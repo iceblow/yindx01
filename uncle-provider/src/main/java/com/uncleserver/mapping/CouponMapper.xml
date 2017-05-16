@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.CouponMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.Coupon" >
+    <id column="couponid" property="couponid" jdbcType="INTEGER" />
+    <result column="coupon_num" property="couponNum" jdbcType="VARCHAR" />
+    <result column="picid" property="picid" jdbcType="INTEGER" />
+    <result column="coupon_condition" property="couponCondition" jdbcType="DECIMAL" />
+    <result column="discount" property="discount" jdbcType="DECIMAL" />
+    <result column="rangetype" property="rangetype" jdbcType="BIT" />
+    <result column="companyid" property="companyid" jdbcType="INTEGER" />
+    <result column="categoryid" property="categoryid" jdbcType="INTEGER" />
+    <result column="granttype" property="granttype" jdbcType="TINYINT" />
+    <result column="stime" property="stime" jdbcType="TIMESTAMP" />
+    <result column="etime" property="etime" jdbcType="TIMESTAMP" />
+    <result column="use_stime" property="useStime" jdbcType="TIMESTAMP" />
+    <result column="use_etime" property="useEtime" jdbcType="TIMESTAMP" />
+    <result column="last_day" property="lastDay" jdbcType="INTEGER" />
+    <result column="totalcount" property="totalcount" jdbcType="INTEGER" />
+    <result column="getcount" property="getcount" jdbcType="INTEGER" />
+    <result column="usecount" property="usecount" jdbcType="INTEGER" />
+    <result column="discountmoney" property="discountmoney" jdbcType="DECIMAL" />
+    <result column="lastmoney" property="lastmoney" jdbcType="DECIMAL" />
+    <result column="delstate" property="delstate" jdbcType="BIT" />
+    <result column="maxreceive" property="maxreceive" jdbcType="TINYINT" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    couponid, coupon_num, picid, coupon_condition, discount, rangetype, companyid, categoryid, 
+    granttype, stime, etime, use_stime, use_etime, last_day, totalcount, getcount, usecount, 
+    discountmoney, lastmoney, delstate, maxreceive, addtime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_coupon
+    where couponid = #{couponid,jdbcType=INTEGER}
+  </select>
+  <select id="selectByPrimaryKeyOrNum" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_coupon
+    where couponid = #{0} or coupon_num = #{0}
+  </select>
+  
+  <select id="selectCouponList" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_coupon
+    where 1=1
+    <if test="rangetype != -1" >
+        and rangetype = #{rangetype}
+    </if>
+    <if test="granttype != -1" >
+        and granttype = #{granttype}
+    </if>
+    <if test="delstate != -1" >
+        and delstate = #{delstate}
+    </if>
+    order by addtime desc
+    limit #{startPage},#{rows}
+  </select>
+  <select id="selectCountCoupon" resultType="java.lang.Long" >
+    select count(*)
+    from t_coupon
+    where 1=1
+    <if test="rangetype != -1" >
+        and rangetype = #{rangetype}
+    </if>
+    <if test="granttype != -1" >
+        and granttype = #{granttype}
+    </if>
+    <if test="delstate != -1" >
+        and delstate = #{delstate}
+    </if>
+  </select>
+  <select id="getCompanyName" parameterType="java.lang.Integer" resultType="String">
+  	select name
+  	from t_company
+  	where companyid = #{companyid}
+  </select>
+  <select id="getCompanyList"  resultType="com.uncleserver.model.Company">
+  	select *
+  	from t_company
+  </select>
+  <select id="getcategorysecond"  resultType="com.uncleserver.model.CategorySecond">
+  	select *
+  	from t_category_second
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_coupon
+    where couponid = #{couponid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.Coupon" >
+    insert into t_coupon (couponid, coupon_num, picid, 
+      coupon_condition, discount, rangetype, 
+      companyid, categoryid, granttype, 
+      stime, etime, use_stime, 
+      use_etime, last_day, totalcount, 
+      getcount, usecount, discountmoney, 
+      lastmoney, delstate, maxreceive, 
+      addtime)
+    values (#{couponid,jdbcType=INTEGER}, #{couponNum,jdbcType=VARCHAR}, #{picid,jdbcType=INTEGER}, 
+      #{couponCondition,jdbcType=DECIMAL}, #{discount,jdbcType=DECIMAL}, #{rangetype,jdbcType=BIT}, 
+      #{companyid,jdbcType=INTEGER}, #{categoryid,jdbcType=INTEGER}, #{granttype,jdbcType=TINYINT}, 
+      #{stime,jdbcType=TIMESTAMP}, #{etime,jdbcType=TIMESTAMP}, #{useStime,jdbcType=TIMESTAMP}, 
+      #{useEtime,jdbcType=TIMESTAMP}, #{lastDay,jdbcType=INTEGER}, #{totalcount,jdbcType=INTEGER}, 
+      #{getcount,jdbcType=INTEGER}, #{usecount,jdbcType=INTEGER}, #{discountmoney,jdbcType=DECIMAL}, 
+      #{lastmoney,jdbcType=DECIMAL}, #{delstate,jdbcType=BIT}, #{maxreceive,jdbcType=TINYINT}, 
+      #{addtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.Coupon" >
+    insert into t_coupon
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="couponid != null" >
+        couponid,
+      </if>
+      <if test="couponNum != null" >
+        coupon_num,
+      </if>
+      <if test="picid != null" >
+        picid,
+      </if>
+      <if test="couponCondition != null" >
+        coupon_condition,
+      </if>
+      <if test="discount != null" >
+        discount,
+      </if>
+      <if test="rangetype != null" >
+        rangetype,
+      </if>
+      <if test="companyid != null" >
+        companyid,
+      </if>
+      <if test="categoryid != null" >
+        categoryid,
+      </if>
+      <if test="granttype != null" >
+        granttype,
+      </if>
+      <if test="stime != null" >
+        stime,
+      </if>
+      <if test="etime != null" >
+        etime,
+      </if>
+      <if test="useStime != null" >
+        use_stime,
+      </if>
+      <if test="useEtime != null" >
+        use_etime,
+      </if>
+      <if test="lastDay != null" >
+        last_day,
+      </if>
+      <if test="totalcount != null" >
+        totalcount,
+      </if>
+      <if test="getcount != null" >
+        getcount,
+      </if>
+      <if test="usecount != null" >
+        usecount,
+      </if>
+      <if test="discountmoney != null" >
+        discountmoney,
+      </if>
+      <if test="lastmoney != null" >
+        lastmoney,
+      </if>
+      <if test="delstate != null" >
+        delstate,
+      </if>
+      <if test="maxreceive != null" >
+        maxreceive,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="couponid != null" >
+        #{couponid,jdbcType=INTEGER},
+      </if>
+      <if test="couponNum != null" >
+        #{couponNum,jdbcType=VARCHAR},
+      </if>
+      <if test="picid != null" >
+        #{picid,jdbcType=INTEGER},
+      </if>
+      <if test="couponCondition != null" >
+        #{couponCondition,jdbcType=DECIMAL},
+      </if>
+      <if test="discount != null" >
+        #{discount,jdbcType=DECIMAL},
+      </if>
+      <if test="rangetype != null" >
+        #{rangetype,jdbcType=BIT},
+      </if>
+      <if test="companyid != null" >
+        #{companyid,jdbcType=INTEGER},
+      </if>
+      <if test="categoryid != null" >
+        #{categoryid,jdbcType=INTEGER},
+      </if>
+      <if test="granttype != null" >
+        #{granttype,jdbcType=TINYINT},
+      </if>
+      <if test="stime != null" >
+        #{stime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="etime != null" >
+        #{etime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="useStime != null" >
+        #{useStime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="useEtime != null" >
+        #{useEtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastDay != null" >
+        #{lastDay,jdbcType=INTEGER},
+      </if>
+      <if test="totalcount != null" >
+        #{totalcount,jdbcType=INTEGER},
+      </if>
+      <if test="getcount != null" >
+        #{getcount,jdbcType=INTEGER},
+      </if>
+      <if test="usecount != null" >
+        #{usecount,jdbcType=INTEGER},
+      </if>
+      <if test="discountmoney != null" >
+        #{discountmoney,jdbcType=DECIMAL},
+      </if>
+      <if test="lastmoney != null" >
+        #{lastmoney,jdbcType=DECIMAL},
+      </if>
+      <if test="delstate != null" >
+        #{delstate,jdbcType=BIT},
+      </if>
+      <if test="maxreceive != null" >
+        #{maxreceive,jdbcType=TINYINT},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.Coupon" >
+    update t_coupon
+    <set >
+      <if test="couponNum != null" >
+        coupon_num = #{couponNum,jdbcType=VARCHAR},
+      </if>
+      <if test="picid != null" >
+        picid = #{picid,jdbcType=INTEGER},
+      </if>
+      <if test="couponCondition != null" >
+        coupon_condition = #{couponCondition,jdbcType=DECIMAL},
+      </if>
+      <if test="discount != null" >
+        discount = #{discount,jdbcType=DECIMAL},
+      </if>
+      <if test="rangetype != null" >
+        rangetype = #{rangetype,jdbcType=BIT},
+      </if>
+      <if test="companyid != null" >
+        companyid = #{companyid,jdbcType=INTEGER},
+      </if>
+      <if test="categoryid != null" >
+        categoryid = #{categoryid,jdbcType=INTEGER},
+      </if>
+      <if test="granttype != null" >
+        granttype = #{granttype,jdbcType=TINYINT},
+      </if>
+      <if test="stime != null" >
+        stime = #{stime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="etime != null" >
+        etime = #{etime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="useStime != null" >
+        use_stime = #{useStime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="useEtime != null" >
+        use_etime = #{useEtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastDay != null" >
+        last_day = #{lastDay,jdbcType=INTEGER},
+      </if>
+      <if test="totalcount != null" >
+        totalcount = #{totalcount,jdbcType=INTEGER},
+      </if>
+      <if test="getcount != null" >
+        getcount = #{getcount,jdbcType=INTEGER},
+      </if>
+      <if test="usecount != null" >
+        usecount = #{usecount,jdbcType=INTEGER},
+      </if>
+      <if test="discountmoney != null" >
+        discountmoney = #{discountmoney,jdbcType=DECIMAL},
+      </if>
+      <if test="lastmoney != null" >
+        lastmoney = #{lastmoney,jdbcType=DECIMAL},
+      </if>
+      <if test="delstate != null" >
+        delstate = #{delstate,jdbcType=BIT},
+      </if>
+      <if test="maxreceive != null" >
+        maxreceive = #{maxreceive,jdbcType=TINYINT},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where couponid = #{couponid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.Coupon" >
+    update t_coupon
+    set coupon_num = #{couponNum,jdbcType=VARCHAR},
+      picid = #{picid,jdbcType=INTEGER},
+      coupon_condition = #{couponCondition,jdbcType=DECIMAL},
+      discount = #{discount,jdbcType=DECIMAL},
+      rangetype = #{rangetype,jdbcType=BIT},
+      companyid = #{companyid,jdbcType=INTEGER},
+      categoryid = #{categoryid,jdbcType=INTEGER},
+      granttype = #{granttype,jdbcType=TINYINT},
+      stime = #{stime,jdbcType=TIMESTAMP},
+      etime = #{etime,jdbcType=TIMESTAMP},
+      use_stime = #{useStime,jdbcType=TIMESTAMP},
+      use_etime = #{useEtime,jdbcType=TIMESTAMP},
+      last_day = #{lastDay,jdbcType=INTEGER},
+      totalcount = #{totalcount,jdbcType=INTEGER},
+      getcount = #{getcount,jdbcType=INTEGER},
+      usecount = #{usecount,jdbcType=INTEGER},
+      discountmoney = #{discountmoney,jdbcType=DECIMAL},
+      lastmoney = #{lastmoney,jdbcType=DECIMAL},
+      delstate = #{delstate,jdbcType=BIT},
+      maxreceive = #{maxreceive,jdbcType=TINYINT},
+      addtime = #{addtime,jdbcType=TIMESTAMP}
+    where couponid = #{couponid,jdbcType=INTEGER}
+  </update>
+</mapper>

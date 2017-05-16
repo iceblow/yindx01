@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.UserExtraMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.UserExtra" >
+    <id column="dataid" property="dataid" jdbcType="INTEGER" />
+    <result column="userid" property="userid" jdbcType="INTEGER" />
+    <result column="point" property="point" jdbcType="INTEGER" />
+    <result column="point_total" property="point_total" jdbcType="INTEGER" />
+    <result column="balance" property="balance" jdbcType="DECIMAL" />
+    <result column="use_total" property="useTotal" jdbcType="DECIMAL" />
+    <result column="last_login" property="lastLogin" jdbcType="DATE" />
+    <result column="last_buy" property="lastBuy" jdbcType="DATE" />
+    <result column="last_sign" property="lastSign" jdbcType="DATE" />
+    <result column="sign_day" property="signDay" jdbcType="INTEGER" />
+    <result column="accesstoken" property="accesstoken" jdbcType="VARCHAR" />
+    <result column="token_time" property="tokenTime" jdbcType="TIMESTAMP" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="updatetime" property="updatetime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    dataid, userid, point,point_total, balance, use_total, last_login, last_buy, last_sign, sign_day, 
+    accesstoken, token_time, city, updatetime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_user_extra
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_user_extra
+    where userid = #{userid,jdbcType=INTEGER}
+  </select>
+  
+   <select id="selectByAccesstoken" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_user_extra
+    where accesstoken = #{0}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_user_extra
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.UserExtra" >
+    insert into t_user_extra (dataid, userid, point, point_total,
+      balance, use_total, last_login, 
+      last_buy, last_sign, sign_day, 
+      accesstoken, token_time, city, 
+      updatetime)
+    values (#{dataid,jdbcType=INTEGER}, #{userid,jdbcType=INTEGER}, #{point,jdbcType=INTEGER}, #{point_total,jdbcType=INTEGER}, 
+      #{balance,jdbcType=DECIMAL}, #{useTotal,jdbcType=DECIMAL}, #{lastLogin,jdbcType=DATE}, 
+      #{lastBuy,jdbcType=DATE}, #{lastSign,jdbcType=DATE}, #{signDay,jdbcType=INTEGER}, 
+      #{accesstoken,jdbcType=VARCHAR}, #{tokenTime,jdbcType=TIMESTAMP}, #{city,jdbcType=VARCHAR}, 
+      #{updatetime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.UserExtra" >
+    insert into t_user_extra
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="dataid != null" >
+        dataid,
+      </if>
+      <if test="userid != null" >
+        userid,
+      </if>
+      <if test="point != null" >
+        point,
+      </if>
+      <if test="point_total != null" >
+        point_total,
+      </if>
+      
+      <if test="balance != null" >
+        balance,
+      </if>
+      <if test="useTotal != null" >
+        use_total,
+      </if>
+      <if test="lastLogin != null" >
+        last_login,
+      </if>
+      <if test="lastBuy != null" >
+        last_buy,
+      </if>
+      <if test="lastSign != null" >
+        last_sign,
+      </if>
+      <if test="signDay != null" >
+        sign_day,
+      </if>
+      <if test="accesstoken != null" >
+        accesstoken,
+      </if>
+      <if test="tokenTime != null" >
+        token_time,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="updatetime != null" >
+        updatetime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="dataid != null" >
+        #{dataid,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null" >
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="point != null" >
+        #{point,jdbcType=INTEGER},
+      </if>
+      <if test="point_total != null" >
+        #{point_total,jdbcType=INTEGER},
+      </if>
+      
+      <if test="balance != null" >
+        #{balance,jdbcType=DECIMAL},
+      </if>
+      <if test="useTotal != null" >
+        #{useTotal,jdbcType=DECIMAL},
+      </if>
+      <if test="lastLogin != null" >
+        #{lastLogin,jdbcType=DATE},
+      </if>
+      <if test="lastBuy != null" >
+        #{lastBuy,jdbcType=DATE},
+      </if>
+      <if test="lastSign != null" >
+        #{lastSign,jdbcType=DATE},
+      </if>
+      <if test="signDay != null" >
+        #{signDay,jdbcType=INTEGER},
+      </if>
+      <if test="accesstoken != null" >
+        #{accesstoken,jdbcType=VARCHAR},
+      </if>
+      <if test="tokenTime != null" >
+        #{tokenTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.UserExtra" >
+    update t_user_extra
+    <set >
+      <if test="userid != null" >
+        userid = #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="point != null" >
+        point = #{point,jdbcType=INTEGER},
+      </if>
+       <if test="point_total != null" >
+        point = #{point_total,jdbcType=INTEGER},
+      </if>
+      
+      <if test="balance != null" >
+        balance = #{balance,jdbcType=DECIMAL},
+      </if>
+      <if test="useTotal != null" >
+        use_total = #{useTotal,jdbcType=DECIMAL},
+      </if>
+      <if test="lastLogin != null" >
+        last_login = #{lastLogin,jdbcType=DATE},
+      </if>
+      <if test="lastBuy != null" >
+        last_buy = #{lastBuy,jdbcType=DATE},
+      </if>
+      <if test="lastSign != null" >
+        last_sign = #{lastSign,jdbcType=DATE},
+      </if>
+      <if test="signDay != null" >
+        sign_day = #{signDay,jdbcType=INTEGER},
+      </if>
+      <if test="accesstoken != null" >
+        accesstoken = #{accesstoken,jdbcType=VARCHAR},
+      </if>
+      <if test="tokenTime != null" >
+        token_time = #{tokenTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="updatetime != null" >
+        updatetime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.UserExtra" >
+    update t_user_extra
+    set userid = #{userid,jdbcType=INTEGER},
+      point = #{point,jdbcType=INTEGER},
+      point_total = #{point_total,jdbcType=INTEGER},
+      balance = #{balance,jdbcType=DECIMAL},
+      use_total = #{useTotal,jdbcType=DECIMAL},
+      last_login = #{lastLogin,jdbcType=DATE},
+      last_buy = #{lastBuy,jdbcType=DATE},
+      last_sign = #{lastSign,jdbcType=DATE},
+      sign_day = #{signDay,jdbcType=INTEGER},
+      accesstoken = #{accesstoken,jdbcType=VARCHAR},
+      token_time = #{tokenTime,jdbcType=TIMESTAMP},
+      city = #{city,jdbcType=VARCHAR},
+      updatetime = #{updatetime,jdbcType=TIMESTAMP}
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </update>
+</mapper>

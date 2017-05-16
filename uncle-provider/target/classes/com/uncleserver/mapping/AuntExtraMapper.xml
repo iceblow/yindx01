@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.AuntExtraMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.AuntExtra" >
+    <id column="dataid" property="dataid" jdbcType="INTEGER" />
+    <result column="auntid" property="auntid" jdbcType="INTEGER" />
+    <result column="score" property="score" jdbcType="REAL" />
+    <result column="point" property="point" jdbcType="INTEGER" />
+    <result column="point_total" property="pointTotal" jdbcType="INTEGER" />
+    <result column="balance" property="balance" jdbcType="DECIMAL" />
+    <result column="use_total" property="useTotal" jdbcType="DECIMAL" />
+    <result column="last_login" property="lastLogin" jdbcType="DATE" />
+    <result column="last_buy" property="lastBuy" jdbcType="DATE" />
+    <result column="last_sign" property="lastSign" jdbcType="DATE" />
+    <result column="sign_day" property="signDay" jdbcType="INTEGER" />
+    <result column="accesstoken" property="accesstoken" jdbcType="VARCHAR" />
+    <result column="token_time" property="tokenTime" jdbcType="TIMESTAMP" />
+    <result column="longitude" property="longitude" jdbcType="DOUBLE" />
+    <result column="latitude" property="latitude" jdbcType="DOUBLE" />
+    <result column="locationtime" property="locationtime" jdbcType="TIMESTAMP" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="font_set" property="fontSet" jdbcType="TINYINT" />
+    <result column="voice_set" property="voiceSet" jdbcType="TINYINT" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    dataid, auntid, score, point, point_total, balance, use_total, last_login, last_buy, 
+    last_sign, sign_day, accesstoken, token_time, longitude, latitude, locationtime, 
+    state, city, font_set, voice_set, addtime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_aunt_extra
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </select>
+  
+   <select id="selectByAuntId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_aunt_extra
+    where auntid = #{auntid,jdbcType=INTEGER}
+  </select>
+  
+   <select id="selectByAccesstoken" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_aunt_extra
+    where accesstoken = #{0}
+  </select>
+  
+  <select id="selectByDistance" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_aunt_extra where state = 0 <![CDATA[ and TIMESTAMPDIFF(minute,locationtime,now())<=1 ]]> <![CDATA[ and getdistance( #{0},  #{1},longitude,latitude) <=#{2}]]> 
+  </select>
+  
+   <select id="selectByDistanceWithoutLine" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_aunt_extra where state = 0 <![CDATA[ and getdistance( #{0},  #{1},longitude,latitude) <=#{2}]]> 
+  </select>
+  
+  <select id="selectByDistanceWithoutLineAndState" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_aunt_extra <![CDATA[ where getdistance( #{0},  #{1},longitude,latitude) <=#{2}]]> 
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_aunt_extra
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.AuntExtra" >
+    insert into t_aunt_extra (dataid, auntid, score, 
+      point, point_total, balance, 
+      use_total, last_login, last_buy, 
+      last_sign, sign_day, accesstoken, 
+      token_time, longitude, latitude, 
+      locationtime, state, city, 
+      font_set, voice_set, addtime
+      )
+    values (#{dataid,jdbcType=INTEGER}, #{auntid,jdbcType=INTEGER}, #{score,jdbcType=REAL}, 
+      #{point,jdbcType=INTEGER}, #{pointTotal,jdbcType=INTEGER}, #{balance,jdbcType=DECIMAL}, 
+      #{useTotal,jdbcType=DECIMAL}, #{lastLogin,jdbcType=DATE}, #{lastBuy,jdbcType=DATE}, 
+      #{lastSign,jdbcType=DATE}, #{signDay,jdbcType=INTEGER}, #{accesstoken,jdbcType=VARCHAR}, 
+      #{tokenTime,jdbcType=TIMESTAMP}, #{longitude,jdbcType=DOUBLE}, #{latitude,jdbcType=DOUBLE}, 
+      #{locationtime,jdbcType=TIMESTAMP}, #{state,jdbcType=TINYINT}, #{city,jdbcType=VARCHAR}, 
+      #{fontSet,jdbcType=TINYINT}, #{voiceSet,jdbcType=TINYINT}, #{addtime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.AuntExtra" >
+    insert into t_aunt_extra
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="dataid != null" >
+        dataid,
+      </if>
+      <if test="auntid != null" >
+        auntid,
+      </if>
+      <if test="score != null" >
+        score,
+      </if>
+      <if test="point != null" >
+        point,
+      </if>
+      <if test="pointTotal != null" >
+        point_total,
+      </if>
+      <if test="balance != null" >
+        balance,
+      </if>
+      <if test="useTotal != null" >
+        use_total,
+      </if>
+      <if test="lastLogin != null" >
+        last_login,
+      </if>
+      <if test="lastBuy != null" >
+        last_buy,
+      </if>
+      <if test="lastSign != null" >
+        last_sign,
+      </if>
+      <if test="signDay != null" >
+        sign_day,
+      </if>
+      <if test="accesstoken != null" >
+        accesstoken,
+      </if>
+      <if test="tokenTime != null" >
+        token_time,
+      </if>
+      <if test="longitude != null" >
+        longitude,
+      </if>
+      <if test="latitude != null" >
+        latitude,
+      </if>
+      <if test="locationtime != null" >
+        locationtime,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="fontSet != null" >
+        font_set,
+      </if>
+      <if test="voiceSet != null" >
+        voice_set,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="dataid != null" >
+        #{dataid,jdbcType=INTEGER},
+      </if>
+      <if test="auntid != null" >
+        #{auntid,jdbcType=INTEGER},
+      </if>
+      <if test="score != null" >
+        #{score,jdbcType=REAL},
+      </if>
+      <if test="point != null" >
+        #{point,jdbcType=INTEGER},
+      </if>
+      <if test="pointTotal != null" >
+        #{pointTotal,jdbcType=INTEGER},
+      </if>
+      <if test="balance != null" >
+        #{balance,jdbcType=DECIMAL},
+      </if>
+      <if test="useTotal != null" >
+        #{useTotal,jdbcType=DECIMAL},
+      </if>
+      <if test="lastLogin != null" >
+        #{lastLogin,jdbcType=DATE},
+      </if>
+      <if test="lastBuy != null" >
+        #{lastBuy,jdbcType=DATE},
+      </if>
+      <if test="lastSign != null" >
+        #{lastSign,jdbcType=DATE},
+      </if>
+      <if test="signDay != null" >
+        #{signDay,jdbcType=INTEGER},
+      </if>
+      <if test="accesstoken != null" >
+        #{accesstoken,jdbcType=VARCHAR},
+      </if>
+      <if test="tokenTime != null" >
+        #{tokenTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="longitude != null" >
+        #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="latitude != null" >
+        #{latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="locationtime != null" >
+        #{locationtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=TINYINT},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="fontSet != null" >
+        #{fontSet,jdbcType=TINYINT},
+      </if>
+      <if test="voiceSet != null" >
+        #{voiceSet,jdbcType=TINYINT},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.AuntExtra" >
+    update t_aunt_extra
+    <set >
+      <if test="auntid != null" >
+        auntid = #{auntid,jdbcType=INTEGER},
+      </if>
+      <if test="score != null" >
+        score = #{score,jdbcType=REAL},
+      </if>
+      <if test="point != null" >
+        point = #{point,jdbcType=INTEGER},
+      </if>
+      <if test="pointTotal != null" >
+        point_total = #{pointTotal,jdbcType=INTEGER},
+      </if>
+      <if test="balance != null" >
+        balance = #{balance,jdbcType=DECIMAL},
+      </if>
+      <if test="useTotal != null" >
+        use_total = #{useTotal,jdbcType=DECIMAL},
+      </if>
+      <if test="lastLogin != null" >
+        last_login = #{lastLogin,jdbcType=DATE},
+      </if>
+      <if test="lastBuy != null" >
+        last_buy = #{lastBuy,jdbcType=DATE},
+      </if>
+      <if test="lastSign != null" >
+        last_sign = #{lastSign,jdbcType=DATE},
+      </if>
+      <if test="signDay != null" >
+        sign_day = #{signDay,jdbcType=INTEGER},
+      </if>
+      <if test="accesstoken != null" >
+        accesstoken = #{accesstoken,jdbcType=VARCHAR},
+      </if>
+      <if test="tokenTime != null" >
+        token_time = #{tokenTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="longitude != null" >
+        longitude = #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="latitude != null" >
+        latitude = #{latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="locationtime != null" >
+        locationtime = #{locationtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=TINYINT},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="fontSet != null" >
+        font_set = #{fontSet,jdbcType=TINYINT},
+      </if>
+      <if test="voiceSet != null" >
+        voice_set = #{voiceSet,jdbcType=TINYINT},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.AuntExtra" >
+    update t_aunt_extra
+    set auntid = #{auntid,jdbcType=INTEGER},
+      score = #{score,jdbcType=REAL},
+      point = #{point,jdbcType=INTEGER},
+      point_total = #{pointTotal,jdbcType=INTEGER},
+      balance = #{balance,jdbcType=DECIMAL},
+      use_total = #{useTotal,jdbcType=DECIMAL},
+      last_login = #{lastLogin,jdbcType=DATE},
+      last_buy = #{lastBuy,jdbcType=DATE},
+      last_sign = #{lastSign,jdbcType=DATE},
+      sign_day = #{signDay,jdbcType=INTEGER},
+      accesstoken = #{accesstoken,jdbcType=VARCHAR},
+      token_time = #{tokenTime,jdbcType=TIMESTAMP},
+      longitude = #{longitude,jdbcType=DOUBLE},
+      latitude = #{latitude,jdbcType=DOUBLE},
+      locationtime = #{locationtime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=TINYINT},
+      city = #{city,jdbcType=VARCHAR},
+      font_set = #{fontSet,jdbcType=TINYINT},
+      voice_set = #{voiceSet,jdbcType=TINYINT},
+      addtime = #{addtime,jdbcType=TIMESTAMP}
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </update>
+</mapper>

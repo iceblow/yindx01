@@ -1,0 +1,68 @@
+package com.uncleserver.service.manage;
+
+import java.util.List;
+
+import com.uncleserver.model.Cities;
+import com.uncleserver.model.HomeAd;
+import com.uncleserver.model.HomeItem;
+import com.uncleserver.model.Proviences;
+import com.uncleserver.model.Result.PQuery;
+import com.uncleserver.model.Result.QueryResult;
+import com.uncleserver.modelVo.AddItemVo;
+import com.uncleserver.modelVo.HomeAdContentVo;
+import com.uncleserver.modelVo.HomeAdVo;
+import com.uncleserver.modelVo.HomeItemVo;
+
+
+public interface ManageHomeService {
+
+	QueryResult<HomeItemVo> geHomeIconByCity(PQuery pquery, String city);
+	
+	
+	QueryResult<HomeItemVo> geHomeItemByCity(PQuery pquery, String cityName, Integer type);
+	
+	List<Proviences> selectProviences();
+
+	List<Cities> selectCitiesByProvienceid(Integer provienceid);
+	
+	List<Cities> selectAllCitys();
+	
+	Cities selectCityByCityId(Integer cityid);
+	
+	List<HomeAdContentVo> getHomeAdContentList(Integer type, String cityName);
+	
+	Integer deleteicon(Integer iconid);
+	
+	Integer deleteContent(Integer dataid);
+	
+	Integer UpOrDowniconSort(Integer iconid,Integer type,String cityName);
+	
+	HomeItem getHomeItem(Integer dataid);
+	
+	HomeAd getHomeAd(Integer dataid);
+	
+	Integer insertIcon(Integer cityid,Integer categoryid);
+
+
+	QueryResult<AddItemVo> selectHomeItemlist(PQuery pquery, String cityName,
+			Integer type);
+
+
+	int insertcontent(Integer cityid, Integer type, String[] goodstips);
+
+
+	int UpOrDownContentSort(Integer dataid, Byte type, String city,Integer companyType);
+
+
+	QueryResult<HomeAdVo> getBanner(PQuery pQuery,String cityName);
+
+
+	int deleteHomeAd(Integer dataid);
+
+
+	int addBannerData(String cityName, Integer type, String linkurl,
+			Integer contentid, Integer fileid);
+
+
+	int UpOrDownBannerSort(Integer dataid, int type, String cityName);
+}

@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.AuntCashMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.AuntCash" >
+    <id column="cashid" property="cashid" jdbcType="INTEGER" />
+    <result column="userid" property="userid" jdbcType="INTEGER" />
+    <result column="money" property="money" jdbcType="DECIMAL" />
+    <result column="type" property="type" jdbcType="TINYINT" />
+    <result column="account" property="account" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="adminid" property="adminid" jdbcType="INTEGER" />
+    <result column="dotime" property="dotime" jdbcType="TIMESTAMP" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+    <result column="user_type" property="userType" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    cashid, userid, money, type, account, name, state, adminid, dotime, addtime,user_type
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_aunt_cash
+    where cashid = #{cashid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_aunt_cash
+    where cashid = #{cashid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.AuntCash" >
+    insert into t_aunt_cash (cashid, userid, money, 
+      type, account, name, 
+      state, adminid, dotime, 
+      addtime,user_type)
+    values (#{cashid,jdbcType=INTEGER}, #{userid,jdbcType=INTEGER}, #{money,jdbcType=DECIMAL}, 
+      #{type,jdbcType=TINYINT}, #{account,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{state,jdbcType=TINYINT}, #{adminid,jdbcType=INTEGER}, #{dotime,jdbcType=TIMESTAMP}, 
+      #{addtime,jdbcType=TIMESTAMP},#{userType,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.AuntCash" >
+    insert into t_aunt_cash
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="cashid != null" >
+        cashid,
+      </if>
+      <if test="userid != null" >
+        userid,
+      </if>
+      <if test="money != null" >
+        money,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="account != null" >
+        account,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="adminid != null" >
+        adminid,
+      </if>
+      <if test="dotime != null" >
+        dotime,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+      <if test="userType != null" >
+        user_type
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="cashid != null" >
+        #{cashid,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null" >
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="money != null" >
+        #{money,jdbcType=DECIMAL},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=TINYINT},
+      </if>
+      <if test="account != null" >
+        #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=TINYINT},
+      </if>
+      <if test="adminid != null" >
+        #{adminid,jdbcType=INTEGER},
+      </if>
+      <if test="dotime != null" >
+        #{dotime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+       <if test="userType != null" >
+        #{userType,jdbcType=TINYINT}
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.AuntCash" >
+    update t_aunt_cash
+    <set >
+      <if test="userid != null" >
+        userid = #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="money != null" >
+        money = #{money,jdbcType=DECIMAL},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=TINYINT},
+      </if>
+      <if test="account != null" >
+        account = #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=TINYINT},
+      </if>
+      <if test="adminid != null" >
+        adminid = #{adminid,jdbcType=INTEGER},
+      </if>
+      <if test="dotime != null" >
+        dotime = #{dotime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userType != null" >
+        user_type = #{userType,jdbcType=TINYINT}
+      </if>
+    </set>
+    where cashid = #{cashid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.AuntCash" >
+    update t_aunt_cash
+    set userid = #{userid,jdbcType=INTEGER},
+      money = #{money,jdbcType=DECIMAL},
+      type = #{type,jdbcType=TINYINT},
+      account = #{account,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      state = #{state,jdbcType=TINYINT},
+      adminid = #{adminid,jdbcType=INTEGER},
+      dotime = #{dotime,jdbcType=TIMESTAMP},
+      addtime = #{addtime,jdbcType=TIMESTAMP},
+      user_type = #{userType,jdbcType=TINYINT}
+    where cashid = #{cashid,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getTotalCashByCompany" resultType="java.lang.Float" >
+    select 
+    sum(money)
+    from t_aunt_cash
+    where state = 1
+    <if test="companyid != null">
+    and userid in
+    (select auntid from t_aunt where companyid = #{companyid})
+    </if>
+    <if test="startDate != null">
+    	and addtime &gt;= #{startDate}
+    </if>
+    <if test="endDate != null">
+    	and addtime &lt;= #{endDate}
+    </if>
+  </select>
+  
+  <select id="getAuntCashList" resultType="com.uncleserver.modelVo.AuntCashVo">
+  	select ac.*,a.real_name as auntname , c.name as companyname from t_aunt_cash ac 
+  	left join t_aunt a on ac.userid = a.auntid 
+  	left join t_company c on ac.userid = c.companyid
+   Limit #{startPage},#{rows}
+  </select>
+  
+  <select id="auntCashListCount" resultType="java.lang.Long">
+  	select count(*) from t_aunt_cash 
+  </select>
+</mapper>

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.AuntMessageDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.AuntMessageDetail" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="messageid" property="messageid" jdbcType="INTEGER" />
+    <result column="sys_messageid" property="sysMessageid" jdbcType="INTEGER" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="detail" property="detail" jdbcType="VARCHAR" />
+    <result column="link_title" property="linkTitle" jdbcType="VARCHAR" />
+    <result column="link_type" property="linkType" jdbcType="TINYINT" />
+    <result column="link_content" property="linkContent" jdbcType="VARCHAR" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, messageid, sys_messageid, title, detail, link_title, link_type, link_content, 
+    addtime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_aunt_message_detail
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+   <select id="selectLastByMid" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_aunt_message_detail
+    where messageid = #{0} order by addtime desc limit 0,1
+  </select>
+  
+   <select id="selectByPage" resultMap="BaseResultMap"  >
+    select 
+    <include refid="Base_Column_List" />
+    from t_aunt_message_detail where messageid=#{0} order by addtime desc limit #{1},#{2}
+  </select>
+  
+  <select id="selectPageCount" resultType="java.lang.Long"  >
+    select 
+    count(id)
+    from t_aunt_message_detail where messageid=#{0}
+  </select>
+  
+   <delete id="deleteByMessageid" parameterType="java.lang.Integer" >
+    delete from t_aunt_message_detail
+    where messageid = #{messageid,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_aunt_message_detail
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.AuntMessageDetail" >
+    insert into t_aunt_message_detail (id, messageid, sys_messageid, 
+      title, detail, link_title, 
+      link_type, link_content, addtime
+      )
+    values (#{id,jdbcType=INTEGER}, #{messageid,jdbcType=INTEGER}, #{sysMessageid,jdbcType=INTEGER}, 
+      #{title,jdbcType=VARCHAR}, #{detail,jdbcType=VARCHAR}, #{linkTitle,jdbcType=VARCHAR}, 
+      #{linkType,jdbcType=TINYINT}, #{linkContent,jdbcType=VARCHAR}, #{addtime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.AuntMessageDetail" >
+    insert into t_aunt_message_detail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="messageid != null" >
+        messageid,
+      </if>
+      <if test="sysMessageid != null" >
+        sys_messageid,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="detail != null" >
+        detail,
+      </if>
+      <if test="linkTitle != null" >
+        link_title,
+      </if>
+      <if test="linkType != null" >
+        link_type,
+      </if>
+      <if test="linkContent != null" >
+        link_content,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="messageid != null" >
+        #{messageid,jdbcType=INTEGER},
+      </if>
+      <if test="sysMessageid != null" >
+        #{sysMessageid,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="detail != null" >
+        #{detail,jdbcType=VARCHAR},
+      </if>
+      <if test="linkTitle != null" >
+        #{linkTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="linkType != null" >
+        #{linkType,jdbcType=TINYINT},
+      </if>
+      <if test="linkContent != null" >
+        #{linkContent,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.AuntMessageDetail" >
+    update t_aunt_message_detail
+    <set >
+      <if test="messageid != null" >
+        messageid = #{messageid,jdbcType=INTEGER},
+      </if>
+      <if test="sysMessageid != null" >
+        sys_messageid = #{sysMessageid,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="detail != null" >
+        detail = #{detail,jdbcType=VARCHAR},
+      </if>
+      <if test="linkTitle != null" >
+        link_title = #{linkTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="linkType != null" >
+        link_type = #{linkType,jdbcType=TINYINT},
+      </if>
+      <if test="linkContent != null" >
+        link_content = #{linkContent,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.AuntMessageDetail" >
+    update t_aunt_message_detail
+    set messageid = #{messageid,jdbcType=INTEGER},
+      sys_messageid = #{sysMessageid,jdbcType=INTEGER},
+      title = #{title,jdbcType=VARCHAR},
+      detail = #{detail,jdbcType=VARCHAR},
+      link_title = #{linkTitle,jdbcType=VARCHAR},
+      link_type = #{linkType,jdbcType=TINYINT},
+      link_content = #{linkContent,jdbcType=VARCHAR},
+      addtime = #{addtime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

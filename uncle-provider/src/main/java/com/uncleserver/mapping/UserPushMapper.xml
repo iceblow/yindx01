@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.UserPushMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.UserPush" >
+    <id column="dataid" property="dataid" jdbcType="INTEGER" />
+    <result column="userid" property="userid" jdbcType="INTEGER" />
+    <result column="push_key" property="pushKey" jdbcType="VARCHAR" />
+    <result column="isaccept" property="isaccept" jdbcType="TINYINT" />
+    <result column="devicetype" property="devicetype" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    dataid, userid, push_key, isaccept, devicetype
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_user_push
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByUserId" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_user_push
+    where userid = #{0}
+  </select>
+  
+  <select id="selectByKeyAndType" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_user_push
+    where push_key = #{0} and devicetype = #{1}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_user_push
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.UserPush" >
+    insert into t_user_push (dataid, userid, push_key, 
+      isaccept, devicetype)
+    values (#{dataid,jdbcType=INTEGER}, #{userid,jdbcType=INTEGER}, #{pushKey,jdbcType=VARCHAR}, 
+      #{isaccept,jdbcType=TINYINT}, #{devicetype,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.UserPush" >
+    insert into t_user_push
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="dataid != null" >
+        dataid,
+      </if>
+      <if test="userid != null" >
+        userid,
+      </if>
+      <if test="pushKey != null" >
+        push_key,
+      </if>
+      <if test="isaccept != null" >
+        isaccept,
+      </if>
+      <if test="devicetype != null" >
+        devicetype,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="dataid != null" >
+        #{dataid,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null" >
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="pushKey != null" >
+        #{pushKey,jdbcType=VARCHAR},
+      </if>
+      <if test="isaccept != null" >
+        #{isaccept,jdbcType=TINYINT},
+      </if>
+      <if test="devicetype != null" >
+        #{devicetype,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.UserPush" >
+    update t_user_push
+    <set >
+      <if test="userid != null" >
+        userid = #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="pushKey != null" >
+        push_key = #{pushKey,jdbcType=VARCHAR},
+      </if>
+      <if test="isaccept != null" >
+        isaccept = #{isaccept,jdbcType=TINYINT},
+      </if>
+      <if test="devicetype != null" >
+        devicetype = #{devicetype,jdbcType=TINYINT},
+      </if>
+    </set>
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.UserPush" >
+    update t_user_push
+    set userid = #{userid,jdbcType=INTEGER},
+      push_key = #{pushKey,jdbcType=VARCHAR},
+      isaccept = #{isaccept,jdbcType=TINYINT},
+      devicetype = #{devicetype,jdbcType=TINYINT}
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,65 @@
+package com.uncleserver.service.manage.Impl;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.uncleserver.model.Aunt;
+import com.uncleserver.model.Company;
+import com.uncleserver.model.CompanyWithBLOBs;
+import com.uncleserver.model.User;
+import com.uncleserver.model.Result.PQuery;
+import com.uncleserver.model.Result.QueryResult;
+import com.uncleserver.service.api.Impl.BaseServiceImpl;
+import com.uncleserver.service.manage.ManageUserService;
+
+@Service("manageUserService")
+public class ManageUserServiceImpl extends BaseServiceImpl implements ManageUserService {
+
+	@Override
+	public QueryResult<User> getAppUser(PQuery pquery, String name, String phone) {
+		List<User> user = userMapper.selectUserByPhoneAndName(pquery.getStartPage(), pquery.getRows(), phone, name);
+		long count = userMapper.selectUserByPhoneAndNameCount(phone, name);
+		QueryResult<User> result = new QueryResult<>(user, count, pquery.getPage(), pquery.getRows());
+		return result;
+	}
+
+	@Override
+	public QueryResult<Company> getCompanyUser(PQuery pquery, String name, String phone) {
+		List<Company> user = companyMapper.selectCompanyByPhoneAndName(pquery.getStartPage(), pquery.getRows(), phone,
+				name);
+		long count = companyMapper.selectCompanyByPhoneAndNameCount(phone, name);
+		QueryResult<Company> result = new QueryResult<>(user, count, pquery.getPage(), pquery.getRows());
+		return result;
+	}
+
+	@Override
+	public QueryResult<Aunt> getAuntUser(PQuery pquery, String name, String phone) {
+		List<Aunt> user = auntMapper.selectAuntByPhoneAndName(pquery.getStartPage(), pquery.getRows(), phone, name);
+		long count = auntMapper.selectAuntByPhoneAndNameCount(phone, name);
+		QueryResult<Aunt> result = new QueryResult<>(user, count, pquery.getPage(), pquery.getRows());
+		return result;
+	}
+
+	@Override
+	public void updateAuntUserState(int auntid, int state) {
+		auntMapper.updateAuntUserState(auntid, state);
+	}
+
+	@Override
+	public void updateCompanyUserState(int companyid, int stateDel) {
+		companyMapper.updateCompanyUserState(companyid, stateDel);
+	}
+
+	@Override
+	public String getcompanyByid(int companyid) {
+		CompanyWithBLOBs company = companyMapper.selectByPrimaryKey(companyid);
+		return company.getName();
+	}
+
+	@Override
+	public String getAuntByid(int id) {
+		return auntMapper.selectByPrimaryKey(id).getRealName();
+	}
+
+}

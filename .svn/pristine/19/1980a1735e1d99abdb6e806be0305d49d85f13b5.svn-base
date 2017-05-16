@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans.xsd
+      http://code.alibabatech.com/schema/dubbo
+      http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <!-- <import resource="classpath:spring.xml"/> -->
+
+    <!-- 提供方应用信息，用于计算依赖关系 -->
+    <dubbo:application name="uncel-provider"/>
+    <!-- 使用zookeeper注册中心暴露服务地址 -->
+    <dubbo:registry protocol="zookeeper" address="zookeeper://127.0.0.1:2181"/>
+    <!-- 用dubbo协议在20880端口暴露服务 -->
+    <dubbo:protocol name="dubbo" port="20881"/>
+
+    <dubbo:provider delay="-1" timeout="5000" retries="1"/>
+    
+    <!--在Dubbo注册的service-->
+    <bean id="userServiceImpl" class="com.uncleserver.service.api.Impl.UserServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.api.UserService" ref="userServiceImpl"/>
+
+    <!--在Dubbo注册的service-->
+    <bean id="homeServiceImpl" class="com.uncleserver.service.api.Impl.HomeServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.api.HomeService" ref="homeServiceImpl"/>
+
+    
+    <bean id="systemServiceImpl" class="com.uncleserver.service.api.Impl.SystemServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.api.SystemService" ref="systemServiceImpl"/>
+
+	<bean id="fileServiceImpl" class="com.uncleserver.service.api.Impl.FileServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.api.FileService" ref="fileServiceImpl"/>
+    
+    <bean id="orderServiceImpl" class="com.uncleserver.service.api.Impl.OrderServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.api.OrderService" ref="orderServiceImpl"/>
+    
+    <bean id="auntCompanyServiceImpl" class="com.uncleserver.service.api.Impl.AuntCompanyServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.api.AuntCompanyService" ref="auntCompanyServiceImpl"/>
+    
+    <bean id="auntHomeServiceImpl" class="com.uncleserver.service.api.Impl.AuntHomeServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.api.AuntHomeService" ref="auntHomeServiceImpl"/>
+    
+    <bean id="auntOrderServiceImpl" class="com.uncleserver.service.api.Impl.AuntOrderServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.api.AuntOrderService" ref="auntOrderServiceImpl"/>
+    
+    <bean id="auntUserServiceImpl" class="com.uncleserver.service.api.Impl.AuntUserServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.api.AuntUserService" ref="auntUserServiceImpl" />
+    
+    <bean id="loginServiceImpl" class="com.uncleserver.service.company.Impl.LoginServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.company.LoginService" ref="loginServiceImpl"/>
+    
+    <bean id="registServiceImpl" class="com.uncleserver.service.company.Impl.RegistServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.company.RegistService" ref="registServiceImpl"/>
+    
+    <bean id="orderCompanyServiceImpl" class="com.uncleserver.service.company.Impl.OrderServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.company.OrderService" ref="orderCompanyServiceImpl"/>
+
+    <bean id="companyServiceImpl" class="com.uncleserver.service.company.Impl.CompanyServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.company.CompanyService" ref="companyServiceImpl"/>
+
+    <bean id="statisticServiceImpl" class="com.uncleserver.service.company.Impl.StatisticServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.company.StatisticService" ref="statisticServiceImpl"/>
+    
+ 	<bean id="manageLoginServiceImpl" class="com.uncleserver.service.manage.Impl.ManageLoginServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.manage.ManageLoginService" ref="manageLoginServiceImpl"/>
+    
+    <bean id="manageIndexService" class="com.uncleserver.service.manage.Impl.ManageIndexServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.manage.ManageIndexService" ref="manageIndexService"/>
+    
+    <bean id="manageAuntServiceImpl" class="com.uncleserver.service.manage.Impl.ManageAuntServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.manage.ManageAuntService" ref="manageAuntServiceImpl"/>
+    
+ 	<bean id="manageUserServiceImpl" class="com.uncleserver.service.manage.Impl.ManageUserServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.manage.ManageUserService" ref="manageUserServiceImpl"/>
+    
+    <bean id="manageSystemServiceImpl" class="com.uncleserver.service.manage.Impl.ManageSystemServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.manage.ManageSystemService" ref="manageSystemServiceImpl"/>
+
+ 	<bean id="manageOrderServiceImpl" class="com.uncleserver.service.manage.Impl.ManageOrderServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.manage.ManageOrderService" ref="manageOrderServiceImpl"/>
+
+ 	<bean id="manageAdminServiceImpl" class="com.uncleserver.service.manage.Impl.ManageAdminServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.manage.ManageAdminService" ref="manageAdminServiceImpl"/>
+    
+    <bean id="managerOthersServiceImpl" class="com.uncleserver.service.manage.Impl.ManagerOthersServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.manage.ManagerOthersService" ref="managerOthersServiceImpl"/>
+
+    
+     <bean id="manageHomeServiceImpl" class="com.uncleserver.service.manage.Impl.ManageHomeServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.manage.ManageHomeService" ref="manageHomeServiceImpl"/>
+
+    
+    <bean id="wechatServiceImpl" class="com.uncleserver.service.api.Impl.WechatServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.api.WechatService" ref="wechatServiceImpl"/>
+    
+    <bean id="birthdayTaskServiceImpl" class="com.uncleserver.service.api.Impl.BirthdayTaskServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.api.BirthdayTaskService" ref="birthdayTaskServiceImpl"/>
+	
+	<bean id="manageCouponServiceImpl" class="com.uncleserver.service.manage.Impl.ManageCouponServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.manage.ManageCouponService" ref="manageCouponServiceImpl"/>
+    
+    <bean id="managePuseServiceImpl" class="com.uncleserver.service.manage.Impl.ManagePuseServiceImpl"/>
+    <dubbo:service interface="com.uncleserver.service.manage.ManagePuseService" ref="managePuseServiceImpl"/>
+    
+	
+</beans>

@@ -1,0 +1,231 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<html>
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+<form class="form-horizontal" role="form"  >
+<div class="row">
+<div class="col-xs-12" >
+	        <div class="form-group">
+				<label Style="text-align: center;" class="col-sm-1 control-label no-padding-right" for="form-field-6">城市选择</label>
+				<div class="col-sm-2">
+					<div>
+						<select name="provienceid" id="proselect" onchange="changepro()" data-rel="tooltip" type="text" class="col-sm-10 searchKey" title="省份选择" data-placement="bottom">
+							<option value="">请选择省</option>
+							<c:forEach items="${list }" var="p">
+								<option value="${p.id }" >${p.name }</option>
+							</c:forEach>
+						</select>
+						<br></br>
+						<select name="cityid" id="cityselect"  data-rel="tooltip" type="text" class="col-sm-10 searchKey" title="城市选择" data-placement="bottom" onchange="change()" >
+							<option value="">请选择市</option>
+							<c:forEach items="${citys }" var="c">
+								<option value="${c.id}" >${c.name}</option>
+							</c:forEach>
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="col-xs-12" >
+	        <div class="form-group">
+				<label Style="text-align: center;" class="col-sm-1 control-label no-padding-right" for="form-field-6">公司类型</label>
+				<div class="col-sm-2">
+					<select id="sel" data-rel="tooltip" type="text" class="col-sm-10 searchKey" name="type" title="公司类型" data-placement="bottom" onchange="change()" >
+						<option value="">请选择</option>						
+						<option value="0">维修公司</option>						
+						<option value="1">家政公司</option>																
+						<option value="2">中介公司</option>																
+						<option value="3">个人阿姨</option>																																												
+					</select>
+				</div>
+			</div>
+		</div>
+		
+		<div class="col-xs-12" id="goodlist">
+		<!-- PAGE CONTENT BEGINS -->
+			<table id="grid-table" class='col-xs-12'></table>
+			<div id="grid-pager"></div>
+		</div><!-- /.col -->
+		
+		<div class="col-xs-3" style="clear:both;float: initial;margin-top: 70px;">
+	        <div class="form-group">
+				<button class="btn btn-info" type="button" style="margin-left: 30%;" onclick="submitaction()">
+					<i class="icon-ok bigger-110"></i>
+					确定
+				</button>
+				<button class="btn" type="button" style="margin-left: 20%;" onclick="goback()">
+					<i class="icon-undo bigger-110"></i>
+					取消
+				</button>
+			</div>
+		</div>
+</form>
+<script type="text/javascript">
+	
+	$("#grid-table").jqGrid({
+	        datatype: "json",
+	        colModel: [
+				{ label: '关联名称', name: 'childname',width: 100},
+				{ label: '名称', name: 'name',width: 100},
+	        ],
+	        multiselect: true,
+            multiboxonly: true,
+            onSelectRow: function (rowId, status, e) {
+            	rowDataNames = [];
+                var rowIds = jQuery("#jqGrid").jqGrid('getGridParam', 'selarrrow');
+                $(rowIds).each(function(i,rowId){
+                    rowDataNames.push($("#jqGrid").jqGrid('getRowData',rowId))
+                });
+            },
+            viewrecords: true, // show the current page, data rang and total records on the toolbar
+			rowList:[10,20,30],
+            autowidth:true,
+            height: $(window).height()-300,
+            rowNum: 10,
+            pager: "#grid-pager",
+        	jsonReader: { root: 'rows', repeatitems: false ,page: "page",   // json中代表当前页码的数据  
+        	    records: "records", // json中代表数据行总数的数据 
+        	    total: "total"},
+        	loadComplete : function() {
+					var table = this;
+					setTimeout(function(){
+						updatePagerIcons(table);
+					}, 0);
+				}
+        }); 
+	 
+function submitaction(){
+// 	$(".form-horizontal").submit();
+	var conform = confirm("确认?")
+	if(conform == false){
+		return;
+	}
+	
+	var s;
+    s = jQuery("#grid-table").jqGrid('getGridParam', 'selarrrow');
+    var sel = $("#sel").val();
+    if(sel == null || sel == ""){
+    	alert("请选择类型");
+    	return;
+    }
+    
+    $.ajax({
+		url:'./home/insertcontent?goodstips='+s,
+		type:"post",
+		data:$('.form-horizontal').serialize(),// 你的formid
+		success:function(code){
+			//101.一级分类名称为空  102.分类名称为空  1.成功  
+			if(code == 1){
+				alert("新增成功");
+				loadHtml("./home/gocontentlist");
+			}else if(code == 101){
+				alert("数据不能为空");
+				return;
+			}else if(code == 102){
+				// alert("同一个城市只能有一个今日闪团");
+				return;
+			}
+		}		
+	})	
+}
+ 
+ 
+function goback(){
+	loadHtml("./home/gocontentlist");
+}
+
+function changepro(){
+	var provienceid = $("#proselect").val();
+	//alert(provienceid);
+	if(provienceid != ""){
+		$.ajax({
+			type: "post",
+			url: "./home/changeprovience",
+			data: {provienceid :provienceid},
+			success: function(msg){
+				var data = eval("("+msg+")");
+				var list = data.cityes;
+				$("#cityselect").empty();
+				var html = '';
+				html += '<option value="">请选择市</option>';
+				if(list != null && list.length > 0){
+					for(var i = 0; i < list.length; i++){
+						html += '<option value="'+list[i].id+'">'+list[i].name+'</option>';
+					}
+				}
+				$("#cityselect").append(html);
+			},
+			error:function (){
+				alert("错误");
+			}
+		});
+	}
+}
+
+var type = 0;
+//判断分类名称
+function change(){
+	sel = $("#sel").val();
+	var cityid = $("#cityselect").val();
+	if(cityid == null || cityid==""){
+		alert('请先选择城市信息');
+		loadHtml("./home/goaddcontent");
+		return;
+	}
+	if(sel == null || sel == ""){
+		return;
+	}
+	jQuery("#grid-table").setGridParam({url:'./home/selectHomeItemlist?type='+sel+'&cityid='+cityid}).trigger("reloadGrid"); 
+	
+	/* if(sel == 0){
+		//今日闪团
+		$("#category").hide();
+		$("#picturebox").hide();
+		jQuery("#grid-table").setGridParam({url:'./home/selectgoodlist?type='+sel+'&cityid='+cityid}).trigger("reloadGrid"); 
+	}else if(sel == 1){
+		//精品推荐
+		$("#category").show();
+		$("#picturebox").show();
+		//清空表格数据
+		jQuery("#grid-table").jqGrid("clearGridData");
+		var category = $("#childid").val();
+		if(category!=null && category!=""){
+			jQuery("#grid-table").setGridParam({url:'./home/selectgoodlist?type='+sel+'&cityid='+cityid+'&childid='+category}).trigger("reloadGrid"); 	
+		}
+	}else if(sel == 2){
+		//图片活动(折扣商品)
+		$("#category").hide();
+		$("#picturebox").show();
+		jQuery("#grid-table").setGridParam({url:'./home/selectgoodlist?type='+sel+'&cityid='+cityid}).trigger("reloadGrid"); 
+	}else if(sel == 3){
+		//图片活动(优惠券)
+		$("#category").hide();
+		$("#picturebox").show();
+		jQuery("#grid-table").setGridParam({url:'./home/selectgoodlist?type='+sel+'&cityid='+cityid}).trigger("reloadGrid"); 
+	}else if(sel == 4){
+		//图片活动(预收商品)
+		$("#category").hide();
+		$("#picturebox").show();
+		jQuery("#grid-table").setGridParam({url:'./home/selectgoodlist?type='+sel+'&cityid='+cityid}).trigger("reloadGrid"); 
+	}else if(sel == 5){
+		//图片活动(一元夺宝商品)
+		$("#category").hide();
+		$("#picturebox").show();
+		jQuery("#grid-table").setGridParam({url:'./home/selectgoodlist?type='+sel+'&cityid='+cityid}).trigger("reloadGrid");  
+	}else if(sel == 6){
+		//图片活动(积分商品商品)
+		$("#category").hide();
+		$("#picturebox").show();
+		jQuery("#grid-table").setGridParam({url:'./home/selectgoodlist?type='+sel+'&cityid='+cityid}).trigger("reloadGrid"); 
+	} */
+}
+
+</script>
+</body>
+</html>

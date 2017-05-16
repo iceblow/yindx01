@@ -1,0 +1,142 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+    pageEncoding="utf-8"%>
+<html xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>投诉</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--星星评价-->
+    <link rel="stylesheet" href="../css/bottom.css" />
+    <link rel="stylesheet" href="../css/common.css" />
+    <!--sui-ui-->
+    <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+    <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/??sm.min.css,sm-extend.min.css">
+    <style>
+        p{
+            margin: 0;
+        }
+        .my_head{background-image: linear-gradient(to right, #78c6ff, #5d8ff9);}
+        .pay_title{color: #959495;font-size: 14px;margin-top: 30px;text-align: center}
+        .pay_money{font-size: 1.5rem;color: #ff5266}
+        .detail_title{float: left;font-size: 14px;color: #959495}
+        .detail_text{float: right;font-size: 14px;}
+        .pay_item{margin-bottom: 15px}
+        .img_box:after{
+            content:".";
+            display:block;
+            height:0;
+            clear:both;
+            visibility:hidden;
+        }
+        .confirm_item:after{
+            content:".";
+            display:block;
+            height:0;
+            clear:both;
+            visibility:hidden;
+        }
+        .item_list{float: left;width: 50%;margin: 0.8rem 0;height:40px ;border-right: 1px solid #eee}
+        .item_list a{display: block}
+        .item_text_box{width: 110px;position: relative;margin: 0 auto}
+        .item_text_box img {height: 100%;}
+        .serve_title{margin-bottom: 0;margin-top: 0;font-size: 12px;color: #333}
+        .serve_text{font-size: 12px;color: #959495}
+        .item_text{height: 100%;float: right;top: 0;padding-top: 5px}
+        .line_title{line-height: 20px;width: 126px;margin: 0 auto;font-size: 12px;text-align: center;position: relative;margin-top: 20px}
+        .line_title  img{width: 100%;position: absolute;left: 0;height: 4px;top: 50%;margin-top: -2px}
+        .line_title_name{font-size: 14px;margin: 0}
+        .item_box{border-bottom: 12px solid #ededed}
+        .item_box:after {
+            content: ".";
+            display: block;
+            height: 0;
+            clear: both;
+            visibility: hidden;
+        }
+        .pay_detail{width: 70%;margin: 0 auto;border-top: 1px solid #e6e6e6;margin-top: 30px;padding-top: 20px;padding-bottom: 5px;}
+        .pay_chose_title{font-size: 16px;}
+        .pay_button_box{padding: 10px 15px 15px 15px ;}
+        .pay_button{width: 100%;height: 45px;line-height: 45px;background-image: url(../img/user/back_background.png);border: none;color: white}
+        .pay_chose_after{position: absolute;right: 30px;color: #959495}
+        .confirm_item{width: 100%;padding: 15px}
+        .confirm_title{width: 20%;float: left;font-size: 14px;color: #959495}
+        .confirm_text{float: left;width: 80%;font-size: 14px;padding-left: 20px}
+        .pay_way_number{font-size: 16px;text-align: center;margin-top: 30px;margin-bottom: 30px}
+        .way_money{color: #ff5266}
+        .pay_line{height: 15px;background-color: #ededed}
+        .img_box{padding: 15px 30px;}
+        .uncle_img{width: 100%;text-align: center;float: left;margin-bottom: 15px;margin-top: 30px}
+        .uncle_img img{height: 35px;border-radius: 50%}
+        .uncle_img p{font-size: 14px;color: #959495;}
+        .uncle_img a{height: 50px;line-height: 50px;width: 80%;margin-left: 10%}
+        .uncle_img .my_handle{height: 30px;line-height: 30px}
+        .handle_text{width: 100%;height: 65px;border: 1px solid #eaf1f9;margin-bottom: 30px;padding: 10px;font-size: 14px}
+    </style>
+</head>
+<body>
+<div class="page-group">
+    <div class="page  page-current">
+        <header class="bar bar-nav my_head">
+            <a class="button button-link button-nav pull-left back">
+                <span class="icon icon-left" style="margin-top: 10px"></span>
+            </a>
+            <h1 class="title">投诉</h1>
+        </header>
+        <div class="content" style="background-color: white" id="complain">
+            <div class="img_box">
+
+            </div>
+            <div class="img_box" style="border-bottom: none">
+                <div class="pay_confirm">
+                    <textarea class="handle_text" placeholder="在这里描述投诉原因，表叔云服将及时为你处理~" v-model="content"></textarea>
+                </div>
+            </div>
+            <div class="pay_button_box">
+                <a class="button pay_button" href="#" v-on:click="submit">提交</a>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!--<script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>-->
+<!--<script>var Zepto = jQuery</script>-->
+<script type='text/javascript' src='//g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
+<script type='text/javascript' src='//g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+<script type='text/javascript' src='//g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
+<script src='../js/plugins/md5.js'></script>
+<script src='../js/van-common.js'></script>
+<script src="../js/vue/vue.min.js"></script>
+<script src="../js/vue/vue-resource.min.js"></script>
+<script>
+    new Vue({
+        el: '#complain',
+        data: {
+            apiUrl: '/order/complaintOrder',
+            orderid: getItem('order_complain_id'), content: ''
+        },
+        methods: {
+            submit: function () {
+                if (this.content == "") {
+                    $.toast("请输入你的宝贵意见！");
+                    return false;
+                }
+                this.$http.get(createUrl(this.apiUrl, {userid: userId, orderid: this.orderid, content:this.content}, true))
+                    .then(function(response) {
+                        if (response.data.c == 1) {
+                            $.toast(response.data.m);
+                        } else {
+                            $.toast(response.data.m);
+                        }
+                    })
+            }
+        }
+    });
+</script>
+</body>
+</html>
+

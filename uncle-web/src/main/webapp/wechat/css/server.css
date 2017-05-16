@@ -1,0 +1,118 @@
+.my_uncle p{overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
+.server_btn{display: inline-block;background-color: #eee;color: #333;border: 1px solid #eee;margin: 5px}
+.btn_area:after{background-color: white !important;}
+.btn_input{height: 30px !important;border: 1px solid #eee !important;font-size: 16px !important;}
+.list-block ul:before{background-color: white}
+.list-block ul:after{background-color: white}
+.input_span{position: relative}
+.input_span span{position: absolute;left: 35px;}
+.select_span{position: absolute;right: 0}
+.chose_title{width: 28%;overflow:scroll;float: left;height: 100%;background-color: #fafafa}
+.chose_detail{width: 72%;float: left;height: 100%}
+.server_scroll{margin: 0;padding: 0}
+.server_scroll li{list-style: none;background-color: #fafafa;height: 55px;text-align: center;line-height: 55px;font-size: 15px}
+.my_serve{width: 100%;z-index: 999;background-color: white}
+.server_scroll .left_active{background-color: white}
+.list-block .item-input input{font-size: 14px !important}
+.list-block .item-input{font-size: 14px !important}
+.btn_active{border: 1px solid #5e93f9!important;box-sizing: border-box !important;background-color: white !important;color: #5e93f9}
+.list-group-title{color: #959495 !important;font-size: 13px !important;}
+.num_color{color: #959495}
+.serve_list_box{overflow: scroll;}
+.list_btn_box a{display: inline-block;margin: 5px}
+.list_btn_box{border-bottom: 1px solid #eee;margin-bottom: 15px;padding-bottom: 10px;margin-top: 15px}
+.inline_box p{font-size: 14px;color: #959495}
+.inline_box{padding: 15px;}
+.list_item_del{position: absolute;height: 15px;right: 15px;top: 10px}
+.server_more_box{position: relative}
+/*阿姨列表样式*/
+p{
+    margin: 0;
+}
+.my_head{background-image: linear-gradient(to right, #78c6ff, #5d8ff9);}
+.list-block .item-title{white-space: normal}
+.uncle_img{border-radius: 50%;height: 50px;width: 50px}
+.list-block .item-text{height: auto}
+.uncle_small{font-size: 12px;color: #ccc;margin-left: 15px;margin-right: 20px}
+.item-after{padding-right: 20px}
+.my_uncle{padding-left: 45px;height: 30px;line-height: 30px;width: 50%;float: left;position: relative;border-right: 1px solid #eee;margin-bottom: 10px;margin-top: 10px}
+.uncle_name{font-size: 15px;margin-left: 10px}
+.my_uncle_img{border-radius: 50%;height: 30px;position: absolute;left: 15px}
+.un_select_btn{border: none;background-color: #f6f9f8;color: #333}
+.uncle_del{position: absolute;height: 20px;top: 5px;right: 15px}
+.hide{display: none}
+.add_num_img_after{position: absolute;top: 10px;right: 20px}
+.reduce_num_img_after{position: absolute;bottom: 10px;right: 20px}
+.shoe_chose_after{padding-right: 0!important;}
+.chose_uncle::after{
+    content:".";
+    display:block;
+    height:0;
+    clear:both;
+    visibility:hidden;
+}
+.star{float: left;width: 15px;height: 15px;background-image: url(../img/serve/star.png);background-size: 100% 100%}
+.star_s{background-image: url("../img/serve/star_s.png") !important;}
+.star_half{background-image: url('../img/serve/h_star.png')}
+/*支付样式*/
+.confirm_item:after{
+    content:".";
+    display:block;
+    height:0;
+    clear:both;
+    visibility:hidden;
+}
+.pay_button_box{padding: 10px 15px 15px 15px ;}
+.pay_button{width: 100%;height: 45px;line-height: 45px;background-image: url(../img/user/back_background.png);border: none;color: white;}
+.confirm_item{width: 100%;padding: 15px}
+.confirm_title{width: 20%;float: left;font-size: 14px;color: #959495}
+.confirm_text{float: left;width: 80%;font-size: 14px}
+.sex_btn{width: 65px;height: 30px;line-height: 30px}
+.my_photo img{margin-right: 5px}
+.item-subtitle{font-size: 13px;color: #959495}
+.item-title{font-size: 15px}
+.img_see_box{position: absolute;width: 100%;height: 100%;background-color: rgba(0,0,0,0.8);
+    top:0;z-index: 9999}
+.img_see_img{
+    display: block;
+    width: 100%;
+    position: absolute;
+    top:50%;
+    left: 50%;
+    -webkit-transform: translate(-50%,-50%);
+    /*overflow: hidden;*/
+}
+.img_del_text{position: absolute;bottom: 10px;right: 10px;color: white;font-size: 14px}
+.close_img_box{position: absolute;top: 10px;right: 10px}
+.pay_btn{position: fixed;width: 90%;bottom: 10px;left: 5%;z-index: 999}
+.circle_chose{position: absolute;right: 10px;top: 13px}
+.input_text{position: absolute;height: 100%;top: 0;line-height: 43px;left: 15px}
+.col-2-title{width: 50%!important;}
+/*弹窗*/
+.my_alert{position: absolute;z-index: 9999;width: 100%;height: 100%;background: rgba(0,0,0,0.5)}
+.alert_box{
+    border-radius: 10px;
+    width: 80%;
+    height: 400px;
+    position: absolute;
+    background-color: white;
+    top:50%;
+    left: 50%;
+    -webkit-transform: translate(-50%,-50%);
+    /*overflow: hidden;*/
+}
+.alert_head{width: 100%;height: 65px;padding: 0 15px;background-image: url(../img/user/sing.png);background-size: 100% 100%;padding-top: 10px}
+.alert_text{background-color: white;height: 120px;position: relative;border-bottom-right-radius:10px;border-bottom-left-radius: 10px }
+.company_btn_box :after{
+    content:".";
+    display:block;
+    height:0;
+    clear:both;
+    visibility:hidden;
+}
+.sign_alert_head_title,.sign_alert_head_text{padding-left: 40px}
+.sign_alert_head_text{font-size: 13px}
+.sign_alert_head_title{font-size: 16px}
+.close_alert{width: 35px;position: absolute;bottom: -60px;left: 50%;margin-left: -18px}
+.get_text{width: 100%;height: 100%;overflow: scroll}
+.serve_back{position: absolute;z-index: 999;height: 23px;top: 15px;left: 15px}

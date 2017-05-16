@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.AdminMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.Admin" >
+    <id column="adminid" property="adminid" jdbcType="INTEGER" />
+    <result column="account" property="account" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="realname" property="realname" jdbcType="VARCHAR" />
+    <result column="nickname" property="nickname" jdbcType="VARCHAR" />
+    <result column="onlinestate" property="onlinestate" jdbcType="TINYINT" />
+    <result column="onlinetime" property="onlinetime" jdbcType="TIMESTAMP" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="delstate" property="delstate" jdbcType="TINYINT" />
+    <result column="roleid" property="roleid" jdbcType="INTEGER" />
+    <result column="shopid" property="shopid" jdbcType="INTEGER" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    adminid, account, password, realname, nickname, onlinestate, onlinetime, phone, delstate, 
+    roleid, shopid, addtime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_admin
+    where adminid = #{adminid,jdbcType=INTEGER}
+  </select>
+  <select id="selectByNP" resultMap="BaseResultMap" >
+    select 
+   *
+    from t_admin
+    where account = #{0} and password = #{1}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_admin
+    where adminid = #{adminid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.Admin" >
+    insert into t_admin (adminid, account, password, 
+      realname, nickname, onlinestate, 
+      onlinetime, phone, delstate, 
+      roleid, shopid, addtime
+      )
+    values (#{adminid,jdbcType=INTEGER}, #{account,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{realname,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, #{onlinestate,jdbcType=TINYINT}, 
+      #{onlinetime,jdbcType=TIMESTAMP}, #{phone,jdbcType=VARCHAR}, #{delstate,jdbcType=TINYINT}, 
+      #{roleid,jdbcType=INTEGER}, #{shopid,jdbcType=INTEGER}, #{addtime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.Admin" >
+    insert into t_admin
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="adminid != null" >
+        adminid,
+      </if>
+      <if test="account != null" >
+        account,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="realname != null" >
+        realname,
+      </if>
+      <if test="nickname != null" >
+        nickname,
+      </if>
+      <if test="onlinestate != null" >
+        onlinestate,
+      </if>
+      <if test="onlinetime != null" >
+        onlinetime,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="delstate != null" >
+        delstate,
+      </if>
+      <if test="roleid != null" >
+        roleid,
+      </if>
+      <if test="shopid != null" >
+        shopid,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="adminid != null" >
+        #{adminid,jdbcType=INTEGER},
+      </if>
+      <if test="account != null" >
+        #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="realname != null" >
+        #{realname,jdbcType=VARCHAR},
+      </if>
+      <if test="nickname != null" >
+        #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="onlinestate != null" >
+        #{onlinestate,jdbcType=TINYINT},
+      </if>
+      <if test="onlinetime != null" >
+        #{onlinetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="delstate != null" >
+        #{delstate,jdbcType=TINYINT},
+      </if>
+      <if test="roleid != null" >
+        #{roleid,jdbcType=INTEGER},
+      </if>
+      <if test="shopid != null" >
+        #{shopid,jdbcType=INTEGER},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.Admin" >
+    update t_admin
+    <set >
+      <if test="account != null" >
+        account = #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="realname != null" >
+        realname = #{realname,jdbcType=VARCHAR},
+      </if>
+      <if test="nickname != null" >
+        nickname = #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="onlinestate != null" >
+        onlinestate = #{onlinestate,jdbcType=TINYINT},
+      </if>
+      <if test="onlinetime != null" >
+        onlinetime = #{onlinetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="delstate != null" >
+        delstate = #{delstate,jdbcType=TINYINT},
+      </if>
+      <if test="roleid != null" >
+        roleid = #{roleid,jdbcType=INTEGER},
+      </if>
+      <if test="shopid != null" >
+        shopid = #{shopid,jdbcType=INTEGER},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where adminid = #{adminid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.Admin" >
+    update t_admin
+    set account = #{account,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      realname = #{realname,jdbcType=VARCHAR},
+      nickname = #{nickname,jdbcType=VARCHAR},
+      onlinestate = #{onlinestate,jdbcType=TINYINT},
+      onlinetime = #{onlinetime,jdbcType=TIMESTAMP},
+      phone = #{phone,jdbcType=VARCHAR},
+      delstate = #{delstate,jdbcType=TINYINT},
+      roleid = #{roleid,jdbcType=INTEGER},
+      shopid = #{shopid,jdbcType=INTEGER},
+      addtime = #{addtime,jdbcType=TIMESTAMP}
+    where adminid = #{adminid,jdbcType=INTEGER}
+  </update>
+  
+  <select id="managePageAdmin" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_admin
+    limit #{startPage},#{rows}
+  </select>
+
+  <select id="managePageAdminCount" resultType="java.lang.Long" >
+    select 
+    	count(*)
+    from t_admin
+  </select>
+  
+  <select id="selectByAccount" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_admin
+    where account = #{account}
+  </select>
+  
+  <!-- 根据账号查找个数 -->
+  <select id="selectCountByAccount"   resultType="int" >
+    select count(*)
+    from t_admin
+    where account = #{0} and adminid !=  #{1}
+  </select>
+</mapper>

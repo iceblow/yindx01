@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.AuntPointProgressMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.AuntPointProgress" >
+    <id column="recordid" property="recordid" jdbcType="INTEGER" />
+    <result column="auntid" property="auntid" jdbcType="INTEGER" />
+    <result column="aunt_info" property="auntInfo" jdbcType="TINYINT" />
+    <result column="video_times" property="videoTimes" jdbcType="TINYINT" />
+    <result column="updatetime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    recordid, auntid, aunt_info, video_times, updatetime, addtime
+  </sql>
+    <select id="selectByAuntid" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_aunt_point_progress
+    where auntid = #{auntid}
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_aunt_point_progress
+    where recordid = #{recordid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_aunt_point_progress
+    where recordid = #{recordid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.AuntPointProgress" >
+    insert into t_aunt_point_progress (recordid, auntid, aunt_info, 
+      video_times, updatetime, addtime
+      )
+    values (#{recordid,jdbcType=INTEGER}, #{auntid,jdbcType=INTEGER}, #{auntInfo,jdbcType=TINYINT}, 
+      #{videoTimes,jdbcType=TINYINT}, #{updatetime,jdbcType=TIMESTAMP}, #{addtime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.AuntPointProgress" >
+    insert into t_aunt_point_progress
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="recordid != null" >
+        recordid,
+      </if>
+      <if test="auntid != null" >
+        auntid,
+      </if>
+      <if test="auntInfo != null" >
+        aunt_info,
+      </if>
+      <if test="videoTimes != null" >
+        video_times,
+      </if>
+      <if test="updatetime != null" >
+        updatetime,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="recordid != null" >
+        #{recordid,jdbcType=INTEGER},
+      </if>
+      <if test="auntid != null" >
+        #{auntid,jdbcType=INTEGER},
+      </if>
+      <if test="auntInfo != null" >
+        #{auntInfo,jdbcType=TINYINT},
+      </if>
+      <if test="videoTimes != null" >
+        #{videoTimes,jdbcType=TINYINT},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.AuntPointProgress" >
+    update t_aunt_point_progress
+    <set >
+      <if test="auntid != null" >
+        auntid = #{auntid,jdbcType=INTEGER},
+      </if>
+      <if test="auntInfo != null" >
+        aunt_info = #{auntInfo,jdbcType=TINYINT},
+      </if>
+      <if test="videoTimes != null" >
+        video_times = #{videoTimes,jdbcType=TINYINT},
+      </if>
+      <if test="updatetime != null" >
+        updatetime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where recordid = #{recordid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.AuntPointProgress" >
+    update t_aunt_point_progress
+    set auntid = #{auntid,jdbcType=INTEGER},
+      aunt_info = #{auntInfo,jdbcType=TINYINT},
+      video_times = #{videoTimes,jdbcType=TINYINT},
+      updatetime = #{updatetime,jdbcType=TIMESTAMP},
+      addtime = #{addtime,jdbcType=TIMESTAMP}
+    where recordid = #{recordid,jdbcType=INTEGER}
+  </update>
+</mapper>

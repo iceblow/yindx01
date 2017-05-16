@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.OrderTargetMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.OrderTarget" >
+    <id column="dataid" property="dataid" jdbcType="INTEGER" />
+    <result column="orderid" property="orderid" jdbcType="INTEGER" />
+    <result column="sex" property="sex" jdbcType="VARCHAR" />
+    <result column="age" property="age" jdbcType="INTEGER" />
+    <result column="weight" property="weight" jdbcType="REAL" />
+    <result column="height" property="height" jdbcType="REAL" />
+    <result column="behavior_type" property="behaviorType" jdbcType="TINYINT" />
+    <result column="illness_type" property="illnessType" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    dataid, orderid, sex, age, weight, height, behavior_type, illness_type
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_order_target
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_order_target
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.OrderTarget" >
+    insert into t_order_target (dataid, orderid, sex, 
+      age, weight, height, behavior_type, 
+      illness_type)
+    values (#{dataid,jdbcType=INTEGER}, #{orderid,jdbcType=INTEGER}, #{sex,jdbcType=VARCHAR}, 
+      #{age,jdbcType=INTEGER}, #{weight,jdbcType=REAL}, #{height,jdbcType=REAL}, #{behaviorType,jdbcType=TINYINT}, 
+      #{illnessType,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.OrderTarget" >
+    insert into t_order_target
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="dataid != null" >
+        dataid,
+      </if>
+      <if test="orderid != null" >
+        orderid,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="age != null" >
+        age,
+      </if>
+      <if test="weight != null" >
+        weight,
+      </if>
+      <if test="height != null" >
+        height,
+      </if>
+      <if test="behaviorType != null" >
+        behavior_type,
+      </if>
+      <if test="illnessType != null" >
+        illness_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="dataid != null" >
+        #{dataid,jdbcType=INTEGER},
+      </if>
+      <if test="orderid != null" >
+        #{orderid,jdbcType=INTEGER},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null" >
+        #{age,jdbcType=INTEGER},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=REAL},
+      </if>
+      <if test="height != null" >
+        #{height,jdbcType=REAL},
+      </if>
+      <if test="behaviorType != null" >
+        #{behaviorType,jdbcType=TINYINT},
+      </if>
+      <if test="illnessType != null" >
+        #{illnessType,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.OrderTarget" >
+    update t_order_target
+    <set >
+      <if test="orderid != null" >
+        orderid = #{orderid,jdbcType=INTEGER},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null" >
+        age = #{age,jdbcType=INTEGER},
+      </if>
+      <if test="weight != null" >
+        weight = #{weight,jdbcType=REAL},
+      </if>
+      <if test="height != null" >
+        height = #{height,jdbcType=REAL},
+      </if>
+      <if test="behaviorType != null" >
+        behavior_type = #{behaviorType,jdbcType=TINYINT},
+      </if>
+      <if test="illnessType != null" >
+        illness_type = #{illnessType,jdbcType=TINYINT},
+      </if>
+    </set>
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.OrderTarget" >
+    update t_order_target
+    set orderid = #{orderid,jdbcType=INTEGER},
+      sex = #{sex,jdbcType=VARCHAR},
+      age = #{age,jdbcType=INTEGER},
+      weight = #{weight,jdbcType=REAL},
+      height = #{height,jdbcType=REAL},
+      behavior_type = #{behaviorType,jdbcType=TINYINT},
+      illness_type = #{illnessType,jdbcType=TINYINT}
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </update>
+</mapper>

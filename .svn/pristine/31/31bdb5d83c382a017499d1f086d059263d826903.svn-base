@@ -1,0 +1,29 @@
+package com.uncleserver.dao;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.uncleserver.model.Admin;
+
+public interface AdminMapper {
+    int deleteByPrimaryKey(Integer adminid);
+
+    int insert(Admin record);
+
+    int insertSelective(Admin record);
+
+    Admin selectByPrimaryKey(Integer adminid);
+
+    int updateByPrimaryKeySelective(Admin record);
+
+    int updateByPrimaryKey(Admin record);
+
+	Admin selectByNP(String cleanXSS, String password);
+	
+	List<Admin> managePageAdmin(@Param(value="startPage")Integer startPage, @Param(value="rows")Integer rows);
+	
+	Long managePageAdminCount();
+	
+	Admin selectByAccount(String account);
+}

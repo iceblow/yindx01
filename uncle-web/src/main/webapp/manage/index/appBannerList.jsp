@@ -1,0 +1,557 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<html>
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+	<div class="row">
+		<form class="form-horizontal" role="form">
+			<div class="col-xs-3">
+				<div class="form-group">
+					<label class="col-sm-4 control-label no-padding-right"
+						for="form-field-6">省份选择</label>
+					<div class="col-sm-8">
+						<select name="provienceid" id="proselect" onchange="changepro()"
+							data-rel="tooltip" type="text" class="col-sm-10 searchKey"
+							title="省份选择" data-placement="bottom">
+							<option value="">请选择省</option>
+							<c:forEach var="p" items="${pro }">
+								<option value="${p.id }">${p.name }</option>
+							</c:forEach>
+						</select>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-xs-3">
+				<div class="form-group">
+					<label class="col-sm-4 control-label no-padding-right"
+						for="form-field-6">城市选择</label>
+					<div class="col-sm-8">
+						<select name="cityid" id="cityselect" data-rel="tooltip" onclick="cityselects()"
+							type="text" class="col-sm-10 searchKey" title="城市选择"
+							data-placement="bottom">
+							<option value="">请选择市</option>
+
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="col-xs-3">
+				<div class="form-group">
+					<label class="col-sm-4 control-label no-padding-right"
+						for="form-field-6" style="font-weight: bold">区域</label>
+					<div class="col-sm-8">
+						<select data-rel="tooltip" class="col-sm-10 searchKey"
+							onclick="areaselect()" name="area" title="区域"
+							data-placement="bottom" id="area">
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="col-xs-3">
+				<div class="form-group">
+					<label class="col-sm-4 control-label no-padding-right"
+						for="form-field-6">类型</label>
+					<div class="col-sm-8">
+						<select name="type" id="type" data-rel="tooltip" type="text"
+							class="col-sm-10 searchKey" title="类型" data-placement="bottom">
+							<option value="">请选择</option>
+							<option value="0">外联</option>
+							<option value="1">公司</option>
+							<option value="2">阿姨</option>
+
+						</select>
+					</div>
+				</div>
+			</div>
+			<!-- 		<div class="col-xs-3"> -->
+			<!-- 	        <div class="form-group"> -->
+			<!-- 				<label class="col-sm-4 control-label no-padding-right" for="form-field-6">类型</label> -->
+			<!-- 				<div class="col-sm-8"> -->
+			<!-- 					<select name="contentid" id="contentid"  data-rel="tooltip" type="text" class="col-sm-10 searchKey" title="类型" data-placement="bottom"> -->
+			<!-- 						<option value="">请选择</option> -->
+			<!-- 						<option value="0">外链的地址</option> -->
+			<!-- 						<option value="1">公司Id</option> -->
+			<!-- 						<option value="2">阿姨Id</option> -->
+
+			<!-- 					</select> -->
+			<!-- 				</div> -->
+			<!-- 			</div> -->
+			<!-- 		</div> -->
+		</form>
+
+
+
+		<div class="col-xs-12">
+			<!-- PAGE CONTENT BEGINS -->
+			<table id="grid-table"></table>
+			<div id="grid-pager"></div>
+		</div>
+	</div>
+	<!-- /.row -->
+	<script type="text/javascript">
+		$(document).ready(
+				function() {
+					var rowDataNames = [];
+					$("#grid-table").jqGrid(
+							{
+								url : './index/getAppBannerList',
+								datatype : "json",
+								page : '${page}',
+								colModel : [ {
+									label : '图片ID',
+									name : 'picid',
+									width : 200,
+									formatter : picAjax
+								}, {
+									label : '类型',
+									name : 'type',
+									width : 50,
+									formatter : typeDef
+								}, {
+									label : '城市',
+									name : 'city',
+									width : 50
+								}, {
+									label : '内容',
+									name : 'contentid',
+									width : 50,
+									formatter : contentFmt
+								}, {
+									label : '添加时间',
+									name : 'addtime',
+									width : 50,
+									formatter : timeFmt
+								}, {
+									label : '操作',
+									name : 'opreation',
+									width : 100,
+									formatter : changestatus
+								} ],
+								multiselect : true,
+								multiboxonly : true,
+								onSelectRow : function(rowId, status, e) {
+									rowDataNames = [];
+									var rowIds = jQuery("#jqGrid").jqGrid(
+											'getGridParam', 'selarrrow');
+									$(rowIds).each(
+											function(i, rowId) {
+												rowDataNames.push($("#jqGrid")
+														.jqGrid('getRowData',
+																rowId))
+											});
+								},
+								viewrecords : true, // show the current page, data rang and total records on the toolbar
+								rowList : [ 10, 20, 30 ],
+								autowidth : true,
+								height : $(window).height() - 200,
+								rowNum : 10,
+								pager : "#grid-pager",
+								jsonReader : {
+									root : 'rows',
+									repeatitems : false,
+									page : "page", // json中代表当前页码的数据  
+									records : "records", // json中代表数据行总数的数据 
+									total : "total"
+								},
+								loadComplete : function() {
+									var table = this;
+									setTimeout(function() {
+										updatePagerIcons(table);
+									}, 0);
+								},
+							});
+
+					$('[data-rel=tooltip]').tooltip({
+						container : 'body'
+					});
+
+					initButton([ {
+						name : "查询", //这里是静态页的地址
+						click : function() {
+							var pro = $("#proselect").val();
+							var city = $("#cityselect").val();
+							if (city != "" && pro == "") {
+								alert("请选择省市信息");
+								return;
+							} else if (pro != "" && city == "") {
+								alert("请选择省市信息");
+								return;
+							}
+							searchFrom('./index/getAppBannerList?');
+						}
+					}, {
+						name : "新增", //这里是静态页的地址
+						click : function() {
+							loadHtml("./index/addappbanner");
+						}
+					} ])
+
+				});
+		function replaceSpace(obj) {
+			obj.value = obj.value.replace(/(^\s*)|(\s*$)/g, "");
+		}
+
+		function picAjax(cellvalue, options, rowObject) {
+			var html = '';
+<<<<<<< .mine
+		
+			$.ajax({
+				url: './index/getPath',
+				data: {'picid':rowObject.picid},
+				type: 'POST',
+				async:false,
+				success: function(msg){
+					html =  "<img src='" + msg +"' style='height: 300px; width: 400px;'/>";
+					console.log(html);
+					
+				}
+			});
+=======
+			$
+					.ajax({
+						url : './index/getPath',
+						data : {
+							'picid' : rowObject.picid
+						},
+						type : 'POST',
+						async : false,
+						success : function(msg) {
+							html = "<img src='" + msg +"' style='height: 300px; width: 400px;'/>";
+
+						}
+					});
+>>>>>>> .r3149
+			return html;
+		}
+
+		function getLocalTime(nS) {
+			return new Date(parseInt(nS) * 1000).toLocaleString().replace(
+					/年|月/g, "-").replace(/日/g, " ");
+		}
+
+		function typeDef(cellvalue, options, rowObject) {
+			var html = '';
+			switch (rowObject.type) {
+			case 0:
+				html = '外链';
+				break;
+			case 1:
+				html = '公司';
+				break;
+			case 2:
+				html = '阿姨';
+				break;
+			default:
+				break;
+			}
+
+			return html;
+		}
+
+		function contentFmt(cellvalue, options, rowObject) {
+			var html = '';
+			switch (rowObject.contentid) {
+			case "0":
+				html = '外链的地址';
+				break;
+			case "1":
+				html = '公司ID';
+				break;
+			case "2":
+				html = '阿姨ID';
+				break;
+			default:
+				break;
+			}
+
+			return html;
+		}
+
+		function timeFmt(cellvalue, options, rowObject) {
+			var html = getLocalTime(rowObject.addtime / 1000);
+<<<<<<< .mine
+=======
+
+>>>>>>> .r3149
+			return html;
+		}
+
+		function delstate(cellvalue, options, rowObject) {
+			var html = '';
+			if (rowObject.delstate == 0) {
+				html = '未删除';
+			} else {
+				html = '已删除';
+			}
+			return html;
+		}
+
+<<<<<<< .mine
+		 function changestatus(cellvalue, options, rowObject){	
+	     		var html = '';
+	     		html += '<button Style="margin-left: 10px;" class="btn btn-xs btn-primary" onclick="upsort(\''+rowObject.bannerid +'\')">上升</button>';
+	     		
+	     		html += '<button Style="margin-left: 10px;" class="btn btn-xs btn-primary" onclick="downsort(\''+rowObject.bannerid +'\')">下降</button>';
+	     		html += '<button Style="margin-left: 10px;" class="btn btn-xs btn-primary" onclick="editAction(\''+rowObject.bannerid +'\')">编辑</button>';
+	       		html += '<button Style="margin-left: 10px;" class="btn btn-xs btn-primary" onclick="deleteAction(\''+rowObject.bannerid +'\')">删除</button>';    					
+	   			
+	       		return html;
+	     	}
+		
+		
+        //编辑
+        function editAction(id,type){
+        	loadHtml("./index/editappbanner?id="+id);
+        }
+        
+        
+        
+        //删除
+        function deleteAction(id){
+        	var bool = confirm("是否确认删除？");
+        	if(bool == true){
+	        	$.ajax({
+	        		url:"./index/delappbanner",
+	        		type:"post",
+	        		data:{id:id},
+	        		success:function(result){
+	        			if(result.c == 0){
+	        				alert("删除失败");
+	        				return;
+	        			}else{
+	        				alert("删除成功");
+	        				loadHtml("./index/appBannerList");
+	        			}
+	        		}
+	        	});
+        	}
+        	return;
+        }		
+		
+      //排序上升
+        function upsort(id){
+   
+        	$.ajax({
+        		url:"./index/upappbanner",
+        		type:"post",
+        		data:{id:id},
+        		success:function(result){
+        			if(result.c == 1){
+        				alert("上升成功");
+        				jQuery("#grid-table").trigger('reloadGrid');
+        			}else if(result.c == 0){
+        				alert("上升失败");
+        				return;
+        			}else if(result.c == 102){
+        				alert("已经是第一位了")
+        				return;
+        			}
+        			
+        		}
+        	})
+        }
+        
+        //排序下降
+        function downsort(id){
+     
+        	$.ajax({
+        		url:"./index/downappbanner",
+        		type:"post",
+        		data:{id:id},
+        		success:function(result){
+        			if(result.c == 1){
+        				alert("下降成功");
+        				jQuery("#grid-table").trigger('reloadGrid');
+        			}else if(result.c == 0){
+        				alert("下降失败");
+        				return;
+        			}else if(result.c == 102){
+        				alert("已经是最后一位了")
+        				return;
+        			}
+        		}
+        	})
+        }
+        
+        
+        function changepro(){
+=======
+		function changestatus(cellvalue, options, rowObject) {
+			var html = '';
+			html += '<button Style="margin-left: 10px;" class="btn btn-xs btn-primary" onclick="upsort(\''
+					+ rowObject.bannerid + '\')">上升</button>';
+			html += '<button Style="margin-left: 10px;" class="btn btn-xs btn-primary" onclick="downsort(\''
+					+ rowObject.bannerid + '\')">下降</button>';
+			html += '<button Style="margin-left: 10px;" class="btn btn-xs btn-primary" onclick="editAction(\''
+					+ rowObject.bannerid + '\')">编辑</button>';
+			html += '<button Style="margin-left: 10px;" class="btn btn-xs btn-primary" onclick="deleteAction(\''
+					+ rowObject.bannerid + '\')">删除</button>';
+			return html;
+		}
+
+		//编辑
+		function editAction(id, type) {
+			loadHtml("./index/editappbanner?id=" + id);
+		}
+
+		//删除
+		function deleteAction(id) {
+			var bool = confirm("是否确认删除？");
+			if (bool == true) {
+				$.ajax({
+					url : "./index/delappbanner",
+					type : "post",
+					data : {
+						id : id
+					},
+					success : function(result) {
+						if (result.c == 0) {
+							alert("删除失败");
+							return;
+						} else {
+							alert("删除成功");
+							loadHtml("./index/appBannerList");
+						}
+					}
+				});
+			}
+			return;
+		}
+
+		//排序上升
+		function upsort(id) {
+
+			$.ajax({
+				url : "./index/upappbanner",
+				type : "post",
+				data : {
+					id : id
+				},
+				success : function(result) {
+					if (result.c == 1) {
+						alert("上升成功");
+						jQuery("#grid-table").trigger('reloadGrid');
+					} else if (result.c == 0) {
+						alert("上升失败");
+						return;
+					} else if (result.c == 102) {
+						alert("已经是第一位了")
+						return;
+					}
+
+				}
+			})
+		}
+
+		//排序下降
+		function downsort(id) {
+
+			$.ajax({
+				url : "./index/downappbanner",
+				type : "post",
+				data : {
+					id : id
+				},
+				success : function(result) {
+					if (result.c == 1) {
+						alert("下降成功");
+						jQuery("#grid-table").trigger('reloadGrid');
+					} else if (result.c == 0) {
+						alert("下降失败");
+						return;
+					} else if (result.c == 102) {
+						alert("已经是最后一位了")
+						return;
+					}
+				}
+			})
+		}
+
+		function changepro() {
+>>>>>>> .r3149
+			var provienceid = $("#proselect").val();
+			//alert(provienceid);
+			if (provienceid != "") {
+				$.ajax({
+					type : "post",
+					url : "./index/changeprovience",
+					data : {
+						'id' : provienceid
+					},
+					success : function(msg) {
+						console.log(msg);
+						var data = eval("(" + msg + ")");
+						//var list = data.cityes;
+						var list = data;
+						$("#cityselect").empty();
+						var html = '';
+						html += '<option value="">请选择市</option>';
+						if (list != null && list.length > 0) {
+							for (var i = 0; i < list.length; i++) {
+								html += '<option value="'+list[i].id+'">'
+										+ list[i].name + '</option>';
+							}
+						}
+						$("#cityselect").append(html);
+					},
+					error : function() {
+						alert("错误");
+					}
+				});
+			}
+		}
+<<<<<<< .mine
+        
+        function dialog(id,type){
+        	
+        	$('#dialog').attr("dialogUrl","./home/loaddetail?id="+id+"&type="+type);
+        	$( "#dialog" ).dialog( "open" );
+        }
+=======
+		
+		 function cityselects(){
+	        	var val = $('#cityselect').val();
+	        	console.log(val);
+	        	$.ajax({
+	        		url:"./index/selectArea",
+	        		type:"post",
+	        		data:{id:val},
+	        		success:function(msg){
+	        			console.log(msg);
+	        			$('#area').empty();
+	        			var html = '';
+	        			for(var i = 0; i < msg.list.length;i++){
+	        				html += '<option value="'+msg.list[i].name+'" onclick="areaselect('+msg.list[i].id+')">'+msg.list[i].name+'</option>';
+	        			}
+	        			$('#area').append(html);
+	        		}
+	        	})
+			}
+		 
+		 function areaselect(){
+	        	var val = $('#area').val();
+	        	$("#grid-table").jqGrid('setGridParam',{
+	                datatype:'json',  
+	                postData:{city:val}, //发送数据  
+	                page:1,
+	                datatype: "json"
+	            }).trigger("reloadGrid"); //重新载入  
+			}
+
+		function dialog(id, type) {
+			$('#dialog').attr("dialogUrl",
+					"./home/loaddetail?id=" + id + "&type=" + type);
+			$("#dialog").dialog("open");
+		}
+>>>>>>> .r3149
+	</script>
+
+
+
+</body>
+</html>

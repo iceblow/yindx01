@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.MessageSysMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.MessageSys" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="TINYINT" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="detail" property="detail" jdbcType="VARCHAR" />
+    <result column="link_title" property="linkTitle" jdbcType="VARCHAR" />
+    <result column="link_type" property="linkType" jdbcType="TINYINT" />
+    <result column="link_content" property="linkContent" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="del_state" property="delState" jdbcType="TINYINT" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, type, title, detail, link_title, link_type, link_content, city, del_state, addtime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_message_sys
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_message_sys
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.MessageSys" >
+    insert into t_message_sys (id, type, title, 
+      detail, link_title, link_type, 
+      link_content, city, del_state, 
+      addtime)
+    values (#{id,jdbcType=INTEGER}, #{type,jdbcType=TINYINT}, #{title,jdbcType=VARCHAR}, 
+      #{detail,jdbcType=VARCHAR}, #{linkTitle,jdbcType=VARCHAR}, #{linkType,jdbcType=TINYINT}, 
+      #{linkContent,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{delState,jdbcType=TINYINT}, 
+      #{addtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.MessageSys" >
+    insert into t_message_sys
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="detail != null" >
+        detail,
+      </if>
+      <if test="linkTitle != null" >
+        link_title,
+      </if>
+      <if test="linkType != null" >
+        link_type,
+      </if>
+      <if test="linkContent != null" >
+        link_content,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="delState != null" >
+        del_state,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=TINYINT},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="detail != null" >
+        #{detail,jdbcType=VARCHAR},
+      </if>
+      <if test="linkTitle != null" >
+        #{linkTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="linkType != null" >
+        #{linkType,jdbcType=TINYINT},
+      </if>
+      <if test="linkContent != null" >
+        #{linkContent,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="delState != null" >
+        #{delState,jdbcType=TINYINT},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.MessageSys" >
+    update t_message_sys
+    <set >
+      <if test="type != null" >
+        type = #{type,jdbcType=TINYINT},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="detail != null" >
+        detail = #{detail,jdbcType=VARCHAR},
+      </if>
+      <if test="linkTitle != null" >
+        link_title = #{linkTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="linkType != null" >
+        link_type = #{linkType,jdbcType=TINYINT},
+      </if>
+      <if test="linkContent != null" >
+        link_content = #{linkContent,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="delState != null" >
+        del_state = #{delState,jdbcType=TINYINT},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.MessageSys" >
+    update t_message_sys
+    set type = #{type,jdbcType=TINYINT},
+      title = #{title,jdbcType=VARCHAR},
+      detail = #{detail,jdbcType=VARCHAR},
+      link_title = #{linkTitle,jdbcType=VARCHAR},
+      link_type = #{linkType,jdbcType=TINYINT},
+      link_content = #{linkContent,jdbcType=VARCHAR},
+      city = #{city,jdbcType=VARCHAR},
+      del_state = #{delState,jdbcType=TINYINT},
+      addtime = #{addtime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.CitiesMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.Cities" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="provienceid" property="provienceid" jdbcType="INTEGER" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="fast_state" property="fastState" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, provienceid, state, fast_state
+  </sql>
+  <sql id="Base_Column_Lists" >
+    c.id, c.name, c.provienceid, c.state, c.fast_state
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_cities
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+   <select id="selectByState" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_cities
+    where state = #{state,jdbcType=INTEGER}
+  </select>
+  
+   <select id="selectByProvienceid" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_cities
+    where provienceid = #{provienceid,jdbcType=INTEGER}
+  </select>
+  <select id="selectCityByChildName" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_cities
+    where provienceid = #{provienceid,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectCityByCityNane" resultMap="BaseResultMap" parameterType = "string">
+    select 
+    <include refid="Base_Column_List" />
+    from t_cities
+    where name = #{name}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_cities
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.Cities" >
+    insert into t_cities (id, name, provienceid, 
+      state, fast_state)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{provienceid,jdbcType=INTEGER}, 
+      #{state,jdbcType=TINYINT}, #{fastState,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.Cities" >
+    insert into t_cities
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="provienceid != null" >
+        provienceid,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="fastState != null" >
+        fast_state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="provienceid != null" >
+        #{provienceid,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=TINYINT},
+      </if>
+      <if test="fastState != null" >
+        #{fastState,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.Cities" >
+    update t_cities
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="provienceid != null" >
+        provienceid = #{provienceid,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=TINYINT},
+      </if>
+      <if test="fastState != null" >
+        fast_state = #{fastState,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.Cities" >
+    update t_cities
+    set name = #{name,jdbcType=VARCHAR},
+      provienceid = #{provienceid,jdbcType=INTEGER},
+      state = #{state,jdbcType=TINYINT},
+      fast_state = #{fastState,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+    <select id="selectAll" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_Lists" />
+    from t_cities c,t_area a WHERE c.id = a.cityid and a.state = 0 group by c.id
+    order by provienceid desc
+  </select>
+  
+</mapper>

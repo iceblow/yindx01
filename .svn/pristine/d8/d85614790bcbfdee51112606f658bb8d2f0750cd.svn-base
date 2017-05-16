@@ -1,0 +1,730 @@
+package com.uncleserver.controller.manage;
+
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.uncleserver.common.CommonUtils;
+import com.uncleserver.controller.BaseController;
+import com.uncleserver.model.AuntSignSet;
+import com.uncleserver.model.CategorySecond;
+import com.uncleserver.model.Cities;
+import com.uncleserver.model.Config;
+import com.uncleserver.model.FileInfo;
+import com.uncleserver.model.QueryFeedBack;
+import com.uncleserver.model.QueryLevel;
+import com.uncleserver.model.QueryRatio;
+import com.uncleserver.model.QuerySignSet;
+import com.uncleserver.model.QueryVersion;
+import com.uncleserver.model.Ratio;
+import com.uncleserver.model.SignSet;
+import com.uncleserver.model.Version;
+import com.uncleserver.model.Result.PQuery;
+import com.uncleserver.model.Result.QueryResult;
+import com.uncleserver.modelVo.ApiResult;
+import com.uncleserver.service.manage.ManagerOthersService;
+
+@Controller
+@RequestMapping("/manage/others")
+public class ManagerOthsersController extends BaseController {
+
+	@Autowired
+	private ManagerOthersService managerOthersService;
+
+	@RequestMapping("/advices")
+	public ModelAndView appUser(HttpSession session, String page) {
+		ModelAndView mav = new ModelAndView();
+		if (!CommonUtils.isEmptyString(page)) {
+			session.setAttribute("page", page);
+		}
+		return mav;
+	}
+
+	@RequestMapping("/getAdvice")
+	@ResponseBody
+	public QueryResult<QueryFeedBack> getAdvice(HttpSession session, PQuery pquery, String client) {
+		if (client == null) {// 默认为user
+			client = "user";
+		}
+		session.setAttribute("page", pquery.getPage());
+		QueryResult<QueryFeedBack> result = null;
+		try {
+			if ("user".equals(client)) {
+				result = managerOthersService.getUserClient(pquery);
+			} else {
+				result = managerOthersService.getAuntClent(pquery);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@RequestMapping("/delAdvice")
+	@ResponseBody
+	public ApiResult delAdvice(String id, String client) {
+		ApiResult result = new ApiResult();
+		if (StringUtils.isEmpty(id) || StringUtils.isEmpty(client)) {
+			result.setCode("0");
+			result.setMessage("缺少参数");
+			return result;
+		}
+		int i = 0;
+		try {
+			if ("user".equals(client)) {
+				i = managerOthersService.delAdvice(id);
+			} else {
+				i = managerOthersService.delAuntAdvice(id);
+			}
+			if (i == 1) {
+				result.setCode("1");
+				result.setMessage("删除成功");
+			} else {
+				result.setCode("0");
+				result.setMessage("删除失败");
+			}
+		} catch (Exception e) {
+			result.setCode("0");
+			result.setMessage("服务器出错");
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@RequestMapping("/qiandao")
+	public ModelAndView qiandao(HttpSession session, String page) {
+		ModelAndView mav = new ModelAndView();
+		if (!CommonUtils.isEmptyString(page)) {
+			session.setAttribute("page", page);
+		}
+		return mav;
+	}
+
+	@RequestMapping("/getSignSet")
+	@ResponseBody
+	public QueryResult<QuerySignSet> getSignSet(HttpSession session, PQuery pquery, String daycount, String point,
+			String client) {
+		if (client == null) {
+			client = "user";
+		}
+		session.setAttribute("page", pquery.getPage());
+		QueryResult<QuerySignSet> result = null;
+		try {
+			if ("user".equals(client)) {
+				result = managerOthersService.getUserSignSet(pquery, daycount, point);
+			} else {
+				result = managerOthersService.getAuentSignSet(pquery, daycount, point);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@RequestMapping("/addSignSet")
+	public ModelAndView addSignSet(HttpSession session, String page) {
+		ModelAndView mav = new ModelAndView();
+		if (!CommonUtils.isEmptyString(page)) {
+			session.setAttribute("page", page);
+		}
+		String client = "user";
+		mav.addObject("client", client);
+		return mav;
+	}
+
+	@RequestMapping("/addAuntSignSet")
+	public ModelAndView addAuntSignSet(HttpSession session, String page) {
+		ModelAndView mav = new ModelAndView();
+		if (!CommonUtils.isEmptyString(page)) {
+			session.setAttribute("page", page);
+		}
+		String client = "aunt";
+		mav.addObject("client", client);
+		return mav;
+	}
+
+	@RequestMapping("/doAddSignSet")
+	@ResponseBody
+	public ApiResult doAddSignSet(HttpSession session, PQuery pquery, String daycount, String point, String client) {
+		if (client == null) {
+			client = "user";
+		}
+		ApiResult result = new ApiResult();
+		session.setAttribute("page", pquery.getPage());
+		int i = 0;
+		try {
+			if ("user".equals(client)) {
+				i = managerOthersService.saveSignSet(daycount, point);
+			} else {
+				i = managerOthersService.saveAuntSignSet(daycount, point);
+			}
+			if (i == 1) {
+				result.setCode("1");
+				result.setMessage("保存成功");
+			} else {
+				result.setCode("0");
+				result.setMessage("保存失败");
+			}
+
+		} catch (Exception e) {
+			result.setCode("0");
+			result.setMessage("客户端出错");
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@RequestMapping("/editSignSet")
+	public ModelAndView editSignSet(HttpServletRequest req, HttpSession session, String page) {
+		ModelAndView mav = new ModelAndView();
+		if (!CommonUtils.isEmptyString(page)) {
+			session.setAttribute("page", page);
+		}
+		String id = req.getParameter("id");
+		SignSet set = managerOthersService.getSignSetById(id);
+		mav.addObject("set", set);
+		String client = "user";
+		mav.addObject("client", client);
+		return mav;
+	}
+
+	@RequestMapping("/editAuntSignSet")
+	public ModelAndView editAuntSignSet(HttpServletRequest req, HttpSession session, String page) {
+		ModelAndView mav = new ModelAndView();
+		if (!CommonUtils.isEmptyString(page)) {
+			session.setAttribute("page", page);
+		}
+		String id = req.getParameter("id");
+		AuntSignSet set = managerOthersService.getAuntSignSetById(id);
+		mav.addObject("set", set);
+		String client = "aunt";
+		mav.addObject("client", client);
+		return mav;
+	}
+
+	@RequestMapping("/doEditSignSet")
+	@ResponseBody
+	public ApiResult doEditSignSet(String id, String daycount, String point, String client) {
+		ApiResult result = new ApiResult();
+		if (StringUtils.isEmpty(id) || StringUtils.isEmpty(client)) {
+			result.setCode("0");
+			result.setMessage("缺少参数");
+			return result;
+		}
+		int i = 0;
+		try {
+			if ("user".equals(client)) {
+				SignSet set = new SignSet();
+				set.setId(CommonUtils.parseInt(id, 0));
+				if (!StringUtils.isEmpty(daycount)) {
+					set.setDaycount((byte) CommonUtils.parseInt(daycount, 0));
+				}
+				if (!StringUtils.isEmpty(point)) {
+					set.setPoint(CommonUtils.parseInt(point, 0));
+				}
+				i = managerOthersService.editSignSet(set);
+			} else {
+				AuntSignSet set = new AuntSignSet();
+				set.setId(CommonUtils.parseInt(id, 0));
+				set.setPoint(CommonUtils.parseInt(point, 0));
+				set.setDaycount((byte) CommonUtils.parseInt(daycount, 0));
+				i = managerOthersService.editAuntSignSet(set);
+			}
+			if (i == 1) {
+				result.setCode("1");
+				result.setMessage("修改成功");
+			} else {
+				result.setCode("0");
+				result.setMessage("修改失败");
+			}
+		} catch (Exception e) {
+			result.setCode("0");
+			result.setMessage("客户端出错");
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@RequestMapping("/delSignSet")
+	@ResponseBody
+	public ApiResult delSignSet(HttpSession session, PQuery pquery, String id, String client) {
+		ApiResult result = new ApiResult();
+		if (StringUtils.isEmpty(id) || StringUtils.isEmpty(client)) {
+			result.setCode("0");
+			result.setMessage("缺少参数");
+			return result;
+		}
+		session.setAttribute("page", pquery.getPage());
+		int i = 0;
+		try {
+			if ("user".equals(client)) {
+				i = managerOthersService.delSignSet(id);
+			} else {
+				i = managerOthersService.delAuntSignSet(id);
+			}
+			if (i == 1) {
+				result.setCode("1");
+				result.setMessage("删除成功");
+			} else {
+				result.setCode("0");
+				result.setMessage("删除失败");
+			}
+		} catch (Exception e) {
+			result.setCode("0");
+			result.setMessage("客户端出错");
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@RequestMapping("/baseconfig")
+	public ModelAndView baseconfig(HttpSession session, String page) {
+		ModelAndView mav = new ModelAndView();
+		if (!CommonUtils.isEmptyString(page)) {
+			session.setAttribute("page", page);
+		}
+		return mav;
+	}
+
+	@RequestMapping("/getConfig")
+	@ResponseBody
+	public QueryResult<Config> getConfig(HttpSession session, PQuery pquery) {
+
+		session.setAttribute("page", pquery.getPage());
+		QueryResult<Config> result = null;
+		try {
+			result = managerOthersService.getConfig();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@RequestMapping("/editconfig")
+	public ModelAndView editconfig(HttpServletRequest req) {
+		ModelAndView mav = new ModelAndView();
+		String id = req.getParameter("id");
+		Config c = managerOthersService.getConfigById(id);
+		mav.addObject("c", c);
+		return mav;
+	}
+
+	@RequestMapping("/doEditConfig")
+	@ResponseBody
+	public ApiResult doEditConfig(Integer id, String keyname, String configvalue) {
+		ApiResult result = new ApiResult();
+		if (id == null || StringUtils.isEmpty(keyname) || StringUtils.isEmpty(configvalue)) {
+			result.setCode("0");
+			result.setMessage("缺少参数");
+			return result;
+		}
+		Config c = new Config();
+		c.setConfigvalue(configvalue);
+		c.setId(id);
+		c.setKeyname(keyname);
+		try {
+			int i = managerOthersService.editConfig(c);
+			if (i == 1) {
+				result.setCode("1");
+				result.setMessage("修改成功");
+			} else {
+				result.setCode("0");
+				result.setMessage("修改失败");
+			}
+		} catch (Exception e) {
+			result.setCode("0");
+			result.setMessage("服务器错误");
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@RequestMapping("/levelset")
+	public ModelAndView levelset(HttpSession session, String page) {
+		ModelAndView mav = new ModelAndView();
+		if (!CommonUtils.isEmptyString(page)) {
+			session.setAttribute("page", page);
+		}
+		return mav;
+	}
+
+	@RequestMapping("/getLevelSet")
+	@ResponseBody
+	public QueryResult<QueryLevel> getLevelSet(HttpSession session, PQuery pquery, String client) {
+		if (client == null) {
+			client = "user";
+		}
+		session.setAttribute("page", pquery.getPage());
+		QueryResult<QueryLevel> result = null;
+		try {
+			if ("user".equals(client)) {
+				result = managerOthersService.getUserLevelSet();
+			} else {
+				result = managerOthersService.getAuntLevelSet();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@RequestMapping("/editlevel")
+	public ModelAndView edituserlevel(HttpServletRequest req) {
+		ModelAndView mav = new ModelAndView();
+		String client = req.getParameter("client");
+		mav.addObject("client", client);
+		String id = req.getParameter("id");
+		QueryLevel c = managerOthersService.getLevelSetByClient(client, id);
+		mav.addObject("c", c);
+		return mav;
+	}
+
+	@RequestMapping("/doEditlevel")
+	@ResponseBody
+	public ApiResult doEditlevel(Integer id, String level, String point, String title, String client) {
+		ApiResult result = new ApiResult();
+		if (id == null || StringUtils.isEmpty(level) || StringUtils.isEmpty(point) || StringUtils.isEmpty(title)
+				|| StringUtils.isEmpty(client)) {
+			result.setCode("0");
+			result.setMessage("缺少参数");
+			return result;
+		}
+
+		try {
+			int i = managerOthersService.editLevel(id, level, point, title, client);
+			if (i == 1) {
+				result.setCode("1");
+				result.setMessage("修改成功");
+			} else {
+				result.setCode("0");
+				result.setMessage("修改失败");
+			}
+		} catch (Exception e) {
+			result.setCode("0");
+			result.setMessage("服务器错误");
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@RequestMapping("/banben")
+	public ModelAndView banben(HttpSession session, String page) {
+		ModelAndView mav = new ModelAndView();
+		if (!CommonUtils.isEmptyString(page)) {
+			session.setAttribute("page", page);
+		}
+		return mav;
+	}
+
+	@RequestMapping("/getAllVersion")
+	@ResponseBody
+	public QueryResult<QueryVersion> getAllVersion(HttpSession session, PQuery pquery, String platformtype,
+			String apptype, String poststate, String versiontype) {
+		session.setAttribute("page", pquery.getPage());
+		QueryResult<QueryVersion> result = null;
+		try {
+			result = managerOthersService.getVersion(pquery, platformtype, apptype, poststate, versiontype);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@RequestMapping("/addbanben")
+	public ModelAndView addbanben(HttpSession session, String page) {
+		ModelAndView mav = new ModelAndView();
+		if (!CommonUtils.isEmptyString(page)) {
+			session.setAttribute("page", page);
+		}
+		return mav;
+	}
+
+	@RequestMapping("/editVersion")
+	@ResponseBody
+	public ApiResult doEditBanBen(Integer versionid) {
+		ApiResult result = new ApiResult();
+		try {
+			int i = managerOthersService.editVersion(versionid);
+			if (i == 1) {
+				result.setCode("1");
+				result.setMessage("发布成功");
+				return result;
+			} else {
+				result.setCode("0");
+				result.setMessage("发布失败");
+				return result;
+			}
+
+		} catch (Exception e) {
+			result.setCode("0");
+			result.setMessage("服务器错误");
+			e.printStackTrace();
+			return result;
+		}
+
+	}
+
+	@RequestMapping("/delVersion")
+	@ResponseBody
+	public ApiResult delVersion(Integer versionid) {
+		ApiResult result = new ApiResult();
+		try {
+			int i = managerOthersService.delVersion(versionid);
+			if (i == 1) {
+				result.setCode("1");
+				result.setMessage("删除成功");
+				return result;
+			} else {
+				result.setCode("0");
+				result.setMessage("删除失败");
+				return result;
+			}
+
+		} catch (Exception e) {
+			result.setCode("0");
+			result.setMessage("服务器错误");
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	protected boolean checkMethod(String method) {
+		if ("GET".equals(method) || "POST".equals(method)) {
+			return true;
+		}
+		return false;
+	}
+
+	@ResponseBody
+	@RequestMapping("/uploadfile")
+	public ApiResult adminUploadFile(HttpServletRequest request, HttpServletResponse response, String type,
+			@RequestParam("filedata") CommonsMultipartFile... filedata) {
+		ApiResult result = new ApiResult();
+		result.setCode("1");
+		result.setMessage("success");
+		return result;
+	}
+
+	@RequestMapping("/saveVersion")
+	@ResponseBody
+	public ApiResult saveVersion(String versionstr, String loginUrl, String IosFile, Byte platformtype, Byte apptype,
+			Byte poststate, Byte versiontype, String newcontent, String sourceLink) {
+		ApiResult result = new ApiResult();
+		if (StringUtils.isEmpty(versionstr) || platformtype == null || apptype == null || poststate == null
+				|| versiontype == null) {
+			result.setCode("0");
+			result.setMessage("参数不完整");
+			return result;
+		}
+		Version v = new Version();
+		v.setAddtime(new Date());
+		v.setApptype(apptype);
+		v.setPlatformtype(platformtype);// 平台类型 android 或 ios
+		if (platformtype == 0) {
+			v.setDownloadurl(sourceLink);
+			FileInfo info = new FileInfo();
+			info.setAddtime(new Date());
+			info.setFilePath(loginUrl);
+			info.setFiletype((byte) 0);
+			info.setState((byte) 0);
+			int i = managerOthersService.saveFile(info);
+			if (i == 0) {
+				result.setCode("0");
+				result.setMessage("服务器错误");
+				return result;
+			}
+		} else {
+			v.setDownloadurl(IosFile);
+		}
+		v.setNewcontent(newcontent);
+		v.setPoststate(poststate);
+		if (poststate == 1) {
+			v.setPosttime(new Date());
+		}
+		v.setVersionstr(versionstr);
+		v.setVersiontype(versiontype);
+
+		FileInfo info = new FileInfo();
+		info.setAddtime(new Date());
+		info.setFilePath(loginUrl);
+		try {
+			int i = managerOthersService.saveVersion(v);
+			if (i == 1) {
+				result.setCode("1");
+				result.setMessage("保存成功");
+				return result;
+			} else {
+				result.setCode("0");
+				result.setMessage("保存失败");
+				return result;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.setCode("0");
+			result.setMessage("服务器错误");
+			return result;
+		}
+
+	}
+
+	@RequestMapping("/ratio")
+	public ModelAndView ratio(HttpSession session, String page) {
+		ModelAndView mav = new ModelAndView();
+		if (!CommonUtils.isEmptyString(page)) {
+			session.setAttribute("page", page);
+		}
+		List<Cities> cities = managerOthersService.getAllCities();
+		mav.addObject("cities", cities);
+		List<CategorySecond> category = managerOthersService.getAllCategorySecond();
+		mav.addObject("category", category);
+		return mav;
+	}
+
+	@RequestMapping("/getRatio")
+	@ResponseBody
+	public QueryResult<QueryRatio> getRatio(HttpSession session, PQuery pquery, String city, String categoryid,
+			String server_type, String ratio_type) {
+		session.setAttribute("page", pquery.getPage());
+		QueryResult<QueryRatio> result = null;
+		try {
+			result = managerOthersService.getRatio(pquery, city, categoryid, server_type, ratio_type);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@RequestMapping("/addratio")
+	public ModelAndView addratio(HttpSession session, String page) {
+		ModelAndView mav = new ModelAndView();
+		if (!CommonUtils.isEmptyString(page)) {
+			session.setAttribute("page", page);
+		}
+		List<Cities> cities = managerOthersService.getAllCities();
+		mav.addObject("cities", cities);
+		List<CategorySecond> category = managerOthersService.getAllCategorySecond();
+		mav.addObject("category", category);
+		return mav;
+	}
+
+	@RequestMapping("/saveRatio")
+	@ResponseBody
+	public ApiResult saveRatio(Short server_type, String city, String categoryid, String ratio) {
+		ApiResult result = new ApiResult();
+		if (StringUtils.isEmpty(ratio) || StringUtils.isEmpty(server_type) || StringUtils.isEmpty(city)
+				|| StringUtils.isEmpty(categoryid)) {
+			result.setCode("0");
+			result.setMessage("参数错误");
+			return result;
+		}
+		Ratio r = new Ratio();
+		r.setAddtime(new Date());
+		r.setCategoryid(CommonUtils.parseInt(categoryid, 0));
+		r.setCity(city);
+		r.setServerType(server_type);
+
+		try {
+			r.setRatio(Float.valueOf(ratio));
+			int i = managerOthersService.addRatio(r);
+			if (i == 1) {
+				result.setCode("1");
+				result.setMessage("保存成功");
+				return result;
+			} else {
+				result.setCode("0");
+				result.setMessage("保存失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.setCode("0");
+			result.setMessage("请输入正确佣金比例");
+		}
+		return result;
+	}
+
+	@RequestMapping("/editratio")
+	public ModelAndView editratio(HttpServletRequest req) {
+		ModelAndView mav = new ModelAndView();
+		String id = req.getParameter("id");
+		List<Cities> cities = managerOthersService.getAllCities();
+		mav.addObject("cities", cities);
+		List<CategorySecond> category = managerOthersService.getAllCategorySecond();
+		mav.addObject("category", category);
+		Ratio ratio = managerOthersService.getRatioById(id);
+		mav.addObject("ratio", ratio);
+		return mav;
+	}
+
+	@RequestMapping("/doEditRatio")
+	@ResponseBody
+	public ApiResult doEditRatio(String id, Short server_type, String city, String categoryid, String ratio) {
+
+		ApiResult result = new ApiResult();
+		if (StringUtils.isEmpty(ratio) || StringUtils.isEmpty(server_type) || StringUtils.isEmpty(city)
+				|| StringUtils.isEmpty(categoryid)) {
+			result.setCode("0");
+			result.setMessage("参数错误");
+			return result;
+		}
+		Ratio r = new Ratio();
+		r.setAddtime(new Date());
+		r.setCategoryid(CommonUtils.parseInt(categoryid, 0));
+		r.setCity(city);
+		r.setServerType(server_type);
+		r.setRatioid(CommonUtils.parseInt(id, 0));
+		try {
+			r.setRatio(Float.valueOf(ratio));
+			int i = managerOthersService.editRatio(r);
+			if (i == 1) {
+				result.setCode("1");
+				result.setMessage("修改成功");
+				return result;
+			} else {
+				result.setCode("0");
+				result.setMessage("修改失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.setCode("0");
+			result.setMessage("请输入正确佣金比例");
+		}
+		return result;
+	}
+
+	@RequestMapping("/delRatio")
+	@ResponseBody
+	public ApiResult delRatio(String id) {
+
+		ApiResult result = new ApiResult();
+		try {
+			int i = managerOthersService.delRatio(id);
+			if (i == 1) {
+				result.setCode("1");
+				result.setMessage("删除成功");
+				return result;
+			} else {
+				result.setCode("0");
+				result.setMessage("删除失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.setCode("0");
+			result.setMessage("删除失败");
+		}
+		return result;
+	}
+
+}

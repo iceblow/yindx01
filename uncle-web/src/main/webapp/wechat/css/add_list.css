@@ -1,0 +1,126 @@
+body{
+    margin:0;
+/*    font-family: '寰蒋闆呴粦';*/
+    background-color: #f6f9f8;
+}
+/*头*/
+.addtop{
+    height: 40px;
+    line-height: 40px;
+    font-size: 14px;
+    color: white;
+    text-align: center;
+    position:relative;
+    box-sizing: border-box;
+    background-image:linear-gradient(to right, #78c6ff, #5d8ff9);
+}
+.address_right{
+    width: 30px;
+    height: 40px;
+    font-size: 12px;
+    position:absolute;
+    right: 10px;
+    top: 0;
+    line-height: 40px;
+}
+.edited,.ok{
+    position:absolute;
+    right: 0;
+}
+.ok{
+    display:none;
+}
+.sec1_pic{
+    width: 10px;
+    position:absolute;
+    left: 10px;
+    top: 10px;
+}
+/*列表*/
+.ad_List{
+    width: 100%;
+    background-color:white;
+}
+.add_con{
+    width: 97%;
+    margin-left: 3%;
+    height: 86px;
+    border-bottom: 1px solid #f1f4f3;
+}
+.adList_infor{
+    width: 250px;
+    height: 86px;
+    display:inline-block;
+    margin-left: 20px;
+    /*border-bottom: 1px solid #f1f4f3;*/
+}
+.ad1{
+    margin-top:10px;
+    line-height:30px;
+    color:#292929;
+}
+.ad2{
+    color:#adadad;
+    font-size:12px;
+    line-height:21px;
+    margin-bottom:7px;
+}
+.dfAd{
+    border-radius: 4px;
+    color:#fff;
+    background-image:linear-gradient(to right, #78c6ff, #5d8ff9);
+    -webkit-transform: scale(0.75);
+    font-size:9px;
+    padding-left:2px;
+    padding-right:2px;
+    padding-top:1px;
+    padding-bottom:1px;
+    margin-right:3px;
+}
+.dfAd_1{
+    border-radius: 4px;
+    color:#fff;
+    background-color:#ccc;
+    -webkit-transform: scale(0.75);
+    font-size:9px;
+    padding-left:2px;
+    padding-right:2px;
+    padding-top:1px;
+    padding-bottom:1px;
+    margin-right:3px;
+}
+
+.reddel{
+    width:22px;
+    display:none;
+    vertical-align: top;
+    margin-top: 30px;
+}
+
+
+/*foot*/
+.footer{
+    background-color: white;
+    height: 49px;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    margin: 0;
+    text-align: center;
+}
+.text_box{
+    width: 296px;
+    line-height: 49px;
+    margin: 0 auto;
+}
+.foot_pic{
+    width: 19px;
+    vertical-align: top;
+    margin-top: 16px;
+    margin-right: 5px;
+}
+.new_add{
+    font-size:15px;
+    color: #5e93f9;
+}
+.add_del_img{position: absolute;width: 20px;top: 50%;margin-top: -15px}

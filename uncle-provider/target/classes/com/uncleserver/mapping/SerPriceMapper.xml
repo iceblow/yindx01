@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.SerPriceMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.SerPrice" >
+    <id column="dataid" property="dataid" jdbcType="INTEGER" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="categoryid" property="categoryid" jdbcType="INTEGER" />
+    <result column="third_categoryid" property="thirdCategoryid" jdbcType="INTEGER" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="deposit_price" property="depositPrice" jdbcType="DECIMAL" />
+    <result column="price_small" property="priceSmall" jdbcType="DECIMAL" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    dataid, city, categoryid, third_categoryid, price, deposit_price, price_small, addtime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_ser_pirce
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByCategoryAndCity" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_ser_pirce
+    where categoryid = #{0} and city = #{1}
+  </select>
+  
+   <select id="selectByCategoryAndThirdId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_ser_pirce
+    where categoryid = #{0} and third_categoryid=#{1}
+  </select>
+  
+  <select id="selectByCategoryId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_ser_pirce
+    where categoryid = #{categoryid,jdbcType=INTEGER} and third_categoryid = 0
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_ser_pirce
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.SerPrice" >
+    insert into t_ser_pirce (dataid, city, categoryid, 
+      third_categoryid, price, deposit_price, 
+      price_small, addtime)
+    values (#{dataid,jdbcType=INTEGER}, #{city,jdbcType=VARCHAR}, #{categoryid,jdbcType=INTEGER}, 
+      #{thirdCategoryid,jdbcType=INTEGER}, #{price,jdbcType=DECIMAL}, #{depositPrice,jdbcType=DECIMAL}, 
+      #{priceSmall,jdbcType=DECIMAL}, #{addtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.SerPrice" >
+    insert into t_ser_pirce
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="dataid != null" >
+        dataid,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="categoryid != null" >
+        categoryid,
+      </if>
+      <if test="thirdCategoryid != null" >
+        third_categoryid,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="depositPrice != null" >
+        deposit_price,
+      </if>
+      <if test="priceSmall != null" >
+        price_small,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="dataid != null" >
+        #{dataid,jdbcType=INTEGER},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryid != null" >
+        #{categoryid,jdbcType=INTEGER},
+      </if>
+      <if test="thirdCategoryid != null" >
+        #{thirdCategoryid,jdbcType=INTEGER},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="depositPrice != null" >
+        #{depositPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="priceSmall != null" >
+        #{priceSmall,jdbcType=DECIMAL},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.SerPrice" >
+    update t_ser_pirce
+    <set >
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryid != null" >
+        categoryid = #{categoryid,jdbcType=INTEGER},
+      </if>
+      <if test="thirdCategoryid != null" >
+        third_categoryid = #{thirdCategoryid,jdbcType=INTEGER},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="depositPrice != null" >
+        deposit_price = #{depositPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="priceSmall != null" >
+        price_small = #{priceSmall,jdbcType=DECIMAL},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.SerPrice" >
+    update t_ser_pirce
+    set city = #{city,jdbcType=VARCHAR},
+      categoryid = #{categoryid,jdbcType=INTEGER},
+      third_categoryid = #{thirdCategoryid,jdbcType=INTEGER},
+      price = #{price,jdbcType=DECIMAL},
+      deposit_price = #{depositPrice,jdbcType=DECIMAL},
+      price_small = #{priceSmall,jdbcType=DECIMAL},
+      addtime = #{addtime,jdbcType=TIMESTAMP}
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </update>
+  
+  	<select id="getServicePriceOther" resultType="com.uncleserver.modelVo.SetPriceResult">
+		(select t.`name` ,s.categoryid,s.third_categoryid ,s.price ,s.deposit_price ,s.price_small from t_ser_pirce s ,t_category_second t WHERE s.city = #{city} and (
+t.dataid != 3 or t.dataid != 7 or t.dataid = 9 ) and t.dataid = s.categoryid and s.third_categoryid = 0) union (select t.`name`,s.categoryid,s.third_categoryid ,s.price ,s.deposit_price ,s.price_small from t_ser_pirce s ,t_category_third t WHERE s.city = #{city} and (t.categoryid = 3 or t.categoryid = 7 or t.categoryid = 9)
+		and t.fid != 0 and s.categoryid = t.categoryid and s.third_categoryid = t.dataid)
+
+	</select>
+
+    <select id="getServicePrice" resultType="com.uncleserver.modelVo.SetPriceResult">
+		(select s.`name`,s.dataid as categoryid ,0 as third_categoryid from t_category_second s WHERE  (
+s.dataid != 3 or s.dataid != 7 or s.dataid = 9 ))union (select concat(s.name , '-' , w.name) as name, w.third_categoryid, w.categoryid
+from
+(select concat(t.name, '-' , a.name) as name, t.categoryid, a.dataid as third_categoryid 
+from t_category_third t ,(select * from t_category_third where fid != 0) a 
+where t.dataid=a.fid and (t.categoryid = 3 or t.categoryid = 7 or t.categoryid = 9)) w,t_category_second s
+where s.dataid = w.categoryid and w.third_categoryid = 0)
+    	<if test="startPage != null and rows != null ">limit #{startPage}, #{rows}</if>
+	</select>
+	<select id="getServicePriceCount" resultType="java.lang.Long">
+		select count(*) from ((select s.`name`,s.dataid as categoryid ,null as third_categoryid from t_category_second s WHERE  (
+s.dataid != 3 or s.dataid != 7 or s.dataid = 9 ))union (select t.`name`,t.categoryid as categoryid,t.dataid as  
+third_categoryid from t_category_third t WHERE (t.categoryid = 3 or t.categoryid = 7 or t.categoryid = 9) and t.fid != 0))a
+	</select>
+	
+	
+	 <select id="selectByCategoryAndThirdIdAndCity" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_ser_pirce
+    where categoryid = #{0} and third_categoryid=#{1} and city = #{2}
+  </select>
+  
+  <select id="selectByCategoryIdAndCity" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_ser_pirce
+    where categoryid = #{0} and third_categoryid = 0 and city = #{1}
+  </select>
+</mapper>

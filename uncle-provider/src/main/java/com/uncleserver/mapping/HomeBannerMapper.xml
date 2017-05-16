@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.HomeBannerMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.HomeBanner" >
+    <id column="bannerid" property="bannerid" jdbcType="INTEGER" />
+    <result column="picid" property="picid" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="TINYINT" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="contentid" property="contentid" jdbcType="VARCHAR" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    bannerid, picid, type, sort, city, contentid, addtime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_home_banner
+    where bannerid = #{bannerid,jdbcType=INTEGER}
+  </select>
+  <select id="selectByCity" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List" />
+    from t_home_banner
+    where city = #{city,jdbcType=VARCHAR} order by sort desc
+  </select>
+  <select id="getWithLimit" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_home_banner
+    order by sort desc limit #{0} , #{1}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_home_banner
+    where bannerid = #{bannerid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.HomeBanner" >
+    insert into t_home_banner (bannerid, picid, type, 
+      sort, city, contentid, 
+      addtime)
+    values (#{bannerid,jdbcType=INTEGER}, #{picid,jdbcType=INTEGER}, #{type,jdbcType=TINYINT}, 
+      #{sort,jdbcType=INTEGER}, #{city,jdbcType=VARCHAR}, #{contentid,jdbcType=VARCHAR}, 
+      #{addtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.HomeBanner" >
+    insert into t_home_banner
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="bannerid != null" >
+        bannerid,
+      </if>
+      <if test="picid != null" >
+        picid,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="contentid != null" >
+        contentid,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="bannerid != null" >
+        #{bannerid,jdbcType=INTEGER},
+      </if>
+      <if test="picid != null" >
+        #{picid,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=TINYINT},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="contentid != null" >
+        #{contentid,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.HomeBanner" >
+    update t_home_banner
+    <set >
+      <if test="picid != null" >
+        picid = #{picid,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=TINYINT},
+      </if>
+      <if test="sort != null" >
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="contentid != null" >
+        contentid = #{contentid,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where bannerid = #{bannerid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.HomeBanner" >
+    update t_home_banner
+    set picid = #{picid,jdbcType=INTEGER},
+      type = #{type,jdbcType=TINYINT},
+      sort = #{sort,jdbcType=INTEGER},
+      city = #{city,jdbcType=VARCHAR},
+      contentid = #{contentid,jdbcType=VARCHAR},
+      addtime = #{addtime,jdbcType=TIMESTAMP}
+    where bannerid = #{bannerid,jdbcType=INTEGER}
+  </update>
+ 
+ <select id="getMaxBanner" resultType="int">
+    SELECT
+		Max(sort)
+	FROM
+		t_home_banner
+  </select>
+  
+  <select id="getHomeBannerByCity" resultMap="BaseResultMap" parameterType="map">
+    SELECT
+		<include refid="Base_Column_List" />
+	FROM
+		t_home_banner
+	<where>
+		<if test="city !=null">
+			city = #{city}
+		</if>
+		<if test=" type !=null">
+			and type = #{ type}
+		</if>
+		<if test="contentid !=null">
+			and contentid = #{contentid}
+		</if>
+	</where>
+	order by sort desc limit #{start} , #{row}
+  </select>
+  <select id="getCount" resultType="long" parameterType="map">
+    select
+    count(bannerid)
+    from t_home_banner
+    <where>
+		<if test="city !=null">
+			city = #{city}
+		</if>
+		<if test=" type !=null">
+			and type = #{ type}
+		</if>
+		<if test="contentid !=null">
+			and contentid = #{contentid}
+		</if>
+	</where>
+  </select>
+<select id="selectCounMaxSort" parameterType="int" resultType="long">
+	SELECT
+		count(bannerid)
+	FROM
+		t_home_banner
+	WHERE
+		t_home_banner.sort = #{num}
+</select>
+</mapper>

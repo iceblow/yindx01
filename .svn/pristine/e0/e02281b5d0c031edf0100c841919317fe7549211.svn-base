@@ -1,0 +1,777 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.AuntMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.Aunt" >
+    <id column="auntid" property="auntid" jdbcType="INTEGER" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="real_name" property="realName" jdbcType="VARCHAR" />
+    <result column="name_letter" property="nameLetter" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="avatar" property="avatar" jdbcType="INTEGER" />
+    <result column="third_avatar" property="thirdAvatar" jdbcType="VARCHAR" />
+    <result column="level" property="level" jdbcType="TINYINT" />
+    <result column="sex" property="sex" jdbcType="VARCHAR" />
+    <result column="signature" property="signature" jdbcType="VARCHAR" />
+    <result column="birthday" property="birthday" jdbcType="DATE" />
+    <result column="idcard_num" property="idcardNum" jdbcType="VARCHAR" />
+    <result column="idcard_picids" property="idcard_picids" jdbcType="VARCHAR" />
+    <result column="origin_place" property="originPlace" jdbcType="VARCHAR" />
+    <result column="work_year" property="workYear" jdbcType="TINYINT" />
+    <result column="home_address" property="homeAddress" jdbcType="VARCHAR" />
+    <result column="now_address" property="nowAddress" jdbcType="VARCHAR" />
+    <result column="nation" property="nation" jdbcType="VARCHAR" />
+    <result column="weight" property="weight" jdbcType="REAL" />
+    <result column="height" property="height" jdbcType="REAL" />
+    <result column="blood_type" property="bloodType" jdbcType="VARCHAR" />
+    <result column="train_state" property="trainState" jdbcType="TINYINT" />
+    <result column="language" property="language" jdbcType="VARCHAR" />
+    <result column="characters" property="characters" jdbcType="VARCHAR" />
+    <result column="culture" property="culture" jdbcType="VARCHAR" />
+    <result column="religion" property="religion" jdbcType="VARCHAR" />
+    <result column="political" property="political" jdbcType="VARCHAR" />
+    <result column="marriage" property="marriage" jdbcType="VARCHAR" />
+    <result column="work_his" property="workHis" jdbcType="VARCHAR" />
+    <result column="self_comment" property="selfComment" jdbcType="VARCHAR" />
+    <result column="hobby" property="hobby" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="companyid" property="companyid" jdbcType="INTEGER" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+    <result column="constellation" property="constellation" jdbcType="VARCHAR" />
+    <result column="zodiac" property="zodiac" jdbcType="VARCHAR" />
+    <result column="info_state" property="infoState" jdbcType="TINYINT" />
+    <result column="king_state" property="kingState" jdbcType="TINYINT" />
+    <result column="qq_id" property="qqId" jdbcType="VARCHAR" />
+    <result column="sina_id" property="sinaId" jdbcType="VARCHAR" />
+    <result column="wx_id" property="wxId" jdbcType="VARCHAR" />
+    <result column="wx_unionid" property="wxUnionid" jdbcType="VARCHAR" />
+  </resultMap>
+  
+   <resultMap id="BaseAuntMap" type="com.uncleserver.modelVo.AuntModel" >
+     <id column="auntid" property="auntid" jdbcType="INTEGER" />
+     <result column="real_name" property="realName" jdbcType="VARCHAR" />
+     <result column="avatar" property="avatar" jdbcType="INTEGER" />
+     <result column="third_avatar" property="thirdAvatar" jdbcType="VARCHAR" />
+     <result column="birthday" property="birthday" jdbcType="DATE" />
+     <result column="origin_place" property="originPlace" jdbcType="VARCHAR" />
+     <result column="score" property="score" jdbcType="REAL" />
+     <result column="distance" property="distance" jdbcType="REAL" />
+  </resultMap>
+  
+  <resultMap id="SearchAuntMap" type="com.uncleserver.modelVo.SearchAuntModel" >
+    <id column="auntid" property="auntid" jdbcType="INTEGER" />
+    <result column="real_name" property="realName" jdbcType="VARCHAR" />
+    <result column="avatar" property="avatar" jdbcType="INTEGER" />
+    <result column="third_avatar" property="thirdAvatar" jdbcType="VARCHAR" />
+    <result column="birthday" property="birthday" jdbcType="DATE" />
+    <result column="origin_place" property="originPlace" jdbcType="VARCHAR" />
+    <result column="score" property="score" jdbcType="REAL" />
+  </resultMap>
+  
+  <resultMap id="BaseStaffMap" type="com.uncleserver.modelVo.StaffModel" >
+    <id column="auntid" property="auntid" jdbcType="INTEGER" />
+    <result column="real_name" property="realName" jdbcType="VARCHAR" />
+    <result column="avatar" property="avatar" jdbcType="INTEGER" />
+    <result column="third_avatar" property="thirdAvatar" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+  </resultMap>
+  
+  <resultMap id="BaseSearchStaffMap" type="com.uncleserver.modelVo.SearchStaffModel" >
+    <id column="auntid" property="auntid" jdbcType="INTEGER" />
+    <result column="real_name" property="realName" jdbcType="VARCHAR" />
+    <result column="avatar" property="avatar" jdbcType="INTEGER" />
+    <result column="third_avatar" property="thirdAvatar" jdbcType="VARCHAR" />
+    <result column="origin_place" property="originPlace" jdbcType="VARCHAR" />
+    <result column="score" property="score" jdbcType="REAL" />
+    <result column="birthday" property="birthday" jdbcType="DATE" />
+  </resultMap>
+  
+  
+  <sql id="Base_Column_List" >
+    auntid, phone, real_name, name_letter, password, avatar, third_avatar,level, sex, signature, 
+    birthday, idcard_num,idcard_picids, origin_place, work_year, home_address, now_address, nation, 
+    weight, height, blood_type, train_state, language, characters, culture, religion, 
+    political, marriage, work_his, self_comment, hobby, state, companyid, addtime, constellation, 
+    zodiac, info_state,king_state,qq_id,sina_id,wx_id,wx_unionid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_aunt
+    where auntid = #{auntid,jdbcType=INTEGER}
+  </select>
+  
+   <select id="selectUserByPhone" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_aunt
+    where phone = #{0}
+  </select>
+  
+  <select id="selectUserBySinaId" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_aunt
+    where sina_id = #{0}
+  </select>
+  
+  <select id="selectUserByQQId" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_aunt
+    where qq_id = #{0}
+  </select>
+  
+  <select id="selectUserByWxId" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_aunt
+    where wx_id = #{0}
+  </select>
+  
+  <select id="searchAuntByName" resultMap="SearchAuntMap" >
+    select aunt.auntid, aunt.real_name,aunt.avatar,aunt.third_avatar,aunt.birthday,aunt.origin_place,extra.score
+    from t_aunt aunt, t_aunt_extra extra
+    where aunt.auntid = extra.auntid and aunt.state = 1 and aunt.companyid = 0 and aunt.real_name like CONCAT('%',#{0},'%') limit #{1},#{2}  
+  </select>
+  
+  <select id="selectSearchCount" resultType="java.lang.Long" >
+    select 
+    count(auntid)
+    from t_aunt
+    where state = 1 and companyid = 0 and real_name like CONCAT('%',#{0},'%') 
+  </select>
+  
+   <!-- 查询该手机号用户的数量 -->
+  <select id="selectUserCountByPhone" resultType="java.lang.Long" >
+    select count(auntid)
+    from t_aunt
+    where phone = #{0}
+  </select>
+  
+   <select id="selectByCondition" resultMap="BaseAuntMap">
+    select aunt.auntid, aunt.real_name,aunt.avatar,aunt.third_avatar,aunt.birthday,aunt.origin_place,extra.score, getdistance(#{longitude},  #{longitude},extra.longitude,extra.latitude) as distance
+    from t_aunt aunt, t_aunt_extra extra, t_aunt_skill skill
+    where aunt.auntid = extra.dataid and skill.auntid = aunt.auntid and aunt.state = 1
+     <if test="name_letter != null and name_letter.length() > 0" >
+       and aunt.name_letter=#{name_letter}
+     </if>
+     <if test="comment_type != 0" >
+       and extra.score > 4
+     </if>
+     <if test="agetype == 1" >
+     <![CDATA[  and TIMESTAMPDIFF(YEAR,aunt.birthday,now()) <= 35]]>  
+     </if>
+     <if test="agetype == 2" >
+        <![CDATA[  and TIMESTAMPDIFF(YEAR,aunt.birthday,now()) >= 35 and TIMESTAMPDIFF(YEAR,aunt.birthday,now()) <=40 ]]>  
+     </if>
+     <if test="agetype == 3" >
+      <![CDATA[  and TIMESTAMPDIFF(YEAR,aunt.birthday,now()) >= 40 and TIMESTAMPDIFF(YEAR,aunt.birthday,now()) <=45 ]]>  
+     </if>
+     <if test="agetype == 4" >
+      <![CDATA[  and TIMESTAMPDIFF(YEAR,aunt.birthday,now()) >=45 and TIMESTAMPDIFF(YEAR,aunt.birthday,now()) <=50 ]]>  
+     </if>
+     <if test="agetype == 5" >
+        <![CDATA[  and TIMESTAMPDIFF(YEAR,aunt.birthday,now()) >=50 and TIMESTAMPDIFF(YEAR,aunt.birthday,now()) <=55 ]]>  
+     </if>
+       <if test="agetype == 6" >
+       <![CDATA[  and TIMESTAMPDIFF(YEAR,aunt.birthday,now()) >=55 ]]>  
+     </if>
+     <if test="agetype == 6" >
+       <![CDATA[  and TIMESTAMPDIFF(YEAR,aunt.birthday,now()) >=55 ]]>  
+     </if>
+      <if test="servertype != 0" >
+       and skill.categoryid = #{servertype}
+     </if>
+     <if test="yeartype == 1" >
+       <![CDATA[  and aunt.work_year <3 ]]>  
+     </if>
+     <if test="yeartype == 2" >
+       <![CDATA[  and aunt.work_year >=3 and aunt.work_year<=5 ]]>  
+     </if>
+     <if test="yeartype == 3" >
+       <![CDATA[  and aunt.work_year >5 ]]>  
+     </if>
+     <![CDATA[ and getdistance(#{longitude},  #{latitude},extra.longitude,extra.latitude) >=#{distance_from}]]>
+     <if test="distance_to !=0" >
+        <![CDATA[ and getdistance(#{longitude},  #{latitude},extra.longitude,extra.latitude) <=#{distance_to}]]>
+     </if>
+     and aunt.state = 1
+    group by aunt.auntid  order by <![CDATA[  getdistance(#{longitude},  #{latitude},extra.longitude,extra.latitude) ]]> limit #{offest},#{pageSize}
+  </select>
+  
+  <select id="selectByCompanyId" resultMap="BaseAuntMap">
+    select aunt.auntid, aunt.real_name,aunt.avatar,aunt.third_avatar,aunt.birthday,aunt.origin_place,extra.score, getdistance(#{1},  #{2},extra.longitude,extra.latitude) as distance
+    from t_aunt aunt, t_aunt_extra extra, t_aunt_skill skill
+    where aunt.auntid = extra.dataid and skill.auntid = aunt.auntid
+     and aunt.companyid = #{0}
+     group by aunt.auntid order by <![CDATA[  getdistance(#{1},  #{2},extra.longitude,extra.latitude) ]]> limit #{3},#{4}
+  </select>
+  
+
+   <select id="selectAnutsByCompanyId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select 
+    <include refid="Base_Column_List" />
+    from t_aunt
+    where companyid = #{companyid,jdbcType=INTEGER}
+  </select>
+
+   <select id="selectStaffListPage" resultMap="BaseStaffMap">
+    select aunt.auntid, aunt.real_name,aunt.avatar,aunt.third_avatar,extra.state
+    from t_aunt aunt, t_aunt_extra extra
+    where aunt.companyid = #{0} and aunt.auntid = extra.auntid order by  aunt.addtime desc limit #{1},#{2}
+  </select>
+
+  
+  <select id="selectAllStaffCount" resultType="java.lang.Long">
+    select count(auntid)
+    from t_aunt aunt
+    where companyid = #{0}
+  </select>
+  
+  <select id="searchUnCompanyAunt" resultMap="BaseSearchStaffMap">
+    select aunt.auntid, aunt.real_name,aunt.avatar,aunt.third_avatar,extra.state,extra.score,aunt.birthday, aunt.origin_place
+    from t_aunt aunt, t_aunt_extra extra
+    where aunt.companyid = 0 and aunt.auntid = extra.dataid and (aunt.phone like CONCAT('%',#{0},'%') or aunt.real_name like CONCAT('%',#{0},'%')) order by  aunt.addtime desc limit #{1},#{2}
+  </select>
+  
+  <select id="searchUnCompanyAuntCount" resultType="java.lang.Long">
+    select count(auntid)
+    from t_aunt aunt
+    where aunt.companyid = 0 and (aunt.phone like CONCAT('%',#{0},'%') or aunt.real_name like CONCAT('%',#{0},'%'))
+  </select>
+  
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_aunt
+    where auntid = #{auntid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.Aunt" >
+   <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="auntid">
+	SELECT LAST_INSERT_ID() AS auntid
+  </selectKey>
+    insert into t_aunt (auntid, phone, real_name, 
+      name_letter, password, avatar, 
+      third_avatar,level, sex, signature, 
+      birthday, idcard_num,idcard_picids, origin_place, 
+      work_year, home_address, now_address, 
+      nation, weight, height, blood_type, 
+      train_state, language, characters, 
+      culture, religion, political, 
+      marriage, work_his, self_comment, 
+      hobby, state, companyid, 
+      addtime, constellation, zodiac, 
+      info_state,king_state,qq_id,sina_id,wx_id,wx_unionid)
+    values (#{auntid,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, #{realName,jdbcType=VARCHAR}, 
+      #{nameLetter,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{avatar,jdbcType=INTEGER}, 
+      #{thirdAvatar,jdbcType=VARCHAR},#{level,jdbcType=TINYINT}, #{sex,jdbcType=VARCHAR}, #{signature,jdbcType=VARCHAR}, 
+      #{birthday,jdbcType=DATE}, #{idcardNum,jdbcType=VARCHAR},#{idcard_picids,jdbcType=VARCHAR}, #{originPlace,jdbcType=VARCHAR}, 
+      #{workYear,jdbcType=TINYINT}, #{homeAddress,jdbcType=VARCHAR}, #{nowAddress,jdbcType=VARCHAR}, 
+      #{nation,jdbcType=VARCHAR}, #{weight,jdbcType=REAL}, #{height,jdbcType=REAL}, #{bloodType,jdbcType=VARCHAR}, 
+      #{trainState,jdbcType=TINYINT}, #{language,jdbcType=VARCHAR}, #{characters,jdbcType=VARCHAR}, 
+      #{culture,jdbcType=VARCHAR}, #{religion,jdbcType=VARCHAR}, #{political,jdbcType=VARCHAR}, 
+      #{marriage,jdbcType=VARCHAR}, #{workHis,jdbcType=VARCHAR}, #{selfComment,jdbcType=VARCHAR}, 
+      #{hobby,jdbcType=VARCHAR}, #{state,jdbcType=TINYINT}, #{companyid,jdbcType=INTEGER}, 
+      #{addtime,jdbcType=TIMESTAMP}, #{constellation,jdbcType=VARCHAR}, #{zodiac,jdbcType=VARCHAR}, 
+      #{infoState,jdbcType=TINYINT},#{kingState,jdbcType=TINYINT},#{qqId,jdbcType=VARCHAR},#{sinaId,jdbcType=VARCHAR},#{wxId,jdbcType=VARCHAR},#{wxUnionid,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.Aunt" >
+    insert into t_aunt
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="auntid != null" >
+        auntid,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="realName != null" >
+        real_name,
+      </if>
+      <if test="nameLetter != null" >
+        name_letter,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="avatar != null" >
+        avatar,
+      </if>
+      <if test="thirdAvatar != null" >
+        third_avatar,
+      </if>
+      <if test="level != null" >
+        level,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="signature != null" >
+        signature,
+      </if>
+      <if test="birthday != null" >
+        birthday,
+      </if>
+      <if test="idcardNum != null" >
+        idcard_num,
+      </if>
+       <if test="idcard_picids != null" >
+        idcard_picids,
+      </if>
+      <if test="originPlace != null" >
+        origin_place,
+      </if>
+      <if test="workYear != null" >
+        work_year,
+      </if>
+      <if test="homeAddress != null" >
+        home_address,
+      </if>
+      <if test="nowAddress != null" >
+        now_address,
+      </if>
+      <if test="nation != null" >
+        nation,
+      </if>
+      <if test="weight != null" >
+        weight,
+      </if>
+      <if test="height != null" >
+        height,
+      </if>
+      <if test="bloodType != null" >
+        blood_type,
+      </if>
+      <if test="trainState != null" >
+        train_state,
+      </if>
+      <if test="language != null" >
+        language,
+      </if>
+      <if test="characters != null" >
+        characters,
+      </if>
+      <if test="culture != null" >
+        culture,
+      </if>
+      <if test="religion != null" >
+        religion,
+      </if>
+      <if test="political != null" >
+        political,
+      </if>
+      <if test="marriage != null" >
+        marriage,
+      </if>
+      <if test="workHis != null" >
+        work_his,
+      </if>
+      <if test="selfComment != null" >
+        self_comment,
+      </if>
+      <if test="hobby != null" >
+        hobby,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="companyid != null" >
+        companyid,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+      <if test="constellation != null" >
+        constellation,
+      </if>
+      <if test="zodiac != null" >
+        zodiac,
+      </if>
+      <if test="infoState != null" >
+        info_state,
+      </if>
+      <if test="kingState != null" >
+        king_state,
+      </if>
+      <if test="qqId != null" >
+        qq_id,
+      </if>
+       <if test="sinaId != null" >
+        sina_id,
+      </if>
+       <if test="wxId != null" >
+        wx_id,
+      </if>
+      <if test="wxUnionid != null" >
+        wx_unionid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="auntid != null" >
+        #{auntid,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="realName != null" >
+        #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="nameLetter != null" >
+        #{nameLetter,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="avatar != null" >
+        #{avatar,jdbcType=INTEGER},
+      </if>
+      <if test="thirdAvatar != null" >
+        #{thirdAvatar,jdbcType=VARCHAR},
+      </if>
+       <if test="level != TINYINT" >
+        #{level,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="signature != null" >
+        #{signature,jdbcType=VARCHAR},
+      </if>
+      <if test="birthday != null" >
+        #{birthday,jdbcType=DATE},
+      </if>
+      <if test="idcardNum != null" >
+        #{idcardNum,jdbcType=VARCHAR},
+      </if>
+      <if test="idcard_picids != null" >
+        #{idcard_picids,jdbcType=VARCHAR},
+      </if>
+      <if test="originPlace != null" >
+        #{originPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="workYear != null" >
+        #{workYear,jdbcType=TINYINT},
+      </if>
+      <if test="homeAddress != null" >
+        #{homeAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="nowAddress != null" >
+        #{nowAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="nation != null" >
+        #{nation,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=REAL},
+      </if>
+      <if test="height != null" >
+        #{height,jdbcType=REAL},
+      </if>
+      <if test="bloodType != null" >
+        #{bloodType,jdbcType=VARCHAR},
+      </if>
+      <if test="trainState != null" >
+        #{trainState,jdbcType=TINYINT},
+      </if>
+      <if test="language != null" >
+        #{language,jdbcType=VARCHAR},
+      </if>
+      <if test="characters != null" >
+        #{characters,jdbcType=VARCHAR},
+      </if>
+      <if test="culture != null" >
+        #{culture,jdbcType=VARCHAR},
+      </if>
+      <if test="religion != null" >
+        #{religion,jdbcType=VARCHAR},
+      </if>
+      <if test="political != null" >
+        #{political,jdbcType=VARCHAR},
+      </if>
+      <if test="marriage != null" >
+        #{marriage,jdbcType=VARCHAR},
+      </if>
+      <if test="workHis != null" >
+        #{workHis,jdbcType=VARCHAR},
+      </if>
+      <if test="selfComment != null" >
+        #{selfComment,jdbcType=VARCHAR},
+      </if>
+      <if test="hobby != null" >
+        #{hobby,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=TINYINT},
+      </if>
+      <if test="companyid != null" >
+        #{companyid,jdbcType=INTEGER},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="constellation != null" >
+        #{constellation,jdbcType=VARCHAR},
+      </if>
+      <if test="zodiac != null" >
+        #{zodiac,jdbcType=VARCHAR},
+      </if>
+      <if test="infoState != null" >
+        #{infoState,jdbcType=TINYINT},
+      </if>
+      <if test="kingState != null" >
+        #{kingState,jdbcType=TINYINT},
+      </if>
+       <if test="qqId != null" >
+        #{qqId,jdbcType=VARCHAR},
+      </if>
+      <if test="sinaId != null" >
+        #{sinaId,jdbcType=VARCHAR},
+      </if>
+       <if test="wxId != null" >
+        #{wxId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.Aunt" >
+    update t_aunt
+    <set >
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="realName != null" >
+        real_name = #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="nameLetter != null" >
+        name_letter = #{nameLetter,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="avatar != null" >
+        avatar = #{avatar,jdbcType=INTEGER},
+      </if>
+      <if test="thirdAvatar != null" >
+        third_avatar = #{thirdAvatar,jdbcType=VARCHAR},
+      </if>
+       <if test="level != null" >
+        level = #{level,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="signature != null" >
+        signature = #{signature,jdbcType=VARCHAR},
+      </if>
+      <if test="birthday != null" >
+        birthday = #{birthday,jdbcType=DATE},
+      </if>
+      <if test="idcardNum != null" >
+        idcard_num = #{idcardNum,jdbcType=VARCHAR},
+      </if>
+       <if test="idcard_picids != null" >
+        idcard_picids = #{idcard_picids,jdbcType=VARCHAR},
+      </if>
+      <if test="originPlace != null" >
+        origin_place = #{originPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="workYear != null" >
+        work_year = #{workYear,jdbcType=TINYINT},
+      </if>
+      <if test="homeAddress != null" >
+        home_address = #{homeAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="nowAddress != null" >
+        now_address = #{nowAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="nation != null" >
+        nation = #{nation,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        weight = #{weight,jdbcType=REAL},
+      </if>
+      <if test="height != null" >
+        height = #{height,jdbcType=REAL},
+      </if>
+      <if test="bloodType != null" >
+        blood_type = #{bloodType,jdbcType=VARCHAR},
+      </if>
+      <if test="trainState != null" >
+        train_state = #{trainState,jdbcType=TINYINT},
+      </if>
+      <if test="language != null" >
+        language = #{language,jdbcType=VARCHAR},
+      </if>
+      <if test="characters != null" >
+        characters = #{characters,jdbcType=VARCHAR},
+      </if>
+      <if test="culture != null" >
+        culture = #{culture,jdbcType=VARCHAR},
+      </if>
+      <if test="religion != null" >
+        religion = #{religion,jdbcType=VARCHAR},
+      </if>
+      <if test="political != null" >
+        political = #{political,jdbcType=VARCHAR},
+      </if>
+      <if test="marriage != null" >
+        marriage = #{marriage,jdbcType=VARCHAR},
+      </if>
+      <if test="workHis != null" >
+        work_his = #{workHis,jdbcType=VARCHAR},
+      </if>
+      <if test="selfComment != null" >
+        self_comment = #{selfComment,jdbcType=VARCHAR},
+      </if>
+      <if test="hobby != null" >
+        hobby = #{hobby,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=TINYINT},
+      </if>
+      <if test="companyid != null" >
+        companyid = #{companyid,jdbcType=INTEGER},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="constellation != null" >
+        constellation = #{constellation,jdbcType=VARCHAR},
+      </if>
+      <if test="zodiac != null" >
+        zodiac = #{zodiac,jdbcType=VARCHAR},
+      </if>
+      <if test="infoState != null" >
+        info_state = #{infoState,jdbcType=TINYINT},
+      </if>
+      <if test="kingState != null" >
+        king_state = #{kingState,jdbcType=TINYINT},
+      </if>
+       <if test="qqId != null" >
+        qq_id = #{qqId,jdbcType=VARCHAR},
+      </if>
+       <if test="sinaId != null" >
+        sina_id = #{sinaId,jdbcType=VARCHAR},
+      </if>
+       <if test="wxId != null" >
+        wx_id = #{wxId,jdbcType=VARCHAR},
+       </if>
+       <if test="wxUnionid != null" >
+        wx_unionid = #{wxUnionid,jdbcType=VARCHAR},
+       </if>
+    </set>
+    where auntid = #{auntid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.Aunt" >
+    update t_aunt
+    set phone = #{phone,jdbcType=VARCHAR},
+      real_name = #{realName,jdbcType=VARCHAR},
+      name_letter = #{nameLetter,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      avatar = #{avatar,jdbcType=INTEGER},
+      third_avatar = #{thirdAvatar,jdbcType=VARCHAR},
+      level = #{level,jdbcType=TINYINT},
+      sex = #{sex,jdbcType=VARCHAR},
+      signature = #{signature,jdbcType=VARCHAR},
+      birthday = #{birthday,jdbcType=DATE},
+      idcard_num = #{idcardNum,jdbcType=VARCHAR},
+      idcard_picids = #{idcard_picids,jdbcType=VARCHAR},
+      origin_place = #{originPlace,jdbcType=VARCHAR},
+      work_year = #{workYear,jdbcType=TINYINT},
+      home_address = #{homeAddress,jdbcType=VARCHAR},
+      now_address = #{nowAddress,jdbcType=VARCHAR},
+      nation = #{nation,jdbcType=VARCHAR},
+      weight = #{weight,jdbcType=REAL},
+      height = #{height,jdbcType=REAL},
+      blood_type = #{bloodType,jdbcType=VARCHAR},
+      train_state = #{trainState,jdbcType=TINYINT},
+      language = #{language,jdbcType=VARCHAR},
+      characters = #{characters,jdbcType=VARCHAR},
+      culture = #{culture,jdbcType=VARCHAR},
+      religion = #{religion,jdbcType=VARCHAR},
+      political = #{political,jdbcType=VARCHAR},
+      marriage = #{marriage,jdbcType=VARCHAR},
+      work_his = #{workHis,jdbcType=VARCHAR},
+      self_comment = #{selfComment,jdbcType=VARCHAR},
+      hobby = #{hobby,jdbcType=VARCHAR},
+      state = #{state,jdbcType=TINYINT},
+      companyid = #{companyid,jdbcType=INTEGER},
+      addtime = #{addtime,jdbcType=TIMESTAMP},
+      constellation = #{constellation,jdbcType=VARCHAR},
+      zodiac = #{zodiac,jdbcType=VARCHAR},
+      info_state = #{infoState,jdbcType=TINYINT},
+      king_state = #{kingState,jdbcType=TINYINT},
+      qq_id = #{qqId,jdbcType=VARCHAR},
+      sina_id = #{sinaId,jdbcType=VARCHAR},
+      wx_id = #{wxId,jdbcType=VARCHAR},
+      wx_unionid = #{wxUnionid,jdbcType=VARCHAR}
+    where auntid = #{auntid,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectAuntByCompanyId" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_aunt
+    where companyid = #{companyid}
+      <if test="keywords != null" >
+        and real_name like concat("%",#{keywords},"%")
+      </if>
+    limit #{startPage},#{rows}
+  </select>
+  
+
+  <select id="countAuntByCompanyId" resultType="java.lang.Long" >
+    select 
+    	count(*)
+    from t_aunt
+    where companyid = #{companyid}
+  </select>
+
+  <select id="selectByids" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_aunt
+    where auntid in
+	<foreach item="ids" index="index" collection="array" open="(" separator="," close=")">  
+  		#{ids}  
+ 	</foreach> 
+  </select>
+  
+  	<select id="selectAuntByPhoneAndName" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_aunt
+		where 1 = 1
+		<if test="phone != null">and phone like concat('%',#{phone},'%')</if>
+		<if test="name != null">and real_name like concat('%',#{name},'%')</if>
+		 order by addtime desc
+    	<if test="startPage != null and rows != null ">limit #{startPage}, #{rows}</if>
+	</select>
+	<select id="selectAuntByPhoneAndNameCount" resultType="java.lang.Long">
+		select count(*)
+		from t_aunt
+		where 1 = 1
+		<if test="phone != null">and phone like concat('%',#{phone},'%')</if>
+		<if test="name != null">and real_name like concat('%',#{name},'%')</if>
+	</select>
+	
+	<select id="selectAllAunt" resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from t_aunt
+	</select>
+	
+	<update id="updateAuntUserState">
+		update t_aunt
+      <set >
+      	<if test="state == 0" >
+        	state = 1,
+      	</if>
+      	<if test="state == 1" >
+        	state = 2,
+      	</if>
+      	<if test="state == 2" >
+        	state = 1,
+      	</if>
+      </set>
+        where auntid = #{auntid}
+	</update>
+	
+</mapper>

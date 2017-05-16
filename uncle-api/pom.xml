@@ -1,0 +1,138 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.zhika</groupId>
+		<artifactId>uncleserver</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<groupId>com.zhika</groupId>
+	<artifactId>uncle-api</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>uncle-api</name>
+	<url>http://maven.apache.org</url>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- http://mvnrepository.com/artifact/com.alibaba/fastjson -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.12</version>
+		</dependency>
+
+		<!-- 表情工具 -->
+		<dependency>
+			<groupId>com.vdurmont</groupId>
+			<artifactId>emoji-java</artifactId>
+			<version>3.1.3</version>
+		</dependency>
+		<!-- IOS原生推送 -->
+		<dependency>
+			<groupId>com.github.fernandospr</groupId>
+			<artifactId>javapns-jdk16</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+		<!-- 容联云通讯短信平台 -->
+		<dependency>
+			<groupId>CCP</groupId>
+			<artifactId>CCP_REST_SMS_SDK_JAVA</artifactId>
+			<version>2.6.3</version>
+		</dependency>
+		<!-- 微信支付 -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.jdom/jdom -->
+		<dependency>
+			<groupId>org.jdom</groupId>
+			<artifactId>jdom</artifactId>
+			<version>1.1.3</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/commons-httpclient/commons-httpclient -->
+		<!-- 支付宝支付 -->
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.1</version>
+		</dependency>
+		<!-- 七牛云 -->
+		<dependency>
+			<groupId>com.qiniu</groupId>
+			<artifactId>qiniu-java-sdk</artifactId>
+			<version>[7.2.0, 7.2.99]</version>
+		</dependency>
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>okhttp</artifactId>
+			<version>3.3.1</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.6.2</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.qiniu</groupId>
+			<artifactId>happy-dns-java</artifactId>
+			<version>0.1.4</version>
+			<scope>compile</scope>
+		</dependency>
+		<!-- 极光推送 -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.7</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.jpush.api</groupId>
+			<artifactId>jiguang-common</artifactId>
+			<version>1.0.3</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.jpush.api</groupId>
+			<artifactId>jiguang-common</artifactId>
+			<version>1.0.3</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.jpush.api</groupId>
+			<artifactId>jpush-client</artifactId>
+			<version>3.2.17</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.thoughtworks.xstream/xstream -->
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+			<version>1.3.1</version>
+		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.springframework</groupId> -->
+		<!-- <artifactId>spring-web</artifactId> -->
+		<!-- <version>${spring.version}</version> -->
+		<!-- </dependency> -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>4.1.6.RELEASE</version>
+		</dependency>
+	</dependencies>
+</project>

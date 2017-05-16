@@ -1,0 +1,216 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>首页</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--星星评价-->
+    <link rel="stylesheet" href="../css/bottom.css" />
+    <link rel="stylesheet" href="../css/common.css" />
+    <!--sui-ui-->
+    <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+    <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/??sm.min.css,sm-extend.min.css">
+    <link rel="stylesheet" href="../js/dropload/dropload.css" />
+    <style>
+        p{
+            margin: 0;
+        }
+        .my_head{background-image: linear-gradient(to right, #78c6ff, #5d8ff9);}
+
+        .sign_btn img{height: 100%}
+
+        .phone_input a{height: 40px;position: absolute;right: 15%;top: 30px;border-radius: 0;line-height: 40px;border: none;color: #333}
+
+        .phone_input input{width: 70%;border: 1px solid #d5d7e3;height: 40px;margin-left: 15%;
+            background-image:url(../img/user/next_shape_select.png);background-size: 100% 100%;
+            margin-left: 15%;margin-top: 30px;line-height: 35px;color: white; }
+        input{padding-left: 10px!important;font-size: 16px}
+        .money_box{background-image: linear-gradient(to right, #78c6ff, #5d8ff9);border-top: none}
+        .money_head:after{background-color: transparent !important}
+        .money_number h1{margin: 0;color: white}
+        .money_number{color: white;vertical-align: middle;padding-left: 15px;padding-bottom: 25px}
+        .add_money{float: right;bottom:25px;height: 30px;border: none;background-color: white;line-height: 30px;right: 15px;color: #ff4c65; }
+        .detail_title{line-height: 20px;font-size: 14px;color: #a6a6a6;padding: 15px}
+        .detail_text{margin-top: 0}
+        .balance_img img{height: 30px}
+        .balance_title{font-size: 16px;color: #333}
+        .balance_time{font-size: 14px;color: #959495}
+        .add_text{font-size: 16px;color: #5e93f9;font-weight: 700}
+        .reduce_text{font-size: 16px;color: #333;font-weight: 700}
+    </style>
+</head>
+<body>
+
+<div class="page-group" >
+    <div class="page page-current" id="user_home">
+        <header class="bar bar-nav my_head money_head">
+            <a class="button button-link button-nav pull-left back">
+                <span class="icon icon-left"></span>
+            </a>
+            <h1 class="title">账户余额</h1>
+        </header>
+        <div class="content" style="background-color: #ffffff" data-distance="100">
+            <!-- 这里是页面内容区 -->
+            <div class="money_box">
+                <div class="money_number">
+                    <h1 class="money_detail" v-cloak>{{balance}}</h1>
+                    <span style="font-size: 14px;" >可用余额</span>
+                    <a class="button add_money prompt-ok">充值</a>
+                </div>
+            </div>
+            <div class="detail_title">
+                账单明细
+            </div>
+            <div class="list-block detail_text">
+                <ul>
+                    <li class="item-content" v-for="item in balanceList">
+                        <div class="item-media balance_img">
+                            <img src="../img/user/balance_default.png" :src="item.logourl" v-cloak/>
+                        </div>
+                        <div class="item-inner">
+                            <div class="item-title">
+                                <p class="balance_title" v-cloak>{{item.title}}</p>
+                                <p class="balance_time" v-cloak>{{item.time}}</p>
+                            </div>
+                            <div class="item-after">
+                                <span class="add_text" v-cloak><span v-if="item.type">+</span><span v-else="item.type">+</span> {{item.count}}</span>
+                            </div>
+                        </div>
+                    </li>
+                    <!--<li class="item-content">-->
+                        <!--<div class="item-media balance_img">-->
+                            <!--<img src="../img/user/balance_default.png" />-->
+                        <!--</div>-->
+                        <!--<div class="item-inner">-->
+                            <!--<div class="item-title">-->
+                                <!--<p class="balance_title">标题</p>-->
+                                <!--<p class="balance_time">标题</p>-->
+                            <!--</div>-->
+                            <!--<div class="item-after">-->
+                                <!--<span class="add_text">+ 500.0</span>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</li>-->
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!--<script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>-->
+<!--<script>var Zepto = jQuery</script>-->
+<!--sui-ui-->
+<script type='text/javascript' src='//g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
+<script type='text/javascript' src='//g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+<script type='text/javascript' src='//g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
+<script type='text/javascript' src='http://res.wx.qq.com/open/js/jweixin-1.2.0.js' charset='utf-8'></script>
+
+<script type='text/javascript' src='../js/plugins/md5.js' charset='utf-8'></script>
+<script type='text/javascript' src='../js/van-common.js' charset='utf-8'></script>
+<script src="../js/vue/vue.min.js"></script>
+<script src="../js/vue/vue-resource.min.js"></script>
+<script src="../js/dropload/dropload.min.js"></script>
+<script>
+//    $.init();
+
+    var home = new Vue({
+        el: '#user_home',
+        data: {
+            apiUrl: '/user/getBalanceList',
+            apiRechargeUrl: '/user/recharge',
+            balanceList: [],
+            balance: 0,
+            page: 1,
+            items: []
+        },
+        emulateJSON: true,
+        mounted: function() {
+            this.getCustomers();
+            console.log('ready ok');
+
+        },
+        methods: {
+            getCustomers: function() {
+                this.$http.get(createUrl(this.apiUrl, {userid: userId, page: this.page}, true))
+                    .then(function(response) {
+                        if (response.data.c == 1) {
+                            if (response.data.r != null ) {
+                                var jsonData = JSON.parse(response.data.r);
+                                console.log(jsonData);
+                            } else {
+                                console.log('错误')
+                            }
+//                            var jsonData = JSON.parse(response.data.r);
+//                            this.userInfo = jsonData;
+//                            setting.userInfo = jsonData;
+
+
+                        } else {
+                            $.toast(response.data.m);
+                        }
+                    })
+            },
+            hello: function (me) {
+                console.log(111);
+                // 锁定
+                me.lock();
+                // 无数据
+                me.noData();
+                me.resetload();
+            }
+
+        }
+    });
+
+    $(document).on('click','.prompt-ok', function () {
+        $.prompt('输入你要充值的金额', function (value) {
+            var reg = /^\d+(?=\.{0,1}\d+$|$)/
+            if (!reg.test(value)) {
+                $.alert('输入正确的数字');
+                return;
+            }
+            home.recharge(value);
+        });
+    });
+
+    // 微信支付
+    wx.config({
+        debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+        appId: '', // 必填，公众号的唯一标识
+        timestamp: 1, // 必填，生成签名的时间戳
+        nonceStr: '', // 必填，生成签名的随机串
+        signature: '',// 必填，签名，见附录1
+        jsApiList: ['checkJsApi', 'chooseWXPay'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+    });
+
+    wx.ready(function(){
+
+    });
+    wx.error(function(res){
+
+    });
+    wx.checkJsApi({
+        jsApiList: ['chooseWXPay'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
+        success: function(res) {
+            // 以键值对的形式返回，可用的api值true，不可用为false
+            // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
+        }
+    });
+    // 生成订单后回调该方法发起支付功能
+    wx.chooseWXPay({
+        timestamp: '',
+        nonceStr: '',
+        package: '',
+        signType: '',
+        paySign: '', // 支付签名
+        success: function (res) {
+            // 支付成功后的回调函数
+        }
+    });
+
+</script>
+</body>
+</html>

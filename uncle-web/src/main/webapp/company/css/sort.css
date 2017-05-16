@@ -1,0 +1,114 @@
+body{
+    background-color: #f4f7fb;
+}
+.add_del{
+    width: 100%;
+    height: 85px;
+    line-height: 85px;
+    border-bottom: 1px solid #cfd9df;
+    background-color: white;
+}
+.left_btn{
+    width: 86px;
+    height: 42px;
+    line-height: 42px;
+    text-align: center;
+    font-size: 14px;
+    display: inline-block;
+}
+.del{
+    background-color: #e5e5e5;
+    margin-left: 28px;
+}
+.add{
+    color: white;
+    margin-left: 10px;
+    background-color: #35aa47;
+}
+.part_right{
+    width: 285px;
+    height: 50px;
+    position: absolute;
+    right: 245px;
+    top: 0;
+}
+.search_box{
+    width: 224px;
+    height: 38px;
+    border: 1px solid #cfd9df;
+}
+.search_btn{
+    width: 56px;
+    height: 40px;
+    text-align: center;
+    background-color: #4cc2ff;
+    line-height: 40px;
+    position: absolute;
+    right: 3px;
+    top: 24px;
+}
+.search{
+    margin-top: 10px;
+}
+
+.food_sort{
+    width: 1500px;
+    margin-left: 50px;
+}
+.sort_cont{
+    width: 306px;
+    height: 200px;
+    background-color: white;
+    border: 1px solid #dcdcdc;
+    margin: 0 20px;
+    margin-top: 120px;
+    /*display: inline-block;*/
+    float: left;
+    position: relative;
+}
+.icon1{
+    position: absolute;
+    top: 9px;
+    left: 15px;
+}
+.sort_pic{
+    position: absolute;
+    top: -52px;
+    left: 97px;
+}
+.icon2{
+    position: absolute;
+    top: 13px;
+    right: 11px;
+}
+.input_con{
+    width: 100%;
+    text-align: center;
+    margin-top: 95px;
+}
+.search_food{
+    width: 194px;
+    height: 43px;
+    border: 1px solid #e5e5e5;
+    padding-left: 10px;
+    box-sizing: border-box;
+}
+.text{
+    width: 100%;
+    font-size: 16px;
+    color: #5b7697;
+    text-align: center;
+    margin-top: 22px;
+}
+.search_sort{
+    width: 100%;
+    text-align: center;
+    margin-top: 95px;
+    font-size: 28px;
+    color: #575757;
+}
+.editor{
+    width: 100%;
+    text-align: center;
+    margin-top: 35px;
+}

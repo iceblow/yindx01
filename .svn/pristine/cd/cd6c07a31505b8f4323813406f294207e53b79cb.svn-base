@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://code.alibabatech.com/schema/dubbo
+    http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <!-- 消费方应用名，用于计算依赖关系，不是匹配条件，不要与提供方一样 -->
+    <dubbo:application name="uncle-consumer"/>
+    <!-- 使用zookeeper注册中心暴露服务地址 -->
+    <!-- 注册中心地址 -->
+    <dubbo:registry protocol="zookeeper" address="zookeeper://127.0.0.1:2181"/>
+
+    <dubbo:reference id="userService" interface="com.uncleserver.service.api.UserService" />
+
+    <dubbo:reference id="homeService" interface="com.uncleserver.service.api.HomeService" />
+
+    
+    <dubbo:reference id="systemService" interface="com.uncleserver.service.api.SystemService" />
+    
+    <dubbo:reference id="fileService" interface="com.uncleserver.service.api.FileService" />
+    
+    <dubbo:reference id="orderService" interface="com.uncleserver.service.api.OrderService" />
+    
+    <dubbo:reference id="auntCompanyService" interface="com.uncleserver.service.api.AuntCompanyService" />
+    
+    <dubbo:reference id="auntHomeService" interface="com.uncleserver.service.api.AuntHomeService" />
+    
+    <dubbo:reference id="auntOrderService" interface="com.uncleserver.service.api.AuntOrderService" />
+    
+    <dubbo:reference id="auntUserService" interface="com.uncleserver.service.api.AuntUserService" />
+    
+    <dubbo:reference id="loginService" interface="com.uncleserver.service.company.LoginService" />
+
+    <dubbo:reference id="registService" interface="com.uncleserver.service.company.RegistService" />
+    
+    <dubbo:reference id="orderCompanyService" interface="com.uncleserver.service.company.OrderService" />
+
+    <dubbo:reference id="companyServiceImpl" interface="com.uncleserver.service.company.CompanyService" />
+
+    <dubbo:reference id="statisticServiceImpl" interface="com.uncleserver.service.company.StatisticService" />
+
+    <dubbo:reference id="manageLoginService" interface="com.uncleserver.service.manage.ManageLoginService" />
+    
+    <dubbo:reference id="manageIndexService" interface="com.uncleserver.service.manage.ManageIndexService" />
+    
+    <dubbo:reference id="manageAuntService" interface="com.uncleserver.service.manage.ManageAuntService" />
+    
+    <dubbo:reference id="manageUserService" interface="com.uncleserver.service.manage.ManageUserService" />
+    
+    <dubbo:reference id="manageSystemService" interface="com.uncleserver.service.manage.ManageSystemService" />
+
+    <dubbo:reference id="manageOrderService" interface="com.uncleserver.service.manage.ManageOrderService" />
+
+    <dubbo:reference id="manageAdminService" interface="com.uncleserver.service.manage.ManageAdminService" />
+    
+    <dubbo:reference id="managerOthersService" interface="com.uncleserver.service.manage.ManagerOthersService" />
+
+  	<dubbo:reference id="manageHomeService" interface="com.uncleserver.service.manage.ManageHomeService" />
+
+    <dubbo:reference id="wechatService" interface="com.uncleserver.service.api.WechatService" />
+    
+    <dubbo:reference id="birthdayTaskService" interface="com.uncleserver.service.api.BirthdayTaskService" />
+	
+	<dubbo:reference id="manageCouponService" interface="com.uncleserver.service.manage.ManageCouponService" />
+	
+	<dubbo:reference id="managePuseService" interface="com.uncleserver.service.manage.ManagePuseService" />
+	
+	
+</beans>

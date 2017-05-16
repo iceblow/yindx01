@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.UserMapper">
+	<resultMap id="BaseResultMap" type="com.uncleserver.model.User">
+		<id column="userid" property="userid" jdbcType="INTEGER" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="tel" property="tel" jdbcType="VARCHAR" />
+		<result column="real_name" property="realName" jdbcType="VARCHAR" />
+		<result column="password" property="password" jdbcType="VARCHAR" />
+		<result column="avatar" property="avatar" jdbcType="INTEGER" />
+		<result column="third_avatar" property="thirdAvatar" jdbcType="VARCHAR" />
+		<result column="sex" property="sex" jdbcType="VARCHAR" />
+		<result column="birthday" property="birthday" jdbcType="DATE" />
+		<result column="level" property="level" jdbcType="TINYINT" />
+		<result column="qq_id" property="qqId" jdbcType="VARCHAR" />
+		<result column="sina_id" property="sinaId" jdbcType="VARCHAR" />
+		<result column="wx_id" property="wxId" jdbcType="VARCHAR" />
+		<result column="wx_unionid" property="wxUnionid" jdbcType="VARCHAR" />
+		<result column="newcoupon" property="newcoupon" jdbcType="TINYINT" />
+		<result column="signature" property="signature" jdbcType="VARCHAR" />
+		<result column="invitation_code" property="invitation_code"
+			jdbcType="VARCHAR" />
+		<result column="invitation_count" property="invitation_count"
+			jdbcType="INTEGER" />
+		<result column="invitationed_state" property="invitationed_state"
+			jdbcType="TINYINT" />
+		<result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		userid, phone, tel, real_name, password, avatar,
+		third_avatar, sex, birthday,
+		level,qq_id, sina_id, wx_id, wx_unionid,
+		newcoupon, signature,
+		invitation_code, invitation_count,
+		invitationed_state, addtime
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from t_user
+		where userid = #{userid,jdbcType=INTEGER}
+	</select>
+
+	<select id="selectBirthdayUser" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_user
+		where DATE_FORMAT(birthday , '%Y%m%d') =DATE_FORMAT(now() ,
+		'%Y%m%d')
+	</select>
+
+	<select id="selectAllUser" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_user 
+	</select>
+
+	<select id="selectUserByCode" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_user
+		where invitation_code = #{0}
+	</select>
+
+	<select id="selectUserBySinaId" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_user
+		where sina_id = #{0}
+	</select>
+	
+	<select id="selectUserByQQId" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_user
+		where qq_id = #{0}
+	</select>
+
+	<select id="selectUserByPhone" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_user
+		where phone = #{0}
+	</select>
+
+	<select id="selectUserByWxId" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_user
+		where wx_id = #{0}
+	</select>
+
+	<select id="selectUserByWxUnionId" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_user
+		where wx_unionid = #{0}
+	</select>
+
+	<!-- 查询该手机号用户的数量 -->
+	<select id="selectUserCountByPhone" resultType="java.lang.Long">
+		select
+		count(userid)
+		from t_user
+		where phone = #{0}
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from t_user
+		where userid = #{userid,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.uncleserver.model.User">
+		<selectKey resultType="java.lang.Integer" order="AFTER"
+			keyProperty="userid">
+			SELECT LAST_INSERT_ID() AS userid
+		</selectKey>
+		insert into t_user (userid, phone, tel,
+		real_name, password, avatar,
+		third_avatar, sex, birthday,
+		level, qq_id, sina_id,
+		wx_id, wx_unionid,
+		newcoupon,
+		signature,invitation_code,invitation_count,invitationed_state, addtime
+
+		)
+		values (#{userid,jdbcType=INTEGER},
+		#{phone,jdbcType=VARCHAR},
+		#{tel,jdbcType=VARCHAR},
+		#{realName,jdbcType=VARCHAR},
+		#{password,jdbcType=VARCHAR},
+		#{avatar,jdbcType=INTEGER},
+		#{thirdAvatar,jdbcType=VARCHAR},
+		#{sex,jdbcType=VARCHAR},
+		#{birthday,jdbcType=DATE},
+		#{level,jdbcType=TINYINT},
+		#{qqId,jdbcType=VARCHAR}, #{sinaId,jdbcType=VARCHAR},
+		#{wxId,jdbcType=VARCHAR},#{wxUnionid,jdbcType=VARCHAR},
+		#{newcoupon,jdbcType=TINYINT},
+		#{signature,jdbcType=VARCHAR},#{invitation_code,jdbcType=VARCHAR},
+		#{invitation_count,jdbcType=INTEGER},
+		#{invitationed_state,jdbcType=TINYINT}, #{addtime,jdbcType=TIMESTAMP}
+
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.uncleserver.model.User">
+		insert into t_user
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="userid != null">
+				userid,
+			</if>
+			<if test="phone != null">
+				phone,
+			</if>
+			<if test="tel != null">
+				tel,
+			</if>
+			<if test="realName != null">
+				real_name,
+			</if>
+			<if test="password != null">
+				password,
+			</if>
+			<if test="avatar != null">
+				avatar,
+			</if>
+			<if test="thirdAvatar != null">
+				third_avatar,
+			</if>
+			<if test="sex != null">
+				sex,
+			</if>
+			<if test="birthday != null">
+				birthday,
+			</if>
+			<if test="level != null">
+				level,
+			</if>
+			<if test="qqId != null">
+				qq_id,
+			</if>
+			<if test="sinaId != null">
+				sina_id,
+			</if>
+			<if test="wxId != null">
+				wx_id,
+			</if>
+			<if test="wxUnionid != null">
+				wx_unionid,
+			</if>
+			<if test="newcoupon != null">
+				newcoupon,
+			</if>
+			<if test="signature != null">
+				signature,
+			</if>
+			<if test="invitation_code != null">
+				invitation_code,
+			</if>
+			<if test="invitation_count != null">
+				invitation_count,
+			</if>
+			<if test="invitationed_state != null">
+				invitationed_state,
+			</if>
+			<if test="addtime != null">
+				addtime,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="userid != null">
+				#{userid,jdbcType=INTEGER},
+			</if>
+			<if test="phone != null">
+				#{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="tel != null">
+				#{tel,jdbcType=VARCHAR},
+			</if>
+			<if test="realName != null">
+				#{realName,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				#{password,jdbcType=VARCHAR},
+			</if>
+			<if test="avatar != null">
+				#{avatar,jdbcType=INTEGER},
+			</if>
+			<if test="thirdAvatar != null">
+				#{thirdAvatar,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				#{sex,jdbcType=VARCHAR},
+			</if>
+			<if test="birthday != null">
+				#{birthday,jdbcType=DATE},
+			</if>
+			<if test="level != null">
+				#{level,jdbcType=TINYINT},
+			</if>
+			<if test="qqId != null">
+				#{qqId,jdbcType=VARCHAR},
+			</if>
+			<if test="sinaId != null">
+				#{sinaId,jdbcType=VARCHAR},
+			</if>
+			<if test="wxId != null">
+				#{wxId,jdbcType=VARCHAR},
+			</if>
+			<if test="wxUnionid != null">
+				#{wxUnionid,jdbcType=VARCHAR},
+			</if>
+
+			<if test="newcoupon != null">
+				#{newcoupon,jdbcType=TINYINT},
+			</if>
+			<if test="signature != null">
+				#{signature,jdbcType=VARCHAR},
+			</if>
+			<if test="invitation_code != null">
+				#{invitation_code,jdbcType=VARCHAR},
+			</if>
+
+			<if test="invitation_count != null">
+				#{invitation_count,jdbcType=INTEGER},
+			</if>
+			<if test="invitationed_state != null">
+				#{invitationed_state,jdbcType=TINYINT},
+			</if>
+			<if test="addtime != null">
+				#{addtime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.User">
+		update t_user
+		<set>
+			<if test="phone != null">
+				phone = #{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="tel != null">
+				tel = #{tel,jdbcType=VARCHAR},
+			</if>
+			<if test="realName != null">
+				real_name = #{realName,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				password = #{password,jdbcType=VARCHAR},
+			</if>
+			<if test="avatar != null">
+				avatar = #{avatar,jdbcType=INTEGER},
+			</if>
+			<if test="thirdAvatar != null">
+				third_avatar = #{thirdAvatar,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				sex = #{sex,jdbcType=VARCHAR},
+			</if>
+			<if test="birthday != null">
+				birthday = #{birthday,jdbcType=DATE},
+			</if>
+			<if test="level != null">
+				level = #{level,jdbcType=TINYINT},
+			</if>
+			<if test="qqId != null">
+				qq_id = #{qqId,jdbcType=VARCHAR},
+			</if>
+			<if test="sinaId != null">
+				sina_id = #{sinaId,jdbcType=VARCHAR},
+			</if>
+			<if test="wxId != null">
+				wx_id = #{wxId,jdbcType=VARCHAR},
+			</if>
+			<if test="wxUnionid != null">
+				wx_unionid = #{wxUnionid,jdbcType=VARCHAR},
+			</if>
+			<if test="newcoupon != null">
+				newcoupon = #{newcoupon,jdbcType=TINYINT},
+			</if>
+			<if test="signature != null">
+				signature = #{signature,jdbcType=VARCHAR},
+			</if>
+			<if test="invitation_code != null">
+				invitation_code = #{invitation_code,jdbcType=VARCHAR},
+			</if>
+			<if test="invitation_count != null">
+				invitation_count = #{invitation_count,jdbcType=INTEGER},
+			</if>
+			<if test="invitationed_state != null">
+				invitationed_state =
+				#{invitationed_state,jdbcType=TINYINT},
+			</if>
+			<if test="addtime != null">
+				addtime = #{addtime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where userid = #{userid,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.uncleserver.model.User">
+		update t_user
+		set
+		phone = #{phone,jdbcType=VARCHAR},
+		tel = #{tel,jdbcType=VARCHAR},
+		real_name = #{realName,jdbcType=VARCHAR},
+		password =
+		#{password,jdbcType=VARCHAR},
+		avatar = #{avatar,jdbcType=INTEGER},
+		third_avatar = #{thirdAvatar,jdbcType=VARCHAR},
+		sex =
+		#{sex,jdbcType=VARCHAR},
+		birthday = #{birthday,jdbcType=DATE},
+		level =
+		#{level,jdbcType=TINYINT},
+		qq_id = #{qqId,jdbcType=VARCHAR},
+		sina_id =
+		#{sinaId,jdbcType=VARCHAR},
+		wx_id = #{wxId,jdbcType=VARCHAR},
+		wx_unionid = #{wxUnionid,jdbcType=VARCHAR},
+		newcoupon =#{newcoupon,jdbcType=TINYINT},
+		signature =#{signature,jdbcType=VARCHAR},
+		invitation_code =#{invitation_code,jdbcType=VARCHAR},
+		invitation_count =#{invitation_count,jdbcType=TINYINT},
+		invitationed_state =#{invitationed_state,jdbcType=VARCHAR},
+		addtime =#{addtime,jdbcType=TIMESTAMP}
+
+		where userid = #{userid,jdbcType=INTEGER}
+	</update>
+	<select id="selectUserByPhoneAndName" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_user
+		where 1 = 1
+		<if test="phone != null">and phone like concat('%',#{phone},'%')</if>
+		<if test="name != null">and real_name like concat('%',#{name},'%')</if>
+		order by addtime desc
+		<if test="startPage != null and rows != null ">limit #{startPage}, #{rows}</if>
+	</select>
+	<select id="selectUserByPhoneAndNameCount" resultType="java.lang.Long">
+		select count(*)
+		from t_user
+		where 1 = 1
+		<if test="phone != null">and phone like concat('%',#{phone},'%')</if>
+		<if test="name != null">and real_name like concat('%',#{name},'%')</if>
+	</select>
+	<update id="updateByUserId">
+		update t_user_extra set point=point+#{point}
+		,point_total=point_total+#{point} where userid=#{id}
+	</update>
+	<insert id="insertPointRecord" parameterType="com.uncleserver.model.PointRecord">
+		insert INTO
+		t_point_record (userid,count,type,addtime) VALUES
+		(userid,count,8,addtime)
+	</insert>
+</mapper>

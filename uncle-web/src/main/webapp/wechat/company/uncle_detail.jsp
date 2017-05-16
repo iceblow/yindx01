@@ -1,0 +1,283 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+    pageEncoding="utf-8"%>
+<html xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>钟点工详情</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--星星评价-->
+    <link rel="stylesheet" href="../css/bottom.css" />
+    <link rel="stylesheet" href="../css/common.css" />
+    <!--sui-ui-->
+    <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+    <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/??sm.min.css,sm-extend.min.css">
+    <style>
+        .top_bg{height: 100px;background-image: linear-gradient(to right, #78c6ff, #5d8ff9);position: absolute;width: 100%;}
+        .money_head:after{background-color: transparent !important}
+        .detail_box{padding: 15px;position: absolute;width: 100%}
+        .head_box{box-shadow:0 0.05rem 0.1rem rgba(0,0,0,.3);position: relative;padding-top: 25px;margin-top: 25px;background-color: white;padding: 15px}
+        .company_img{position: absolute;text-align: center;top: -25px;left: 50%;margin-left: -25px}
+        .company_img img{height: 50px;border-radius: 50%;}
+        .company_name{margin-top: 15px}
+        .company_phone{margin: 0}
+        .company_address, .company_phone{color: #959495}
+        .line_title{line-height: 20px;width: 126px;margin: 0 auto;font-size: 12px;text-align: center;position: relative;margin-top: 20px}
+        .line_title  img{width: 100%;position: absolute;left: 0;height: 4px;top: 50%;margin-top: -2px}
+        .line_title_name{font-size: 14px;margin: 0}
+        .company_about{font-size: 14px;color: #959495;text-align: center}
+        .company_foot_img_box:after{
+            content:".";
+            display:block;
+            height:0;
+            clear:both;
+            visibility:hidden;
+        }
+        .company_foot_img_box{padding-top: 15px;padding-left: 35px;padding-right: 35px}
+        .company_foot_img img{height: 50px;border-radius: 50%}
+        .company_foot_img {float: left;width: 25%;text-align: center}
+        .company_foot_img p{margin-top: 5px;font-size: 14px}
+        .company_btn{position: fixed;bottom: 0;width: 100%;padding: 15px;background-color: white;border-top: 1px solid #c0d8f1}
+        .company_btn span{color: #6babfc;}
+        .company_btn a{width: 80px;background-color: #6babfc;height: 30px;line-height: 30px;color: white;border: none;border-radius: 0}
+        .uncle_detail_box{padding: 15px;border-top: 1px solid #e6e6e6}
+        .uncle_detail_box div{float: left;width: 33%;text-align: center;font-size: 14px;color: #959495;border-right: 1px solid #e6e6e6}
+        .uncle_detail_box div p{margin: 0}
+        .uncle_detail_box:after{
+            content:".";
+            display:block;
+            height:0;
+            clear:both;
+            visibility:hidden;
+        }
+        .info_list{position: relative}
+        .info_img{position: absolute;height: 15px;}
+        .info_list p{padding-left: 30px;font-size: 14px;color: #959495}
+        /*弹窗*/
+        .my_alert{position: absolute;z-index: 999;width: 100%;height: 100%;background: rgba(0,0,0,0.5)}
+        .alert_box{
+            border-radius: 10px;
+            width: 85%;
+            position: absolute;
+            background-color: white;
+            top:50%;
+            left: 50%;
+            -webkit-transform: translate(-50%,-50%);
+            overflow: hidden;
+        }
+        .alert_head{background-image: linear-gradient(to right, #78c6ff, #5d8ff9);width: 100%;height: 65px;line-height: 65px;padding: 0 15px}
+        .alert_text{background-color: white}
+        .about_img_box{text-align: center}
+        .about_img_box img{width: 30%}
+        .company_btn_box :after{
+            content:".";
+            display:block;
+            height:0;
+            clear:both;
+            visibility:hidden;
+        }
+        .company_btn_box{padding: 0 20px}
+        .company_btn_box .alert_company_button{float: left;width: 50%;padding: 10px}
+        .btn_active {border: 1px solid #5e93f9!important;box-sizing: border-box !important;background-color: white !important;color: #5e93f9}
+        a:visited {color: #959495}
+    </style>
+</head>
+<body>
+<div class="page-group">
+    <div class="page page-current" id="user_home">
+        <header class="bar bar-nav my_head money_head">
+           <!--  <a class="button button-link button-nav pull-left back">
+                <span class="icon icon-left"></span>
+            </a> -->
+        </header>
+        <div class="my_alert" v-if="alert" v-cloak>
+            <div class="alert_box">
+                <div class="alert_head ">
+                    <p class="text-center" style="color: white;margin-top: 0;">
+                        <span class="pull-left" v-on:click="unBook">取消</span>
+                        <span class="pull-right" v-on:click="selected">确定</span>
+                        服务内容
+                    </p>
+                </div>
+                <div class="alert_text">
+                    <div class="company_btn_box">
+                        <div class="alert_company_button" v-for="(server,i) in serverList">
+                            <a class="button serve_btn btn_active" v-if="i==0" v-on:click="select(server.serverid, $event)">{{server.server_name}}</a>
+                            <a class="button serve_btn " v-else="i==0" v-on:click="select(server.serverid, $event)">{{server.server_name}}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content" style="background-color: #ffffff">
+            <!-- 这里是页面内容区 -->
+            <div class="top_bg"></div>
+            <div class="detail_box" style="height: 500px">
+                <div class="head_box">
+                    <div class="company_img">
+                        <img src="../img/user/default_head_pic.png" :src="auntInfo.avatarurl"/>
+                    </div>
+                    <div class="company_detail">
+                        <h4 class="company_name text-center" v-cloak>{{auntInfo.name}}</h4>
+                    </div>
+                    <div class="uncle_detail_box">
+                        <div v-on:click="setLick">
+                            <img src="../img/user/u1.png" height="15" />
+                            <p>{{auntInfo.lickcount}}</p>
+                        </div>
+                        <div v-on:click="setShare">
+                            <img src="../img/user/u2.png" height="15" />
+                            <p>分享</p>
+                        </div>
+                        <div style="border-right: none">
+                            <a href="https://ikefu.baidu.com/wise/zk">
+                                <img src="../img/user/u3.png" height="15" />
+                                <p>客服</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="company_middle">
+                    <div class="line_title">
+                        <img src="../img/serve/t_line.png" />
+                        <h4 class="line_title_name">基本信息</h4>
+                    </div>
+                    <div class="uncle_info_box">
+                        <div class="info_list">
+                            <img class="info_img" src="../img/user/u4.png" />
+                            <p class="uncle_info_text">{{auntInfo.age}} | {{auntInfo.origin_place}} | {{auntInfo.nation}} | {{auntInfo.marriage}}</p>
+                        </div>
+                        <div class="info_list">
+                            <img class="info_img" src="../img/user/u5.png" />
+                            <p class="uncle_info_text">{{auntInfo.political}} | {{auntInfo.culture}} | {{auntInfo.religion}}</p>
+                        </div>
+                        <div class="info_list">
+                            <img class="info_img" src="../img/user/u6.png" />
+                            <p class="uncle_info_text">{{auntInfo.language}}</p>
+                        </div>
+                        <div class="info_list">
+                            <img class="info_img" src="../img/user/u7.png" />
+                            <p class="uncle_info_text">{{auntInfo.work_his}}年以上家政行业经历</p>
+                        </div>
+                        <div class="info_list">
+                            <img class="info_img" src="../img/user/u8.png" />
+                            <p class="uncle_info_text">{{auntInfo.register}}加入表叔云服</p>
+                        </div>
+                        <div class="info_list">
+                            <img class="info_img" src="../img/user/u9.png" />
+                            <p class="uncle_info_text">{{auntInfo.height}}cm | {{auntInfo.weight}}kg</p>
+                        </div>
+                        <div class="info_list">
+                            <img class="info_img" src="../img/user/u10.png" />
+                            <p class="uncle_info_text">{{auntInfo.constellation}}</p>
+                        </div>
+                        <div class="info_list">
+                            <img class="info_img" src="../img/user/u11.png" />
+                            <p class="uncle_info_text">{{auntInfo.zodiac}}</p>
+                        </div>
+                        <div class="info_list">
+                            <img class="info_img" src="../img/user/u13.png" />
+                            <p class="uncle_info_text">自我评价：{{auntInfo.self_comment}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="company_btn">
+                <span class="pull-left">选择服务内容</span>
+                <a class="button pull-right" v-on:click="book">立即预约</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script>var Zepto = jQuery</script>
+<!--sui-ui-->
+<!--<script type='text/javascript' src='//g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>-->
+<script type='text/javascript' src='//g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+<script type='text/javascript' src='//g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
+
+<script type='text/javascript' src='../js/plugins/md5.js' charset='utf-8'></script>
+<script type='text/javascript' src='../js/van-common.js' charset='utf-8'></script>
+<script src="../js/vue/vue.min.js"></script>
+<script src="../js/vue/vue-resource.min.js"></script>
+<script>
+    var home = new Vue({
+        el: '#user_home',
+        data: {
+            apiAuntDetailUrl: '/home/auntDetail',
+            apiGetAuntServerUrl: '/order/getAuntServer',
+            apiLikeAuntUrl: '/home/likeAunt',
+            auntId: getItem('aunt_id'), userId: userId, serverId:0,
+            auntInfo: {}, serverList:[], alert: false
+        },
+        mounted: function() {
+            this.getCustomers();
+            this.getAuntServer();
+        },
+        methods: {
+            getCustomers: function () {
+                this.$http.get(createUrl(this.apiAuntDetailUrl, {auntid:this.auntId}, false))
+                    .then(function(response) {
+                        if (response.data.c == 1) {
+                            var jsonData = JSON.parse(response.data.r);
+                            this.auntInfo = jsonData.auntInfo;
+                            console.log(jsonData)
+                        } else {
+                            console.log(response.data.m)
+                        }
+                    })
+            },
+            getAuntServer: function () {
+                this.$http.get(createUrl(this.apiGetAuntServerUrl, {auntid: this.auntId}, false))
+                    .then(function(response) {
+                        if (response.data.c == 1) {
+                            var jsonData = JSON.parse(response.data.r);
+                            this.serverList = jsonData.serverlist;
+                            this.serverId = this.serverList[0].serverid;
+                        } else {
+                            console.log(response.data.m)
+                        }
+                    })
+            },
+            setLick: function () {
+                this.$http.get(createUrl(this.apiLikeAuntUrl, {userid: this.userId, auntid:this.auntId}, true))
+                    .then(function(response) {
+                        if (response.data.c == 1) {
+                            var jsonData = JSON.parse(response.data.r);
+                            this.auntInfo.lickcount = jsonData.count;
+                        } else {
+                            console.log(response.data.m)
+                        }
+                    })
+            },
+            setShare: function () {
+                console.log('分享');
+            },
+            book: function () {
+                this.alert = true
+            },
+            unBook: function () {
+                this.alert = false
+            },
+            select: function (id, e) {
+                this.serverId = id;
+                $('.serve_btn').removeClass('btn_active');
+                $(e.currentTarget).addClass('btn_active');
+            },
+            selected: function () {
+                window.location='../auth/go?uri=/wechat/serves/xielei'
+                console.log(this.serverId)
+                // 跳转选择页面
+//            window.location.href = './add_address.jsp'
+            }
+
+        }
+    });
+
+    $.init();
+</script>
+</body>
+</html>

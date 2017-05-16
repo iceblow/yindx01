@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.BalanceRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.BalanceRecord" >
+    <id column="recordid" property="recordid" jdbcType="INTEGER" />
+    <result column="userid" property="userid" jdbcType="INTEGER" />
+    <result column="count" property="count" jdbcType="DECIMAL" />
+    <result column="type" property="type" jdbcType="TINYINT" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    recordid, userid, count, type, addtime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_balance_record
+    where recordid = #{recordid,jdbcType=INTEGER}
+  </select>
+  
+  
+  <select id="selectUnRead" resultType="java.lang.Long" parameterType="java.lang.Integer" >
+    select count(id);
+    <include refid="Base_Column_List" />
+    from t_message
+    where userid = #{userid,jdbcType=INTEGER} and read_state = 0 order by addtime desc
+  </select>
+   <select id="selectByPage" resultMap="BaseResultMap"  >
+    select 
+    <include refid="Base_Column_List" />
+    from t_balance_record where userid=#{2} order by addtime desc limit #{0},#{1}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_balance_record
+    where recordid = #{recordid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.BalanceRecord" >
+    insert into t_balance_record (recordid, userid, count, 
+      type, addtime)
+    values (#{recordid,jdbcType=INTEGER}, #{userid,jdbcType=INTEGER}, #{count,jdbcType=DECIMAL}, 
+      #{type,jdbcType=TINYINT}, #{addtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.BalanceRecord" >
+    insert into t_balance_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="recordid != null" >
+        recordid,
+      </if>
+      <if test="userid != null" >
+        userid,
+      </if>
+      <if test="count != null" >
+        count,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="recordid != null" >
+        #{recordid,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null" >
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="count != null" >
+        #{count,jdbcType=DECIMAL},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=TINYINT},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.BalanceRecord" >
+    update t_balance_record
+    <set >
+      <if test="userid != null" >
+        userid = #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="count != null" >
+        count = #{count,jdbcType=DECIMAL},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=TINYINT},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where recordid = #{recordid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.BalanceRecord" >
+    update t_balance_record
+    set userid = #{userid,jdbcType=INTEGER},
+      count = #{count,jdbcType=DECIMAL},
+      type = #{type,jdbcType=TINYINT},
+      addtime = #{addtime,jdbcType=TIMESTAMP}
+    where recordid = #{recordid,jdbcType=INTEGER}
+  </update>
+</mapper>

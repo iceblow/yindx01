@@ -1,0 +1,271 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<html>
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+<form class="form-horizontal" role="form"  >
+<div class="row">
+<div class="col-xs-12" >
+	        <div class="form-group">
+				<label Style="text-align: center;" class="col-sm-1 control-label no-padding-right" for="form-field-6">城市选择</label>
+				<div class="col-sm-2">
+					<div>
+						<select name="provienceid" id="proselect" onchange="changepro()" data-rel="tooltip" type="text" class="col-sm-10 searchKey" title="省份选择" data-placement="bottom">
+							<option value="">请选择省</option>
+							<c:forEach items="${list }" var="p">
+								<option value="${p.id }" >${p.name }</option>
+							</c:forEach>
+						</select>
+						<br></br>
+						<select name="cityid" id="cityselect"  data-rel="tooltip" type="text" class="col-sm-10 searchKey" title="城市选择" data-placement="bottom"  >
+							<option value="">请选择市</option>
+							<c:forEach items="${citys }" var="c">
+								<option value="${c.id}" >${c.name}</option>
+							</c:forEach>
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="col-xs-12" >
+	        <div class="form-group">
+				<label Style="text-align: center;" class="col-sm-1 control-label no-padding-right" for="form-field-6">服务分类</label>
+				<div class="col-sm-2">
+					<select id="sel" data-rel="tooltip" type="text" class="col-sm-10 searchKey" name="categoryid" title="服务分类" data-placement="bottom" >
+						<option value="">请选择分类</option>
+						<option value="1">日常保洁</option>						
+						<option value="2">擦窗清洁</option>																
+						<option value="3">家电清洗</option>																
+						<option value="4">买菜做饭</option>																
+						<option value="5">宴会帮工</option>																
+						<option value="6">酒席小工</option>																
+						<option value="7">皮具保养</option>
+						<option value="8">家常洗衣</option>																
+						<option value="9">鞋类洗护</option>																
+						<option value="10">家电维修</option>
+						<option value="11">管道维修</option>						
+						<option value="12">水电维修</option>																
+						<option value="13">上门开锁</option>																
+						<option value="14">居家家护</option>																
+						<option value="15">月嫂</option>																
+						<option value="16">育儿嫂</option>																
+						<option value="17">老人陪护</option>
+						<option value="18">病人陪护</option>																																																						
+					</select>
+				</div>
+			</div>
+		</div>
+		
+		</div>
+		
+		<div class="col-xs-12" id="goodlist">
+		<!-- PAGE CONTENT BEGINS -->
+			<table id="grid-table" class='col-xs-12'></table>
+			<div id="grid-pager"></div>
+		</div><!-- /.col -->
+		
+		<div class="col-xs-3" style="clear:both;float: initial;margin-top: 70px;">
+	        <div class="form-group">
+				<button class="btn btn-info" type="button" style="margin-left: 30%;" onclick="submitaction()">
+					<i class="icon-ok bigger-110"></i>
+					确定
+				</button>
+				<button class="btn" type="button" style="margin-left: 20%;" onclick="goback()">
+					<i class="icon-undo bigger-110"></i>
+					取消
+				</button>
+			</div>
+		</div>
+</form>
+<script type="text/javascript">
+	//初始化
+	 var myDropzone =new Dropzone("div#dropzone",{ 
+		url: "../api/file/adminupload",
+		paramName: "filedata", 
+	    maxFilesize: 1.0, //mb
+	    maxFiles: 1,//最大文件数量
+		addRemoveLinks : true,
+		dictDefaultMessage :'<div class="dz-default dz-message" style="font-size:12px"><span class="bigger-150 bolder"><i class="icon-caret-right red"></i> 拖拽文件</span><span class="smaller-80 grey">(或者点击)上传 <br /> 文件尺寸:320px*175px <br /> 文件大小:1MB</span> <br /><i class="upload-icon icon-cloud-upload blue icon-3x"></i></div>',
+		previewTemplate: "<div style='width:330px' class=\"dz-preview dz-file-preview\">\n  <div style='height:160px;' class=\"dz-details\">\n    <div class=\"dz-filename\"><span data-dz-name></span></div>\n    <div class=\"dz-size\" data-dz-size></div>\n    <img style='width:320px;height:175px;' data-dz-thumbnail />\n  </div>\n  <div class=\"progress progress-small progress-striped active\"><div class=\"progress-bar progress-bar-success\" data-dz-uploadprogress></div></div>\n  <div class=\"dz-success-mark\"><span></span></div>\n  <div class=\"dz-error-mark\"><span></span></div>\n  <div class=\"dz-error-message\"><span data-dz-errormessage></span></div>\n</div>",
+		init:function(){
+	            this.on("addedfile", function(file) { 
+	            });
+	            this.on("success",function(file,data) {
+	            	var result = data.result;
+	            	var list = eval('('+result+')').fileidList;
+	            	var fileid = list[0];
+	            	file.id = fileid;
+	            	$("form").append("<input class='classFile' type='hidden' name='fileId' value='"+fileid+"' id='file"+file.id+"' />");
+	            });
+	            this.on("removedfile",function(file){
+	            	if(file.status=='success'){
+	            		$("#file"+file.id).remove();
+	            	}
+	            });
+	        }
+	});
+	
+	$("#grid-table").jqGrid({
+	        datatype: "json",
+	        colModel: [
+				{ label: '关联名称', name: 'childname',width: 100},
+				{ label: '商品名称', name: 'name',width: 100},
+	        ],
+	        multiselect: true,
+            multiboxonly: true,
+            onSelectRow: function (rowId, status, e) {
+            	rowDataNames = [];
+                var rowIds = jQuery("#jqGrid").jqGrid('getGridParam', 'selarrrow');
+                $(rowIds).each(function(i,rowId){
+                    rowDataNames.push($("#jqGrid").jqGrid('getRowData',rowId))
+                });
+            },
+            viewrecords: true, // show the current page, data rang and total records on the toolbar
+			rowList:[10,20,30],
+            autowidth:true,
+            height: $(window).height()-300,
+            rowNum: 10,
+            pager: "#grid-pager",
+        	jsonReader: { root: 'rows', repeatitems: false ,page: "page",   // json中代表当前页码的数据  
+        	    records: "records", // json中代表数据行总数的数据 
+        	    total: "total"},
+        	loadComplete : function() {
+					var table = this;
+					setTimeout(function(){
+						updatePagerIcons(table);
+					}, 0);
+				}
+        });
+	
+ //上传图片插件-删除监听
+ $(".dz-remove").on("click",function(){
+	$(this).parent().remove();
+	if($("#dropzone:has(.dz-preview)").length==0){
+		$("#dropzone").empty();
+		$("#dropzone").append('<div class=\"dz-default dz-message\"><span>' + myDropzone.options.dictDefaultMessage + '</span></div>');
+	}	
+})	 
+	 
+function submitaction(){
+// 	$(".form-horizontal").submit();
+	var conform = confirm("确认?")
+	if(conform == false){
+		return;
+	}
+    
+	var cityId = $("#cityselect").val();
+	if(cityId == null || cityId == ""){
+		alert('请先选择城市信息');
+		return;
+	}
+	
+	var categoryid = $("#sel").val();
+	if(categoryid == null || categoryid == ""){
+		alert('请选择服务分类');
+		return;
+	}
+	
+    $.ajax({
+		url:'./home/inserticon?',
+		type:"post",
+		data:$('.form-horizontal').serialize(),// 你的formid
+		success:function(code){
+			//101.一级分类名称为空  102.分类名称为空  1.成功  
+			if(code == 1){
+				alert("新增成功");
+				loadHtml("./home/goiconlist");
+			}else if(code == 101){
+				alert("数据不能为空");
+				return;
+			}else if(code == 102){
+				alert("同一个城市只能有一个相同服务");
+				return;
+			}
+		}		
+	})	
+}
+ 
+ 
+function goback(){
+	loadHtml("./home/gocontentlist");
+}
+
+
+function changepro(){
+	var provienceid = $("#proselect").val();
+	//alert(provienceid);
+	if(provienceid != ""){
+		$.ajax({
+			type: "post",
+			url: "./home/changeprovience",
+			data: {provienceid :provienceid},
+			success: function(msg){
+				var data = eval("("+msg+")");
+				var list = data.cityes;
+				$("#cityselect").empty();
+				var html = '';
+				html += '<option value="">请选择市</option>';
+				if(list != null && list.length > 0){
+					for(var i = 0; i < list.length; i++){
+						html += '<option value="'+list[i].id+'">'+list[i].name+'</option>';
+					}
+				}
+				$("#cityselect").append(html);
+			},
+			error:function (){
+				alert("错误");
+			}
+		});
+	}
+}
+
+var type = 0;
+//判断分类名称
+function change(){
+	sel = $("#cityselect").val();
+	/* var cityid = $("#cityselect").val();
+	if(cityid == null || cityid==""){
+		alert('请先选择城市信息');
+		loadHtml("./home/goaddcontent");
+		return;
+	}
+	if(sel == null || sel == ""){
+		return;
+	} */
+	if(sel != ""){
+		$.ajax({
+			type: "post",
+			url: "./home/getCityCategory",
+			data: {cityid :sel},
+			success: function(msg){
+				var data = eval("("+msg+")");
+				var list = data.cityCatrgoty;
+				$("#sel").empty();
+				var html = '';
+				html += '<option value="">请选择分类</option>';
+				if(list != null && list.length > 0){
+					for(var i = 0; i < list.length; i++){
+						html += '<option value="'+list[i].id+'">'+list[i].name+'</option>';
+					}
+				}
+				$("#cityselect").append(html);
+			},
+			error:function (){
+				alert("错误");
+			}
+		});	
+	}
+	
+	
+	
+	
+}
+
+</script>
+</body>
+</html>

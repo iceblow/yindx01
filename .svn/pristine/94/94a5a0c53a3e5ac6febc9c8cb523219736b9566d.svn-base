@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.OrderPoolMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.OrderPool" >
+    <id column="orderid" property="orderid" jdbcType="INTEGER" />
+    <result column="auntid" property="auntid" jdbcType="INTEGER" />
+    <result column="user_type" property="user_type" jdbcType="INTEGER" />
+    <result column="orderid_user" property="orderid_user" jdbcType="INTEGER" />
+    <result column="totime" property="totime" jdbcType="VARCHAR" />
+    <result column="longitude" property="longitude" jdbcType="DOUBLE" />
+    <result column="latitude" property="latitude" jdbcType="DOUBLE" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="tip_state" property="tipState" jdbcType="TINYINT" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="price_tip" property="priceTip" jdbcType="DECIMAL" />
+    <result column="order_type" property="orderType" jdbcType="TINYINT" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+    <result column="aunt_m_count" property="aunt_m_count" jdbcType="INTEGER" />
+    <result column="aunt_w_count" property="aunt_w_count" jdbcType="INTEGER" />
+    <result column="categoryid" property="categoryid" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    orderid, auntid,orderid_user, totime,longitude, latitude, title, address, tip_state, price,price_tip, order_type,user_type, state,addtime
+    ,aunt_m_count,aunt_w_count,categoryid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_order_pool
+    where orderid = #{orderid,jdbcType=INTEGER}
+  </select>
+  <select id="selectListByUserOrderId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_order_pool
+    where orderid_user = #{0}
+  </select>
+   <select id="selectListByUserIdAndType" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_order_pool
+    where ((auntid = #{0} and user_type = #{1}) or auntid = 0)  and state = 1 order by addtime desc
+  </select>
+  
+  <select id="selectListByOrderUser" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_order_pool
+    where orderid_user = #{0} and state = #{1} order by addtime desc
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_order_pool
+    where orderid = #{orderid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByUserOrderId" parameterType="java.lang.Integer" >
+    delete from t_order_pool
+    where orderid_user = #{0}
+  </delete>
+  <delete id="deleteOrderPoolDate" parameterType="java.lang.Integer" >
+    delete from t_order_pool
+    where orderid_user = #{0}
+  </delete>
+  <delete id="deleteAuntOrCompanyData" parameterType="java.lang.Integer" >
+    delete from t_order_pool
+    where orderid_user = #{0} and auntid = #{1} and user_type = #{2}
+  </delete>
+  
+  <insert id="insert" parameterType="com.uncleserver.model.OrderPool" >
+    insert into t_order_pool (orderid, auntid,user_type,orderid_user, totime, longitude, latitude,
+      title, address, tip_state, 
+      price,price_tip, order_type, state,addtime,aunt_m_count,aunt_w_count,categoryid
+      )
+    values (#{orderid,jdbcType=INTEGER}, #{auntid,jdbcType=INTEGER}, #{user_type,jdbcType=INTEGER},#{orderid_user,jdbcType=INTEGER}, #{totime,jdbcType=VARCHAR}, 
+      #{longitude,jdbcType=DOUBLE},#{latitude,jdbcType=DOUBLE},#{title,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{tipState,jdbcType=TINYINT}, 
+      #{price,jdbcType=DECIMAL},#{priceTip,jdbcType=DECIMAL}, #{orderType,jdbcType=TINYINT},#{state,jdbcType=TINYINT}, #{addtime,jdbcType=TIMESTAMP},
+       #{aunt_m_count,jdbcType=INTEGER},#{aunt_w_count,jdbcType=INTEGER}, #{categoryid,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.OrderPool" >
+    insert into t_order_pool
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderid != null" >
+        orderid,
+      </if>
+      <if test="auntid != null" >
+        auntid,
+      </if>
+      <if test="user_type != null" >
+        user_type,
+      </if>
+      <if test="orderid_user != null" >
+        orderid_user,
+      </if>
+      <if test="totime != null" >
+        totime,
+      </if>
+      <if test="longitude != null" >
+        longitude,
+      </if>
+      <if test="latitude != null" >
+        latitude,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="tipState != null" >
+        tip_state,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="priceTip != null" >
+        price_tip,
+      </if>
+      <if test="orderType != null" >
+        order_type,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+       <if test="aunt_m_count != null" >
+        aunt_m_count,
+      </if>
+        <if test="aunt_w_count != null" >
+        aunt_w_count,
+      </if>
+        <if test="categoryid != null" >
+        categoryid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderid != null" >
+        #{orderid,jdbcType=INTEGER},
+      </if>
+      <if test="auntid != null" >
+        #{auntid,jdbcType=INTEGER},
+      </if>
+      <if test="user_type != null" >
+        #{user_type,jdbcType=INTEGER},
+      </if>
+      <if test="orderid_user != null" >
+        #{orderid_user,jdbcType=INTEGER},
+      </if>
+      <if test="totime != null" >
+        #{totime,jdbcType=VARCHAR},
+      </if>
+      <if test="longitude != null" >
+        #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="latitude != null" >
+        #{latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="tipState != null" >
+        #{tipState,jdbcType=TINYINT},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="priceTip != null" >
+        #{priceTip,jdbcType=DECIMAL},
+      </if>
+      <if test="orderType != null" >
+        #{orderType,jdbcType=TINYINT},
+      </if>
+       <if test="state != null" >
+        #{state,jdbcType=TINYINT},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+       <if test="aunt_m_count != null" >
+        #{aunt_m_count,jdbcType=INTEGER},
+      </if>
+       <if test="aunt_w_count != null" >
+        #{aunt_w_count,jdbcType=INTEGER},
+      </if>
+       <if test="categoryid != null" >
+        #{categoryid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.OrderPool" >
+    update t_order_pool
+    <set >
+      <if test="auntid != null" >
+        auntid = #{auntid,jdbcType=INTEGER},
+      </if>
+      <if test="orderid_user != null" >
+        auntid = #{orderid_user,jdbcType=INTEGER},
+      </if>
+      <if test="user_type != null" >
+        user_type = #{user_type,jdbcType=INTEGER},
+      </if>
+      <if test="totime != null" >
+        totime = #{totime,jdbcType=VARCHAR},
+      </if>
+      <if test="longitude != null" >
+        longitude = #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="latitude != null" >
+        totime = #{latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="tipState != null" >
+        tip_state = #{tipState,jdbcType=TINYINT},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="priceTip != null" >
+        price_tip = #{priceTip,jdbcType=DECIMAL},
+      </if>
+      <if test="orderType != null" >
+        order_type = #{orderType,jdbcType=TINYINT},
+      </if>
+       <if test="state != null" >
+        #{state,jdbcType=TINYINT},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+       <if test="aunt_m_count != null" >
+        aunt_m_count = #{aunt_m_count,jdbcType=INTEGER},
+      </if>
+        <if test="aunt_w_count != null" >
+        aunt_w_count = #{aunt_w_count,jdbcType=INTEGER},
+      </if>
+       <if test="categoryid != null" >
+        categoryid = #{categoryid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where orderid = #{orderid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.OrderPool" >
+    update t_order_pool
+    set auntid = #{auntid,jdbcType=INTEGER},user_type = #{user_type,jdbcType=INTEGER},
+      orderid_user = #{orderid_user,jdbcType=INTEGER},
+      totime = #{totime,jdbcType=VARCHAR},
+      longitude = #{longitude,jdbcType=DOUBLE},
+      latitude = #{latitude,jdbcType=DOUBLE},
+      title = #{title,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      tip_state = #{tipState,jdbcType=TINYINT},
+      price = #{price,jdbcType=DECIMAL},
+      price_tip = #{priceTip,jdbcType=DECIMAL},
+      order_type = #{orderType,jdbcType=TINYINT},
+      state = #{state,jdbcType=TINYINT},
+      addtime = #{addtime,jdbcType=TIMESTAMP},
+      aunt_m_count = #{aunt_m_count,jdbcType=INTEGER},
+      aunt_w_count = #{aunt_w_count,jdbcType=INTEGER},
+      categoryid = #{categoryid,jdbcType=INTEGER}
+    where orderid = #{orderid,jdbcType=INTEGER}
+  </update>
+  <select id="getPendingOrder" resultMap="BaseResultMap">
+    select *
+    from t_order_pool where ( auntid = #{companyid} or auntid=0 ) and user_type = 1 
+    order by addtime desc
+    <if test="startPage != null and rows != null ">limit #{startPage}, #{rows}</if>
+  </select>
+  
+  <select id="getPendingOrderCount" resultType="java.lang.Long">
+    select count(*)
+    from t_order_pool where user_type = 1 and auntid = #{companyid}
+  </select>
+</mapper>

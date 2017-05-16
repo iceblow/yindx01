@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.PointProgressMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.PointProgress" >
+    <id column="recordid" property="recordid" jdbcType="INTEGER" />
+    <result column="userid" property="userid" jdbcType="INTEGER" />
+    <result column="user_info" property="userInfo" jdbcType="TINYINT" />
+    <result column="first_order" property="firstOrder" jdbcType="TINYINT" />
+    <result column="share_app" property="shareApp" jdbcType="TINYINT" />
+    <result column="updatetime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    recordid, userid, user_info, first_order, share_app, updatetime, addtime
+  </sql>
+   <select id="selectByUserid" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_point_progress
+    where userid = #{userid,jdbcType=INTEGER}
+  </select>
+  
+   <select id="selectByUseridToday" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_point_progress
+    where userid = #{userid,jdbcType=INTEGER} and TIMESTAMPDIFF(day,updatetime,now()) = 0
+  </select>
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_point_progress
+    where recordid = #{recordid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_point_progress
+    where recordid = #{recordid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.PointProgress" >
+    insert into t_point_progress (recordid, userid, user_info, 
+      first_order, share_app, updatetime, 
+      addtime)
+    values (#{recordid,jdbcType=INTEGER}, #{userid,jdbcType=INTEGER}, #{userInfo,jdbcType=TINYINT}, 
+      #{firstOrder,jdbcType=TINYINT}, #{shareApp,jdbcType=TINYINT}, #{updatetime,jdbcType=TIMESTAMP}, 
+      #{addtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.PointProgress" >
+    insert into t_point_progress
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="recordid != null" >
+        recordid,
+      </if>
+      <if test="userid != null" >
+        userid,
+      </if>
+      <if test="userInfo != null" >
+        user_info,
+      </if>
+      <if test="firstOrder != null" >
+        first_order,
+      </if>
+      <if test="shareApp != null" >
+        share_app,
+      </if>
+      <if test="updatetime != null" >
+        updatetime,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="recordid != null" >
+        #{recordid,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null" >
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="userInfo != null" >
+        #{userInfo,jdbcType=TINYINT},
+      </if>
+      <if test="firstOrder != null" >
+        #{firstOrder,jdbcType=TINYINT},
+      </if>
+      <if test="shareApp != null" >
+        #{shareApp,jdbcType=TINYINT},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.PointProgress" >
+    update t_point_progress
+    <set >
+      <if test="userid != null" >
+        userid = #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="userInfo != null" >
+        user_info = #{userInfo,jdbcType=TINYINT},
+      </if>
+      <if test="firstOrder != null" >
+        first_order = #{firstOrder,jdbcType=TINYINT},
+      </if>
+      <if test="shareApp != null" >
+        share_app = #{shareApp,jdbcType=TINYINT},
+      </if>
+      <if test="updatetime != null" >
+        updatetime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where recordid = #{recordid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.PointProgress" >
+    update t_point_progress
+    set userid = #{userid,jdbcType=INTEGER},
+      user_info = #{userInfo,jdbcType=TINYINT},
+      first_order = #{firstOrder,jdbcType=TINYINT},
+      share_app = #{shareApp,jdbcType=TINYINT},
+      updatetime = #{updatetime,jdbcType=TIMESTAMP},
+      addtime = #{addtime,jdbcType=TIMESTAMP}
+    where recordid = #{recordid,jdbcType=INTEGER}
+  </update>
+</mapper>

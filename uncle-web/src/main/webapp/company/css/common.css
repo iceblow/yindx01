@@ -1,0 +1,22 @@
+.nav-search .btn + .btn{
+	margin-left:10px;
+}
+ .form-horizontal .control-label {
+	font-size:13px;
+	font-weight:bold;
+	/* text-align: left; */
+}
+textarea,input[type="text"],input[type="password"], input[type="datetime"],
+ input[type="datetime-local"], input[type="date"], input[type="month"], 
+ input[type="time"], input[type="week"], input[type="number"], input[type="email"],
+ input[type="url"], input[type="search"], input[type="tel"], input[type="color"], {
+ 	/* right:20px; */
+ 	height:23px;
+ 	font-size:13px;
+    margin-top: 2px;
+ } 
+.maskId{
+	height:23px;
+ 	font-size:13px;
+    margin-top: 2px;
+}

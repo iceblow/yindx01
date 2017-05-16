@@ -1,0 +1,287 @@
+package com.uncleserver.modelVo;
+
+import java.util.List;
+
+public class OrderAuntDetailValue {
+
+	private int orderid;
+	private String servername;
+	private int categoryid;
+	private String timetitle;
+	private String address;
+	private int paylasttime;
+	private String servertime;
+	private int tip_state;
+	private int state;
+	private int accept_type;
+	private int comment_state;
+	private String expect_time;
+	private String day_time;
+	private String server_time;
+	private String distance;
+	private String book;
+	private List<String> picurlList;
+	private String longitude;
+	private String latitude;
+	private String phone;
+	private String rname;
+	private String sex;
+	private String addressname;
+	private String addressdetail;
+	private String contentdes;
+	private int order_type;
+	private int aunt_m_count;
+	private int aunt_w_count;
+	private String start_time;
+	private String end_time;
+	private String ordernum;
+
+	public String getDistance() {
+		return distance;
+	}
+
+	public void setDistance(String distance) {
+		this.distance = distance;
+	}
+
+	public String getBook() {
+		return book;
+	}
+
+	public void setBook(String book) {
+		this.book = book;
+	}
+
+	public List<String> getPicurlList() {
+		return picurlList;
+	}
+
+	public void setPicurlList(List<String> picurlList) {
+		this.picurlList = picurlList;
+	}
+
+	public String getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(String longitude) {
+		this.longitude = longitude;
+	}
+
+	public String getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(String latitude) {
+		this.latitude = latitude;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getRname() {
+		return rname;
+	}
+
+	public void setRname(String rname) {
+		this.rname = rname;
+	}
+
+	public String getSex() {
+		return sex;
+	}
+
+	public void setSex(String sex) {
+		this.sex = sex;
+	}
+
+	public String getAddressname() {
+		return addressname;
+	}
+
+	public void setAddressname(String addressname) {
+		this.addressname = addressname;
+	}
+
+	public String getAddressdetail() {
+		return addressdetail;
+	}
+
+	public void setAddressdetail(String addressdetail) {
+		this.addressdetail = addressdetail;
+	}
+
+	public int getOrderid() {
+		return orderid;
+	}
+
+	public void setOrderid(int orderid) {
+		this.orderid = orderid;
+	}
+
+	public String getServername() {
+		return servername;
+	}
+
+	public void setServername(String servername) {
+		this.servername = servername;
+	}
+
+	public int getCategoryid() {
+		return categoryid;
+	}
+
+	public void setCategoryid(int categoryid) {
+		this.categoryid = categoryid;
+	}
+
+	public String getTimetitle() {
+		return timetitle;
+	}
+
+	public void setTimetitle(String timetitle) {
+		this.timetitle = timetitle;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public int getPaylasttime() {
+		return paylasttime;
+	}
+
+	public void setPaylasttime(int paylasttime) {
+		this.paylasttime = paylasttime;
+	}
+
+	public String getServertime() {
+		return servertime;
+	}
+
+	public void setServertime(String servertime) {
+		this.servertime = servertime;
+	}
+
+	public int getState() {
+		return state;
+	}
+
+	public void setState(int state) {
+		this.state = state;
+	}
+
+	public int getAccept_type() {
+		return accept_type;
+	}
+
+	public void setAccept_type(int accept_type) {
+		this.accept_type = accept_type;
+	}
+
+	public int getComment_state() {
+		return comment_state;
+	}
+
+	public void setComment_state(int comment_state) {
+		this.comment_state = comment_state;
+	}
+
+	public String getExpect_time() {
+		return expect_time;
+	}
+
+	public void setExpect_time(String expect_time) {
+		this.expect_time = expect_time;
+	}
+
+	public String getDay_time() {
+		return day_time;
+	}
+
+	public void setDay_time(String day_time) {
+		this.day_time = day_time;
+	}
+
+	public String getServer_time() {
+		return server_time;
+	}
+
+	public void setServer_time(String server_time) {
+		this.server_time = server_time;
+	}
+
+	public int getTip_state() {
+		return tip_state;
+	}
+
+	public void setTip_state(int tip_state) {
+		this.tip_state = tip_state;
+	}
+
+	public String getContentdes() {
+		return contentdes;
+	}
+
+	public void setContentdes(String contentdes) {
+		this.contentdes = contentdes;
+	}
+
+	public int getOrder_type() {
+		return order_type;
+	}
+
+	public void setOrder_type(int order_type) {
+		this.order_type = order_type;
+	}
+
+	public int getAunt_m_count() {
+		return aunt_m_count;
+	}
+
+	public void setAunt_m_count(int aunt_m_count) {
+		this.aunt_m_count = aunt_m_count;
+	}
+
+	public int getAunt_w_count() {
+		return aunt_w_count;
+	}
+
+	public void setAunt_w_count(int aunt_w_count) {
+		this.aunt_w_count = aunt_w_count;
+	}
+
+	public String getStart_time() {
+		return start_time;
+	}
+
+	public void setStart_time(String start_time) {
+		this.start_time = start_time;
+	}
+
+	public String getEnd_time() {
+		return end_time;
+	}
+
+	public void setEnd_time(String end_time) {
+		this.end_time = end_time;
+	}
+
+	public String getOrdernum() {
+		return ordernum;
+	}
+
+	public void setOrdernum(String ordernum) {
+		this.ordernum = ordernum;
+	}
+    
+}

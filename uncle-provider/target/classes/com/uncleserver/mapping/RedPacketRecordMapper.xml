@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.RedPacketRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.RedPacketRecord" >
+    <id column="dataid" property="dataid" jdbcType="INTEGER" />
+    <result column="userid" property="userid" jdbcType="INTEGER" />
+    <result column="user_type" property="userType" jdbcType="INTEGER" />
+    <result column="orderid" property="orderid" jdbcType="INTEGER" />
+    <result column="count" property="count" jdbcType="DECIMAL" />
+    <result column="type" property="type" jdbcType="TINYINT" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    dataid, userid, user_type, orderid, count, type, state, addtime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_red_packet_record
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </select>
+  
+   <select id="selectByUserIdAndPage" resultMap="BaseResultMap"  >
+    select 
+    <include refid="Base_Column_List" />
+    from t_red_packet_record where userid=#{0} and user_type=#{1} order by addtime desc limit #{2},#{3}
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_red_packet_record
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.RedPacketRecord" >
+  <selectKey resultType="java.lang.Integer" order="AFTER"
+			keyProperty="dataid">
+			SELECT LAST_INSERT_ID() AS dataid
+		</selectKey>
+    insert into t_red_packet_record (dataid, userid, user_type, 
+      orderid, count, type, 
+      state, addtime)
+    values (#{dataid,jdbcType=INTEGER}, #{userid,jdbcType=INTEGER}, #{userType,jdbcType=INTEGER}, 
+      #{orderid,jdbcType=INTEGER}, #{count,jdbcType=DECIMAL}, #{type,jdbcType=TINYINT}, 
+      #{state,jdbcType=TINYINT}, #{addtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.RedPacketRecord" >
+    insert into t_red_packet_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="dataid != null" >
+        dataid,
+      </if>
+      <if test="userid != null" >
+        userid,
+      </if>
+      <if test="userType != null" >
+        user_type,
+      </if>
+      <if test="orderid != null" >
+        orderid,
+      </if>
+      <if test="count != null" >
+        count,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="dataid != null" >
+        #{dataid,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null" >
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="userType != null" >
+        #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="orderid != null" >
+        #{orderid,jdbcType=INTEGER},
+      </if>
+      <if test="count != null" >
+        #{count,jdbcType=DECIMAL},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=TINYINT},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=TINYINT},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.RedPacketRecord" >
+    update t_red_packet_record
+    <set >
+      <if test="userid != null" >
+        userid = #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="userType != null" >
+        user_type = #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="orderid != null" >
+        orderid = #{orderid,jdbcType=INTEGER},
+      </if>
+      <if test="count != null" >
+        count = #{count,jdbcType=DECIMAL},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=TINYINT},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=TINYINT},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.RedPacketRecord" >
+    update t_red_packet_record
+    set userid = #{userid,jdbcType=INTEGER},
+      user_type = #{userType,jdbcType=INTEGER},
+      orderid = #{orderid,jdbcType=INTEGER},
+      count = #{count,jdbcType=DECIMAL},
+      type = #{type,jdbcType=TINYINT},
+      state = #{state,jdbcType=TINYINT},
+      addtime = #{addtime,jdbcType=TIMESTAMP}
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </update>
+</mapper>

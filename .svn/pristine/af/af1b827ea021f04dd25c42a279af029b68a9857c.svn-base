@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.CategoryCityMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.CategoryCity" >
+    <id column="dataid" property="dataid" jdbcType="INTEGER" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="area" property="area" jdbcType="VARCHAR" />
+    <result column="categoryid" property="categoryid" jdbcType="INTEGER" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    dataid, city,area, categoryid, addtime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_category_city
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </select>
+  <select id="selectAreaCidCount" resultType="java.lang.Long" >
+    select 
+    count(dataid)
+    from t_category_city
+    where area = #{0} and  categoryid = #{1}
+  </select>
+  
+  <select id="selectByCity" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_category_city
+    where area = #{area,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_category_city
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.CategoryCity" >
+    insert into t_category_city (dataid, city,area, categoryid, 
+      addtime)
+    values (#{dataid,jdbcType=INTEGER}, #{city,jdbcType=VARCHAR},#{area,jdbcType=VARCHAR},  #{categoryid,jdbcType=INTEGER}, 
+      #{addtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.CategoryCity" >
+    insert into t_category_city
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="dataid != null" >
+        dataid,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="area != null" >
+        area,
+      </if>
+      
+      <if test="categoryid != null" >
+        categoryid,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="dataid != null" >
+        #{dataid,jdbcType=INTEGER},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryid != null" >
+        #{categoryid,jdbcType=INTEGER},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.CategoryCity" >
+    update t_category_city
+    <set >
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        area = #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryid != null" >
+        categoryid = #{categoryid,jdbcType=INTEGER},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.CategoryCity" >
+    update t_category_city
+    set city = #{city,jdbcType=VARCHAR},area = #{area,jdbcType=VARCHAR},
+      categoryid = #{categoryid,jdbcType=INTEGER},
+      addtime = #{addtime,jdbcType=TIMESTAMP}
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </update>
+  
+    <select id="getServiceArea" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_category_city where area = #{city}
+		 order by addtime desc
+    	<if test="startPage != null and rows != null ">limit #{startPage}, #{rows}</if>
+	</select>
+	<select id="getServiceAreaCount" resultType="java.lang.Long">
+		select count(*)
+		from t_category_city where area = #{city}
+	</select>
+</mapper>

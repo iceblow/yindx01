@@ -1,0 +1,572 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.CompanyMapper">
+	<resultMap id="BaseResultMap" type="com.uncleserver.model.Company">
+		<id column="companyid" property="companyid" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="name_letter" property="name_letter" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="TINYINT" />
+		<result column="listpic" property="listpic" jdbcType="INTEGER" />
+		<result column="profile" property="profile" jdbcType="VARCHAR" />
+		<result column="city" property="city" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="password" property="password" jdbcType="VARCHAR" />
+		<result column="logo_picid" property="logoPicid" jdbcType="INTEGER" />
+		<result column="longitude" property="longitude" jdbcType="DOUBLE" />
+		<result column="latitude" property="latitude" jdbcType="DOUBLE" />
+		<result column="year_create" property="yearCreate" jdbcType="DATE" />
+		<result column="people_count" property="peopleCount" jdbcType="INTEGER" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="relation_people" property="relationPeople"
+			jdbcType="VARCHAR" />
+		<result column="relation_phone" property="relationPhone"
+			jdbcType="VARCHAR" />
+		<result column="state_del" property="stateDel" jdbcType="TINYINT" />
+		<result column="title" property="title" jdbcType="TINYINT" />
+		<result column="star" property="star" jdbcType="TINYINT" />
+		<result column="main_business" property="mainBusiness"
+			jdbcType="VARCHAR" />
+		<result column="time_train" property="timeTrain" jdbcType="TINYINT" />
+		<result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<resultMap id="ResultMapWithBLOBs" type="com.uncleserver.model.CompanyWithBLOBs"
+		extends="BaseResultMap">
+		<result column="piclist" property="piclist" jdbcType="LONGVARCHAR" />
+		<result column="company_detail" property="companyDetail"
+			jdbcType="LONGVARCHAR" />
+	</resultMap>
+
+	<resultMap id="BaseCompanyMap" type="com.uncleserver.modelVo.CompanyModel">
+		<id column="companyid" property="companyid" jdbcType="INTEGER" />
+		<result column="listpic" property="listpic" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="profile" property="profile" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="SearchCompanyMap" type="com.uncleserver.modelVo.SearchCompanyModel">
+		<id column="companyid" property="companyid" jdbcType="INTEGER" />
+		<result column="listpic" property="listpic" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="profile" property="profile" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="selectByNP" resultMap="BaseResultMap">
+		select *
+		from t_company
+		where
+		phone = #{0} and password = #{1}
+	</select>
+	<select id="selectByCondition" resultMap="BaseCompanyMap">
+		select company.companyid, company.listpic,company.name,company.profile
+		from t_company company, t_company_extra extra, t_company_range
+		comrange
+		where company.companyid = extra.companyid and
+		comrange.companyid =
+		company.companyid and company.state_del = 1
+		<if test="companytype != 3">
+			and company.type=#{companytype}
+		</if>
+		<if test="name_letter != null and name_letter.length() > 0">
+			and company.name_letter=#{name_letter}
+		</if>
+		<if test="comment_type != 0">
+			and extra.score > 4
+		</if>
+		<if test="yeartype!= 0">
+     <![CDATA[  and TIMESTAMPDIFF(YEAR,company.year_create,now()) = #{yeartype}]]>
+		</if>
+		<if test="servertype != 0">
+			and comrange.categoryid = #{servertype}
+		</if>
+		and <![CDATA[  getdistance(#{longitude},  #{latitude},company.longitude,company.latitude) >= #{distance_from}]]>
+		<if test="distance_to !=0">
+			and <![CDATA[  getdistance(#{longitude},  #{latitude},company.longitude,company.latitude) <= #{distance_to}]]>
+		</if>
+		<if test="agetype !=0">
+			and company.title = #{agetype}
+		</if>
+		group by company.companyid order by <![CDATA[  getdistance(#{longitude},  #{latitude},company.longitude,company.latitude) ]]>
+		limit #{offest},#{pageSize}
+	</select>
+
+	<select id="selectUserByPhone" resultMap="ResultMapWithBLOBs">
+		select
+		<include refid="Base_Column_List" />
+		from t_company
+		where phone = #{0}
+	</select>
+
+	<select id="selectByCityAndType" resultMap="ResultMapWithBLOBs">
+		select
+		<include refid="Base_Column_List" />
+		from t_company
+		where city = #{0} and type = #{1} order by addtime desc
+		Limit #{2},#{3}
+	</select>
+
+	<select id="selectByCity" resultMap="ResultMapWithBLOBs"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from t_company
+		where city = #{cityName,jdbcType=VARCHAR} order by
+		addtime desc
+	</select>
+
+	<!-- 查询该手机号用户的数量 -->
+	<select id="manageCountConpanyByCityAndType" resultType="java.lang.Long">
+		select
+		count(companyid)
+		from t_company
+		where city = #{0} and type = #{1}
+	</select>
+
+	<!-- 查询该手机号用户的数量 -->
+	<select id="selectUserCountByPhone" resultType="java.lang.Long">
+		select
+		count(companyid)
+		from t_company
+		where phone = #{0}
+	</select>
+
+	<sql id="Base_Column_List">
+		companyid, name, type, listpic, profile, city, phone,
+		password, logo_picid,
+		longitude, latitude, year_create, people_count,
+		address,
+		relation_people, relation_phone,
+		state_del, title, star,
+		main_business, time_train, addtime
+	</sql>
+	<sql id="Blob_Column_List">
+		piclist, company_detail
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from t_company
+		where companyid = #{companyid,jdbcType=INTEGER}
+	</select>
+
+	<select id="searchCompanyByName" resultMap="SearchCompanyMap">
+		select
+		companyid,name,listpic,profile
+		from t_company
+		where state_del = 1 and
+		type = #{3} and name like CONCAT('%',#{0},'%')
+		limit #{1},#{2}
+	</select>
+
+
+	<select id="selectSearchCount" resultType="java.lang.Long">
+		select
+		count(companyid)
+		from t_company
+		where state_del = 1 and type = #{1} and
+		name like CONCAT('%',#{0},'%')
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from
+		t_company
+		where companyid = #{companyid,jdbcType=INTEGER}
+	</delete>
+
+	<select id="selectByDistance" resultMap="ResultMapWithBLOBs">
+		select
+		<include refid="Base_Column_List" />
+		from t_company <![CDATA[ where getdistance( #{0},  #{1},longitude,latitude) <=#{2}]]>
+	</select>
+
+
+	<insert id="insert" parameterType="com.uncleserver.model.CompanyWithBLOBs">
+		INSERT INTO
+		`db_zhika`.`t_company` (
+		`companyid`,`name`,`type`,`listpic`,
+		`profile`,`city`,`phone`,`password`,
+		`logo_picid`,`longitude`,`latitude`,`piclist`,
+		`year_create`,`people_count`,`address`,`relation_people`,
+		`relation_phone`,`state_del`,`title`,`star`,
+		`main_business`,`company_detail`,`time_train`,`addtime`,
+		`name_letter`,`login_account`
+		)
+		VALUES
+		(
+		#{companyid},#{name},#{type},#{listpic},
+		#{profile},#{city},#{phone},#{password},
+		#{logoPicid},#{longitude},#{latitude},#{piclist},
+		#{yearCreate},#{peopleCount},#{address},#{relationPeople},
+		#{relationPhone},#{stateDel},#{title},#{star},
+		#{mainBusiness},#{companyDetail},#{timeTrain},#{addtime},
+		#{name_letter},#{phone}
+		);
+
+
+	</insert>
+	<insert id="insertSelective" parameterType="com.uncleserver.model.CompanyWithBLOBs">
+		insert into t_company
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="companyid != null">
+				companyid,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="type != null">
+				type,
+			</if>
+			<if test="listpic != null">
+				listpic,
+			</if>
+			<if test="profile != null">
+				profile,
+			</if>
+			<if test="city != null">
+				city,
+			</if>
+			<if test="phone != null">
+				phone,
+			</if>
+			<if test="password != null">
+				password,
+			</if>
+			<if test="logoPicid != null">
+				logo_picid,
+			</if>
+			<if test="longitude != null">
+				longitude,
+			</if>
+			<if test="latitude != null">
+				latitude,
+			</if>
+			<if test="yearCreate != null">
+				year_create,
+			</if>
+			<if test="peopleCount != null">
+				people_count,
+			</if>
+			<if test="address != null">
+				address,
+			</if>
+			<if test="relationPeople != null">
+				relation_people,
+			</if>
+			<if test="relationPhone != null">
+				relation_phone,
+			</if>
+			<if test="stateDel != null">
+				state_del,
+			</if>
+			<if test="title != null">
+				title,
+			</if>
+			<if test="star != null">
+				star,
+			</if>
+			<if test="mainBusiness != null">
+				main_business,
+			</if>
+			<if test="timeTrain != null">
+				time_train,
+			</if>
+			<if test="addtime != null">
+				addtime,
+			</if>
+			<if test="piclist != null">
+				piclist,
+			</if>
+			<if test="companyDetail != null">
+				company_detail,
+			</if>
+			<if test="name_letter !=null">
+				name_letter,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="companyid != null">
+				#{companyid,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=TINYINT},
+			</if>
+			<if test="listpic != null">
+				#{listpic,jdbcType=INTEGER},
+			</if>
+			<if test="profile != null">
+				#{profile,jdbcType=VARCHAR},
+			</if>
+			<if test="city != null">
+				#{city,jdbcType=VARCHAR},
+			</if>
+			<if test="phone != null">
+				#{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				#{password,jdbcType=VARCHAR},
+			</if>
+			<if test="logoPicid != null">
+				#{logoPicid,jdbcType=INTEGER},
+			</if>
+			<if test="longitude != null">
+				#{longitude,jdbcType=DOUBLE},
+			</if>
+			<if test="latitude != null">
+				#{latitude,jdbcType=DOUBLE},
+			</if>
+			<if test="yearCreate != null">
+				#{yearCreate,jdbcType=DATE},
+			</if>
+			<if test="peopleCount != null">
+				#{peopleCount,jdbcType=INTEGER},
+			</if>
+			<if test="address != null">
+				#{address,jdbcType=VARCHAR},
+			</if>
+			<if test="relationPeople != null">
+				#{relationPeople,jdbcType=VARCHAR},
+			</if>
+			<if test="relationPhone != null">
+				#{relationPhone,jdbcType=VARCHAR},
+			</if>
+			<if test="stateDel != null">
+				#{stateDel,jdbcType=TINYINT},
+			</if>
+			<if test="title != null">
+				#{title,jdbcType=TINYINT},
+			</if>
+			<if test="star != null">
+				#{star,jdbcType=TINYINT},
+			</if>
+			<if test="mainBusiness != null">
+				#{mainBusiness,jdbcType=VARCHAR},
+			</if>
+			<if test="timeTrain != null">
+				#{timeTrain,jdbcType=TINYINT},
+			</if>
+			<if test="addtime != null">
+				#{addtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="piclist != null">
+				#{piclist,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="companyDetail != null">
+				#{companyDetail,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="name_letter != null">
+				#{name_letter,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.CompanyWithBLOBs">
+		update t_company
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=TINYINT},
+			</if>
+			<if test="listpic != null">
+				listpic = #{listpic,jdbcType=INTEGER},
+			</if>
+			<if test="profile != null">
+				profile = #{profile,jdbcType=VARCHAR},
+			</if>
+			<if test="city != null">
+				city = #{city,jdbcType=VARCHAR},
+			</if>
+			<if test="phone != null">
+				phone = #{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				password = #{password,jdbcType=VARCHAR},
+			</if>
+			<if test="logoPicid != null">
+				logo_picid = #{logoPicid,jdbcType=INTEGER},
+			</if>
+			<if test="longitude != null">
+				longitude = #{longitude,jdbcType=DOUBLE},
+			</if>
+			<if test="latitude != null">
+				latitude = #{latitude,jdbcType=DOUBLE},
+			</if>
+			<if test="yearCreate != null">
+				year_create = #{yearCreate,jdbcType=DATE},
+			</if>
+			<if test="peopleCount != null">
+				people_count = #{peopleCount,jdbcType=INTEGER},
+			</if>
+			<if test="address != null">
+				address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="relationPeople != null">
+				relation_people = #{relationPeople,jdbcType=VARCHAR},
+			</if>
+			<if test="relationPhone != null">
+				relation_phone = #{relationPhone,jdbcType=VARCHAR},
+			</if>
+			<if test="stateDel != null">
+				state_del = #{stateDel,jdbcType=TINYINT},
+			</if>
+			<if test="title != null">
+				title = #{title,jdbcType=TINYINT},
+			</if>
+			<if test="star != null">
+				star = #{star,jdbcType=TINYINT},
+			</if>
+			<if test="mainBusiness != null">
+				main_business = #{mainBusiness,jdbcType=VARCHAR},
+			</if>
+			<if test="timeTrain != null">
+				time_train = #{timeTrain,jdbcType=TINYINT},
+			</if>
+			<if test="addtime != null">
+				addtime = #{addtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="piclist != null">
+				piclist = #{piclist,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="companyDetail != null">
+				company_detail = #{companyDetail,jdbcType=LONGVARCHAR},
+			</if>
+		</set>
+		where companyid = #{companyid,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.uncleserver.model.CompanyWithBLOBs">
+		update
+		t_company
+		set name = #{name,jdbcType=VARCHAR},
+		type =
+		#{type,jdbcType=TINYINT},
+		listpic = #{listpic,jdbcType=INTEGER},
+		profile = #{profile,jdbcType=VARCHAR},
+		city = #{city,jdbcType=VARCHAR},
+		phone = #{phone,jdbcType=VARCHAR},
+		password =
+		#{password,jdbcType=VARCHAR},
+		logo_picid =
+		#{logoPicid,jdbcType=INTEGER},
+		longitude =
+		#{longitude,jdbcType=DOUBLE},
+		latitude = #{latitude,jdbcType=DOUBLE},
+		year_create = #{yearCreate,jdbcType=DATE},
+		people_count =
+		#{peopleCount,jdbcType=INTEGER},
+		address = #{address,jdbcType=VARCHAR},
+		relation_people = #{relationPeople,jdbcType=VARCHAR},
+		relation_phone =
+		#{relationPhone,jdbcType=VARCHAR},
+		state_del =
+		#{stateDel,jdbcType=TINYINT},
+		title = #{title,jdbcType=TINYINT},
+		star =
+		#{star,jdbcType=TINYINT},
+		main_business =
+		#{mainBusiness,jdbcType=VARCHAR},
+		time_train =
+		#{timeTrain,jdbcType=TINYINT},
+		addtime = #{addtime,jdbcType=TIMESTAMP},
+		piclist = #{piclist,jdbcType=LONGVARCHAR},
+		company_detail =
+		#{companyDetail,jdbcType=LONGVARCHAR}
+		where companyid =
+		#{companyid,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.uncleserver.model.Company">
+		update t_company
+		set name = #{name,jdbcType=VARCHAR},
+		type = #{type,jdbcType=TINYINT},
+		listpic = #{listpic,jdbcType=INTEGER},
+		profile =
+		#{profile,jdbcType=VARCHAR},
+		city = #{city,jdbcType=VARCHAR},
+		phone =
+		#{phone,jdbcType=VARCHAR},
+		password = #{password,jdbcType=VARCHAR},
+		logo_picid = #{logoPicid,jdbcType=INTEGER},
+		longitude =
+		#{longitude,jdbcType=DOUBLE},
+		latitude = #{latitude,jdbcType=DOUBLE},
+		year_create = #{yearCreate,jdbcType=DATE},
+		people_count =
+		#{peopleCount,jdbcType=INTEGER},
+		address = #{address,jdbcType=VARCHAR},
+		relation_people = #{relationPeople,jdbcType=VARCHAR},
+		relation_phone =
+		#{relationPhone,jdbcType=VARCHAR},
+		state_del =
+		#{stateDel,jdbcType=TINYINT},
+		title = #{title,jdbcType=TINYINT},
+		star =
+		#{star,jdbcType=TINYINT},
+		main_business =
+		#{mainBusiness,jdbcType=VARCHAR},
+		time_train =
+		#{timeTrain,jdbcType=TINYINT},
+		addtime = #{addtime,jdbcType=TIMESTAMP}
+		where companyid = #{companyid,jdbcType=INTEGER}
+	</update>
+
+	<select id="exitName" parameterType="string" resultType="boolean">
+  	<![CDATA[ select count(companyid) from t_company where name=#{name} ]]>
+	</select>
+
+	<select id="getMaxId" resultType="int">
+  	<![CDATA[ SELECT MAX(t.companyid) FROM t_company AS t]]>
+	</select>
+
+
+
+	<select id="selectCompanyByPhoneAndName" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_company
+		where 1 = 1
+		<if test="phone != null">and phone like concat('%',#{phone},'%')</if>
+		<if test="name != null">and name like concat('%',#{name},'%')</if>
+		order by addtime desc
+		<if test="startPage != null and rows != null ">limit #{startPage}, #{rows}</if>
+	</select>
+	<select id="selectCompanyByPhoneAndNameCount" resultType="java.lang.Long">
+		select count(*)
+		from t_company
+		where 1 = 1
+		<if test="phone != null">and phone like concat('%',#{phone},'%')</if>
+		<if test="name != null">and name like concat('%',#{name},'%')</if>
+	</select>
+
+	<select id="getAllCompany" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_company
+	</select>
+
+	<update id="updateCompanyUserState">
+		update t_company
+		<set>
+			<if test="stateDel == 0">
+				state_del = 1,
+			</if>
+			<if test="stateDel == 1">
+				state_del = 2,
+			</if>
+			<if test="stateDel == 2">
+				state_del = 1,
+			</if>
+		</set>
+		where companyid = #{companyid}
+	</update>
+	<delete id="deluser">
+		DELETE FROM t_company where companyid=#{companyid}
+	</delete>
+
+	<select id="getCompanyUserByid" resultMap="BaseResultMap">
+		select * from t_company where companyid=#{companyid}
+	</select>
+
+</mapper>

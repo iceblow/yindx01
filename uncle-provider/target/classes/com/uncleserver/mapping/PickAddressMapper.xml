@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.PickAddressMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.PickAddress" >
+    <id column="addressid" property="addressid" jdbcType="INTEGER" />
+    <result column="provience" property="provience" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="area" property="area" jdbcType="VARCHAR" />
+    <result column="userid" property="userid" jdbcType="INTEGER" />
+    <result column="longitude" property="longitude" jdbcType="DOUBLE" />
+    <result column="latitude" property="latitude" jdbcType="DOUBLE" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="rname" property="rname" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="VARCHAR" />
+    <result column="addressname" property="addressname" jdbcType="VARCHAR" />
+    <result column="addressdetail" property="addressdetail" jdbcType="VARCHAR" />
+    <result column="isdefault" property="isdefault" jdbcType="TINYINT" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    addressid, provience, city, area, userid, longitude, latitude, phone, rname, sex, 
+    addressname, addressdetail, isdefault, addtime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_pickaddress
+    where addressid = #{addressid,jdbcType=INTEGER}
+  </select>
+  <select id="getUserAllPickAddress" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_pickaddress
+    where userid = #{userid,jdbcType=INTEGER} order by isdefault desc,addtime desc 
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_pickaddress
+    where addressid = #{addressid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.PickAddress" >
+    insert into t_pickaddress (addressid, provience, city, 
+      area, userid, longitude, 
+      latitude, phone, rname, 
+      sex, addressname, addressdetail, 
+      isdefault, addtime)
+    values (#{addressid,jdbcType=INTEGER}, #{provience,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, 
+      #{area,jdbcType=VARCHAR}, #{userid,jdbcType=INTEGER}, #{longitude,jdbcType=DOUBLE}, 
+      #{latitude,jdbcType=DOUBLE}, #{phone,jdbcType=VARCHAR}, #{rname,jdbcType=VARCHAR}, 
+      #{sex,jdbcType=VARCHAR}, #{addressname,jdbcType=VARCHAR}, #{addressdetail,jdbcType=VARCHAR}, 
+      #{isdefault,jdbcType=TINYINT}, #{addtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.PickAddress" >
+    insert into t_pickaddress
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="addressid != null" >
+        addressid,
+      </if>
+      <if test="provience != null" >
+        provience,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="area != null" >
+        area,
+      </if>
+      <if test="userid != null" >
+        userid,
+      </if>
+      <if test="longitude != null" >
+        longitude,
+      </if>
+      <if test="latitude != null" >
+        latitude,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="rname != null" >
+        rname,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="addressname != null" >
+        addressname,
+      </if>
+      <if test="addressdetail != null" >
+        addressdetail,
+      </if>
+      <if test="isdefault != null" >
+        isdefault,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="addressid != null" >
+        #{addressid,jdbcType=INTEGER},
+      </if>
+      <if test="provience != null" >
+        #{provience,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="userid != null" >
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="longitude != null" >
+        #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="latitude != null" >
+        #{latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="rname != null" >
+        #{rname,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="addressname != null" >
+        #{addressname,jdbcType=VARCHAR},
+      </if>
+      <if test="addressdetail != null" >
+        #{addressdetail,jdbcType=VARCHAR},
+      </if>
+      <if test="isdefault != null" >
+        #{isdefault,jdbcType=TINYINT},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.PickAddress" >
+    update t_pickaddress
+    <set >
+      <if test="provience != null" >
+        provience = #{provience,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        area = #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="userid != null" >
+        userid = #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="longitude != null" >
+        longitude = #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="latitude != null" >
+        latitude = #{latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="rname != null" >
+        rname = #{rname,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="addressname != null" >
+        addressname = #{addressname,jdbcType=VARCHAR},
+      </if>
+      <if test="addressdetail != null" >
+        addressdetail = #{addressdetail,jdbcType=VARCHAR},
+      </if>
+      <if test="isdefault != null" >
+        isdefault = #{isdefault,jdbcType=TINYINT},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where addressid = #{addressid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.PickAddress" >
+    update t_pickaddress
+    set provience = #{provience,jdbcType=VARCHAR},
+      city = #{city,jdbcType=VARCHAR},
+      area = #{area,jdbcType=VARCHAR},
+      userid = #{userid,jdbcType=INTEGER},
+      longitude = #{longitude,jdbcType=DOUBLE},
+      latitude = #{latitude,jdbcType=DOUBLE},
+      phone = #{phone,jdbcType=VARCHAR},
+      rname = #{rname,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=VARCHAR},
+      addressname = #{addressname,jdbcType=VARCHAR},
+      addressdetail = #{addressdetail,jdbcType=VARCHAR},
+      isdefault = #{isdefault,jdbcType=TINYINT},
+      addtime = #{addtime,jdbcType=TIMESTAMP}
+    where addressid = #{addressid,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateUserDefault" parameterType="java.lang.Integer" >
+    update t_pickaddress
+    set isdefault = 0
+    where userid = #{userid,jdbcType=INTEGER}
+  </update>
+</mapper>

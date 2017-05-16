@@ -1,0 +1,12 @@
+validationQuery=SELECT 1 
+#jdbc.url=jdbc:oracle:thin:@10.18.4.111:1521:testdb
+jdbc.driver=com.mysql.jdbc.Driver
+jdbc.url=jdbc:mysql://192.168.1.44:3306/db_zhika
+jdbc.username=root
+jdbc.password=12345678
+#jdbc.username=scotest
+#jdbc.password=test
+#validationQuery=SELECT 1 FROM DUAL
+#jdbc.url=jdbc:oracle:thin:@192.168.1.44:1521:ORCL
+#jdbc.username=yingte
+#jdbc.password=123456

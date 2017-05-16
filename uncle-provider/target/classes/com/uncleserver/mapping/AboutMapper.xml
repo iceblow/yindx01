@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.AboutMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.About" >
+    <id column="dataid" property="dataid" jdbcType="INTEGER" />
+    <result column="app_type" property="appType" jdbcType="TINYINT" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    dataid, app_type, url, addtime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_about
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </select>
+  <select id="selectByAppType" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_about
+    where app_type = #{0}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_about
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.About" >
+    insert into t_about (dataid, app_type, url, 
+      addtime)
+    values (#{dataid,jdbcType=INTEGER}, #{appType,jdbcType=TINYINT}, #{url,jdbcType=VARCHAR}, 
+      #{addtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.About" >
+    insert into t_about
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="dataid != null" >
+        dataid,
+      </if>
+      <if test="appType != null" >
+        app_type,
+      </if>
+      <if test="url != null" >
+        url,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="dataid != null" >
+        #{dataid,jdbcType=INTEGER},
+      </if>
+      <if test="appType != null" >
+        #{appType,jdbcType=TINYINT},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.About" >
+    update t_about
+    <set >
+      <if test="appType != null" >
+        app_type = #{appType,jdbcType=TINYINT},
+      </if>
+      <if test="url != null" >
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.About" >
+    update t_about
+    set app_type = #{appType,jdbcType=TINYINT},
+      url = #{url,jdbcType=VARCHAR},
+      addtime = #{addtime,jdbcType=TIMESTAMP}
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </update>
+</mapper>

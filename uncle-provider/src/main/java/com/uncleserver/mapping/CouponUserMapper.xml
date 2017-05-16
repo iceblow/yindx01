@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.CouponUserMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.CouponUser" >
+    <id column="dataid" property="dataid" jdbcType="INTEGER" />
+    <result column="couponid" property="couponid" jdbcType="INTEGER" />
+    <result column="userid" property="userid" jdbcType="INTEGER" />
+    <result column="coupon_condition" property="couponCondition" jdbcType="DECIMAL" />
+    <result column="discount" property="discount" jdbcType="DECIMAL" />
+    <result column="rangetype" property="rangetype" jdbcType="BIT" />
+    <result column="companyid" property="companyid" jdbcType="INTEGER" />
+    <result column="categoryid" property="categoryid" jdbcType="INTEGER" />
+    <result column="use_stime" property="useStime" jdbcType="TIMESTAMP" />
+    <result column="use_etime" property="useEtime" jdbcType="TIMESTAMP" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    dataid, couponid, userid, coupon_condition, discount, rangetype, companyid, categoryid, 
+    use_stime, use_etime, state, addtime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_coupon_user
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </select>
+  
+   <select id="selectCouponById" resultMap="BaseResultMap"  >
+    select 
+    <include refid="Base_Column_List" />
+    from t_coupon_user
+    where userid = #{0}  <![CDATA[ and  ( TIMESTAMPDIFF(day,use_etime,now()) <= 7
+ or now() <  use_etime ) 
+    ]]>  
+    and state = 0
+    order by addtime desc
+  </select>
+  
+  
+   <select id="selectByUserid" resultType="java.lang.Long">
+    select count(dataid)
+    <include refid="Base_Column_List" />
+    from t_coupon_user
+    where couponid = #{0} and userid = #{1}
+  </select>
+  
+   <select id="selectCouponByUserid" resultType="java.lang.Long">
+    select 
+    <include refid="Base_Column_List" />
+    from t_coupon_user
+    where couponid = #{0} and userid = #{1}
+  </select>
+  
+  
+  <select id="selectCanUseCoupon" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_coupon_user
+    where userid = #{userid} and state = 0 <![CDATA[ and  use_etime > now()]]>
+    and (categoryid = #{cid} or categoryid = 0) and <![CDATA[ (coupon_condition = 0 or coupon_condition <= #{priceCondition}) ]]>
+    <if test="companyid > 0" >
+       and (rangetype  = 0 or (rangetype = 1 or companyid = #{companyid}))
+    </if>
+    <if test="companyid == 0" >
+       and rangetype  = 0
+    </if>
+    
+    
+    order by addtime desc
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_coupon_user
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.CouponUser" >
+    insert into t_coupon_user (dataid, couponid, userid, 
+      coupon_condition, discount, rangetype, 
+      companyid, categoryid, use_stime, 
+      use_etime, state, addtime
+      )
+    values (#{dataid,jdbcType=INTEGER}, #{couponid,jdbcType=INTEGER}, #{userid,jdbcType=INTEGER}, 
+      #{couponCondition,jdbcType=DECIMAL}, #{discount,jdbcType=DECIMAL}, #{rangetype,jdbcType=BIT}, 
+      #{companyid,jdbcType=INTEGER}, #{categoryid,jdbcType=INTEGER}, #{useStime,jdbcType=TIMESTAMP}, 
+      #{useEtime,jdbcType=TIMESTAMP}, #{state,jdbcType=TINYINT}, #{addtime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.CouponUser" >
+    insert into t_coupon_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="dataid != null" >
+        dataid,
+      </if>
+      <if test="couponid != null" >
+        couponid,
+      </if>
+      <if test="userid != null" >
+        userid,
+      </if>
+      <if test="couponCondition != null" >
+        coupon_condition,
+      </if>
+      <if test="discount != null" >
+        discount,
+      </if>
+      <if test="rangetype != null" >
+        rangetype,
+      </if>
+      <if test="companyid != null" >
+        companyid,
+      </if>
+      <if test="categoryid != null" >
+        categoryid,
+      </if>
+      <if test="useStime != null" >
+        use_stime,
+      </if>
+      <if test="useEtime != null" >
+        use_etime,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="dataid != null" >
+        #{dataid,jdbcType=INTEGER},
+      </if>
+      <if test="couponid != null" >
+        #{couponid,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null" >
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="couponCondition != null" >
+        #{couponCondition,jdbcType=DECIMAL},
+      </if>
+      <if test="discount != null" >
+        #{discount,jdbcType=DECIMAL},
+      </if>
+      <if test="rangetype != null" >
+        #{rangetype,jdbcType=BIT},
+      </if>
+      <if test="companyid != null" >
+        #{companyid,jdbcType=INTEGER},
+      </if>
+      <if test="categoryid != null" >
+        #{categoryid,jdbcType=INTEGER},
+      </if>
+      <if test="useStime != null" >
+        #{useStime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="useEtime != null" >
+        #{useEtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=TINYINT},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.CouponUser" >
+    update t_coupon_user
+    <set >
+      <if test="couponid != null" >
+        couponid = #{couponid,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null" >
+        userid = #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="couponCondition != null" >
+        coupon_condition = #{couponCondition,jdbcType=DECIMAL},
+      </if>
+      <if test="discount != null" >
+        discount = #{discount,jdbcType=DECIMAL},
+      </if>
+      <if test="rangetype != null" >
+        rangetype = #{rangetype,jdbcType=BIT},
+      </if>
+      <if test="companyid != null" >
+        companyid = #{companyid,jdbcType=INTEGER},
+      </if>
+      <if test="categoryid != null" >
+        categoryid = #{categoryid,jdbcType=INTEGER},
+      </if>
+      <if test="useStime != null" >
+        use_stime = #{useStime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="useEtime != null" >
+        use_etime = #{useEtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=TINYINT},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.CouponUser" >
+    update t_coupon_user
+    set couponid = #{couponid,jdbcType=INTEGER},
+      userid = #{userid,jdbcType=INTEGER},
+      coupon_condition = #{couponCondition,jdbcType=DECIMAL},
+      discount = #{discount,jdbcType=DECIMAL},
+      rangetype = #{rangetype,jdbcType=BIT},
+      companyid = #{companyid,jdbcType=INTEGER},
+      categoryid = #{categoryid,jdbcType=INTEGER},
+      use_stime = #{useStime,jdbcType=TIMESTAMP},
+      use_etime = #{useEtime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=TINYINT},
+      addtime = #{addtime,jdbcType=TIMESTAMP}
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </update>
+</mapper>

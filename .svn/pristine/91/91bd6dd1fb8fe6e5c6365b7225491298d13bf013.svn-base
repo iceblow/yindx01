@@ -1,0 +1,351 @@
+package com.uncleserver.service.api.Impl;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.uncleserver.common.CommonUtils;
+import com.uncleserver.model.Area;
+import com.uncleserver.model.Aunt;
+import com.uncleserver.model.CategorySecond;
+import com.uncleserver.model.Company;
+import com.uncleserver.model.CompanyExtra;
+import com.uncleserver.model.CompanyRange;
+import com.uncleserver.model.CompanyWithBLOBs;
+import com.uncleserver.model.PickAddressCompany;
+import com.uncleserver.modelVo.ApiResult;
+import com.uncleserver.modelVo.CompanyDetail;
+import com.uncleserver.modelVo.SearchStaffModel;
+import com.uncleserver.modelVo.ServerValue;
+import com.uncleserver.modelVo.StaffModel;
+import com.uncleserver.service.api.AuntCompanyService;
+
+@Service("auntCompanyService")
+public class AuntCompanyServiceImpl extends BaseServiceImpl implements AuntCompanyService {
+
+	@Override
+	public ApiResult getStaffList(String userid, String page) {
+		ApiResult result = new ApiResult();
+		int useridInt = CommonUtils.parseInt(userid, 0);
+		int pageIndex = CommonUtils.parseInt(page, 1);
+
+		HashMap<String, Object> map = new HashMap<>();
+		List<StaffModel> staffList = auntMapper.selectStaffListPage(useridInt, (pageIndex - 1) * 30, 30);
+		if (staffList != null && staffList.size() > 0) {
+			for (StaffModel staffModel : staffList) {
+				String fileurl = getFilePathById(staffModel.getAvatar());
+				if (!CommonUtils.isEmptyString(fileurl)) {
+					staffModel.setPicurl(fileurl);
+				} else {
+					if (!CommonUtils.isEmptyString(staffModel.getThirdAvatar())) {
+						staffModel.setPicurl(staffModel.getThirdAvatar());
+					}
+				}
+			}
+			Long count = auntMapper.selectAllStaffCount(useridInt);
+			if (count > pageIndex * 30) {
+				map.put("havemore", 1);
+			} else {
+				map.put("havemore", 0);
+			}
+		} else {
+			map.put("havemore", 0);
+		}
+
+		result.setCode("1");
+		result.setMessage("请求成功");
+		map.put("staffList", staffList);
+		result.setResult(map);
+
+		return result;
+	}
+
+	@Override
+	public ApiResult searchStaff(String userid, String page, String keywrod) throws Exception {
+		ApiResult result = new ApiResult();
+		// int useridInt = CommonUtils.parseInt(userid, 0);
+		int pageIndex = CommonUtils.parseInt(page, 1);
+		HashMap<String, Object> map = new HashMap<>();
+
+		List<SearchStaffModel> staffList = auntMapper.searchUnCompanyAunt(keywrod, (pageIndex - 1) * 10, 10);
+		if (staffList != null && staffList.size() > 0) {
+			for (SearchStaffModel staffModel : staffList) {
+				String fileurl = getFilePathById(staffModel.getAvatar());
+				if (!CommonUtils.isEmptyString(fileurl)) {
+					staffModel.setPicurl(fileurl);
+				} else {
+					if (!CommonUtils.isEmptyString(staffModel.getThirdAvatar())) {
+						staffModel.setPicurl(staffModel.getThirdAvatar());
+					}
+				}
+				staffModel.setAge(CommonUtils.getAge(staffModel.getBirthday()));
+			}
+			Long count = auntMapper.searchUnCompanyAuntCount(keywrod);
+			if (count > pageIndex * 30) {
+				map.put("havemore", 1);
+			} else {
+				map.put("havemore", 0);
+			}
+		} else {
+			map.put("havemore", 0);
+		}
+
+		result.setCode("1");
+		result.setMessage("请求成功");
+		map.put("staffList", staffList);
+		result.setResult(map);
+
+		return result;
+	}
+
+	@Override
+	@Transactional(readOnly = false, propagation = Propagation.SUPPORTS)
+	public ApiResult addStaff(String userid, String auntid) {
+		ApiResult result = new ApiResult();
+		int useridInt = CommonUtils.parseInt(userid, 0);
+		int auntidInt = CommonUtils.parseInt(auntid, 0);
+		Aunt aunt = auntMapper.selectByPrimaryKey(auntidInt);
+		if (aunt == null) {
+			result.setCode("2");
+			result.setMessage("添加失败,阿姨不存在");
+			return result;
+		}
+
+		if (aunt.getCompanyid() != null && aunt.getCompanyid() > 0) {
+			result.setCode("3");
+			result.setMessage("添加失败,阿姨已经有公司了");
+			return result;
+		}
+		aunt.setCompanyid(useridInt);
+
+		auntMapper.updateByPrimaryKey(aunt);
+
+		result.setCode("1");
+		result.setMessage("添加成功");
+		return result;
+	}
+
+	@Override
+	@Transactional(readOnly = false, propagation = Propagation.SUPPORTS)
+	public ApiResult delStaff(String userid, String auntid) {
+		ApiResult result = new ApiResult();
+		// int useridInt = CommonUtils.parseInt(userid, 0);
+		int auntidInt = CommonUtils.parseInt(auntid, 0);
+		Aunt aunt = auntMapper.selectByPrimaryKey(auntidInt);
+		if (aunt == null) {
+			result.setCode("2");
+			result.setMessage("删除失败,阿姨不存在");
+			return result;
+		}
+		aunt.setCompanyid(0);
+
+		auntMapper.updateByPrimaryKey(aunt);
+
+		result.setCode("1");
+		result.setMessage("删除成功");
+		return result;
+	}
+
+	@Override
+	public ApiResult refreshInfo(Company company, CompanyExtra extra) {
+		ApiResult result = new ApiResult();
+		HashMap<String, Object> map = new HashMap<>();
+		if (extra.getBalance() != null) {
+			map.put("balance", extra.getBalance().doubleValue());
+		} else {
+			map.put("balance", 0.00);
+		}
+		map.put("logourl", getFilePathById(company.getLogoPicid()));
+		map.put("name", company.getName());
+		map.put("address", company.getAddress());
+		map.put("relation_phone", company.getRelationPhone());
+		map.put("state_del", company.getStateDel());
+		result.setCode("1");
+		result.setMessage("请求成功");
+		result.setResult(map);
+		return result;
+	}
+
+	@Override
+	@Transactional(readOnly = false, propagation = Propagation.SUPPORTS)
+	public ApiResult addAddress(String userid, String provience, String city, String area, String longitude,
+			String latitude, String phone, String rname, String sex, String addressname, String addressdetail,
+			String isdefault) {
+
+		ApiResult result = new ApiResult();
+		int isdefaultInt = CommonUtils.parseInt(isdefault, 0);
+		PickAddressCompany address = new PickAddressCompany();
+		address.setUserid(CommonUtils.parseInt(userid, 0));
+		if (!CommonUtils.isEmptyString(provience))
+			address.setProvience(provience);
+		if (!CommonUtils.isEmptyString(area))
+			address.setArea(area);
+		address.setCity(city);
+		address.setLongitude(CommonUtils.parseDouble(longitude, 0d));
+		address.setLatitude(CommonUtils.parseDouble(latitude, 0d));
+		address.setPhone(phone);
+		address.setRname(rname);
+		address.setSex(sex);
+		address.setAddressname(addressname);
+		address.setAddressdetail(addressdetail);
+		address.setIsdefault((short) isdefaultInt);
+		address.setAddtime(new Date());
+
+		if (isdefaultInt == 1) {// 设置用户其它的地址不是默认地址
+			pickAddressCompanyMapper.updateUserDefault(CommonUtils.parseInt(userid, 0));
+		}
+		pickAddressCompanyMapper.insert(address);
+
+		result.setCode("1");
+		result.setMessage("添加成功");
+		return result;
+	}
+
+	@Override
+	@Transactional(readOnly = false, propagation = Propagation.SUPPORTS)
+	public ApiResult editAddress(String userid, String addressid, String provience, String city, String area,
+			String longitude, String latitude, String phone, String rname, String sex, String addressname,
+			String addressdetail, String isdefault) {
+		ApiResult result = new ApiResult();
+
+		PickAddressCompany addressOld = pickAddressCompanyMapper.selectByPrimaryKey(CommonUtils.parseInt(addressid, 0));
+		if (addressOld == null) {
+			result.setCode("2");
+			result.setMessage("编辑失败,服务地址不存在");
+			return result;
+		}
+		int isdefaultInt = CommonUtils.parseInt(isdefault, 0);
+
+		addressOld.setUserid(CommonUtils.parseInt(userid, 0));
+		if (!CommonUtils.isEmptyString(provience))
+			addressOld.setProvience(provience);
+		if (!CommonUtils.isEmptyString(area))
+			addressOld.setArea(area);
+		addressOld.setCity(city);
+		addressOld.setLongitude(CommonUtils.parseDouble(longitude, 0d));
+		addressOld.setLatitude(CommonUtils.parseDouble(latitude, 0d));
+		addressOld.setPhone(phone);
+		addressOld.setRname(rname);
+		addressOld.setSex(sex);
+		addressOld.setAddressname(addressname);
+		addressOld.setAddressdetail(addressdetail);
+		if (addressOld.getIsdefault() != null && addressOld.getIsdefault() == 1) {// 本来就是默认
+			addressOld.setIsdefault((short) isdefaultInt);
+			pickAddressCompanyMapper.updateByPrimaryKey(addressOld);
+		} else {
+			if (isdefaultInt == 1) {// 设置用户其它的地址不是默认地址
+				pickAddressCompanyMapper.updateUserDefault(CommonUtils.parseInt(userid, 0));
+			}
+			addressOld.setIsdefault((short) isdefaultInt);
+			pickAddressCompanyMapper.updateByPrimaryKey(addressOld);
+		}
+
+		result.setCode("1");
+		result.setMessage("编辑成功");
+		return result;
+	}
+
+	@Override
+	@Transactional(readOnly = false, propagation = Propagation.SUPPORTS)
+	public ApiResult delAddress(String userid, String addressid) {
+		ApiResult result = new ApiResult();
+
+		PickAddressCompany addressOld = pickAddressCompanyMapper.selectByPrimaryKey(CommonUtils.parseInt(addressid, 0));
+		if (addressOld == null) {
+			result.setCode("2");
+			result.setMessage("删除失败,服务地址不存在");
+			return result;
+		}
+
+		pickAddressCompanyMapper.deleteByPrimaryKey(CommonUtils.parseInt(addressid, 0));
+
+		result.setCode("1");
+		result.setMessage("删除成功");
+		return result;
+	}
+
+	@Override
+	public ApiResult getAddressList(int userid, int categoryid) {
+		ApiResult result = new ApiResult();
+
+		List<PickAddressCompany> addressList = pickAddressCompanyMapper.getUserAllPickAddress(userid);
+
+		for (PickAddressCompany pickAddressCompany : addressList) {
+			Long count = categoryCityMapper.selectAreaCidCount(pickAddressCompany.getArea(), categoryid);
+			if (count != null && count > 0) {
+				pickAddressCompany.setChoose_state(1);
+				Area area = areaMapper.selectByName(pickAddressCompany.getArea());
+				if (area != null && area.getFastState() == 0) {
+					pickAddressCompany.setFast_state(0);
+				} else {
+					pickAddressCompany.setFast_state(1);
+				}
+			} else {
+				pickAddressCompany.setChoose_state(0);
+			}
+		}
+
+		result.setCode("1");
+		result.setMessage("请求成功");
+
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("addressList", addressList);
+		result.setResult(map);
+		return result;
+	}
+
+	@Override
+	public ApiResult companyDetail(String companyid) {
+		ApiResult result = new ApiResult();
+		result.setCode("1");
+		result.setMessage("请求成功");
+		HashMap<String, Object> map = new HashMap<>();
+		CompanyWithBLOBs company = companyMapper.selectByPrimaryKey(Integer.parseInt(companyid));
+		CompanyDetail value = new CompanyDetail();
+		value.setCompanyid(company.getCompanyid());
+		value.setName(company.getName());
+		value.setProfile(company.getProfile());
+		value.setType(company.getType().toString());
+		value.setCity(company.getCity());
+		if (company.getLogoPicid() != null && company.getLogoPicid() > 0) {
+			value.setLogo_url(getFilePathById(company.getLogoPicid()));
+		}
+		List<String> picurllist = new ArrayList<>();
+		if (!CommonUtils.isEmptyString(company.getPiclist())) {
+			String[] ids = company.getPiclist().split(",");
+			for (int i = 0; i < ids.length; i++) {
+				if (CommonUtils.isEmptyString(ids[i])) {
+					picurllist.add(getFilePathById(Integer.parseInt(ids[i])));
+				}
+			}
+		}
+		value.setPicurllist(picurllist);
+		value.setYear_create(CommonUtils.getTimeFormat(company.getYearCreate(), null));
+		value.setPeople_count(company.getPeopleCount());
+		value.setAddress(company.getAddress());
+		value.setRelation_phone(company.getRelationPhone());
+		List<CompanyRange> rangeList = companyRangeMapper.selectByCompany(company.getCompanyid());
+		List<ServerValue> serverList = new ArrayList();
+		if (rangeList != null && rangeList.size() > 0) {
+			for (CompanyRange range : rangeList) {
+				ServerValue serverValue = new ServerValue();
+				CategorySecond second = categorySecondMapper.selectByPrimaryKey(range.getCategoryid());
+				if (null != second) {
+					serverValue.setServer_name(second.getName());
+					serverValue.setServerid(range.getCategoryid());
+					serverList.add(serverValue);
+				}
+			}
+			value.setServerlist(serverList);
+		}
+		map.put("companyInfo", value);
+		result.setResult(map);
+		return result;
+	}
+
+}

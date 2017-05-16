@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.AuntMessageMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.AuntMessage" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="userid" property="userid" jdbcType="INTEGER" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="TINYINT" />
+    <result column="read_state" property="readState" jdbcType="BIT" />
+    <result column="user_type" property="userType" jdbcType="TINYINT" />
+    <result column="unread_count" property="unreadCount" jdbcType="INTEGER" />
+    <result column="last_msg_time" property="lastMsgTime" jdbcType="TIMESTAMP" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, userid, title, type, read_state, user_type, unread_count, last_msg_time, addtime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_aunt_message
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByUserIdAndType" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_aunt_message
+    where userid = #{0} and type = #{1}
+  </select>
+  <select id="selectUnRead" resultType="java.lang.Long" parameterType="java.lang.Integer" >
+    select count(id)
+    <include refid="Base_Column_List" />
+    from t_aunt_message
+    where userid = #{0} and user_type=#{1} and  read_state = 0 order by addtime desc
+  </select>
+  
+   <select id="selectByPage" resultMap="BaseResultMap"  >
+    select 
+    m.*
+    from t_aunt_message m where userid=#{0} and user_type=#{1} and (select count(id) from t_aunt_message_detail where m.id = messageid) > 0 order by last_msg_time desc
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_aunt_message
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.AuntMessage" >
+  <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+	SELECT LAST_INSERT_ID() AS id
+  </selectKey>
+    insert into t_aunt_message (id, userid, title, 
+      type, read_state, user_type, 
+      unread_count, last_msg_time, addtime
+      )
+    values (#{id,jdbcType=INTEGER}, #{userid,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, 
+      #{type,jdbcType=TINYINT}, #{readState,jdbcType=BIT}, #{userType,jdbcType=TINYINT}, 
+      #{unreadCount,jdbcType=INTEGER}, #{lastMsgTime,jdbcType=TIMESTAMP}, #{addtime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.AuntMessage" >
+    insert into t_aunt_message
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userid != null" >
+        userid,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="readState != null" >
+        read_state,
+      </if>
+      <if test="userType != null" >
+        user_type,
+      </if>
+      <if test="unreadCount != null" >
+        unread_count,
+      </if>
+      <if test="lastMsgTime != null" >
+        last_msg_time,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null" >
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=TINYINT},
+      </if>
+      <if test="readState != null" >
+        #{readState,jdbcType=BIT},
+      </if>
+      <if test="userType != null" >
+        #{userType,jdbcType=TINYINT},
+      </if>
+      <if test="unreadCount != null" >
+        #{unreadCount,jdbcType=INTEGER},
+      </if>
+      <if test="lastMsgTime != null" >
+        #{lastMsgTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.AuntMessage" >
+    update t_aunt_message
+    <set >
+      <if test="userid != null" >
+        userid = #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=TINYINT},
+      </if>
+      <if test="readState != null" >
+        read_state = #{readState,jdbcType=BIT},
+      </if>
+      <if test="userType != null" >
+        user_type = #{userType,jdbcType=TINYINT},
+      </if>
+      <if test="unreadCount != null" >
+        unread_count = #{unreadCount,jdbcType=INTEGER},
+      </if>
+      <if test="lastMsgTime != null" >
+        last_msg_time = #{lastMsgTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.AuntMessage" >
+    update t_aunt_message
+    set userid = #{userid,jdbcType=INTEGER},
+      title = #{title,jdbcType=VARCHAR},
+      type = #{type,jdbcType=TINYINT},
+      read_state = #{readState,jdbcType=BIT},
+      user_type = #{userType,jdbcType=TINYINT},
+      unread_count = #{unreadCount,jdbcType=INTEGER},
+      last_msg_time = #{lastMsgTime,jdbcType=TIMESTAMP},
+      addtime = #{addtime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

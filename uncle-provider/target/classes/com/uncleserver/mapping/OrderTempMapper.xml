@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.OrderTempMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.OrderTemp" >
+    <id column="orderid" property="orderid" jdbcType="INTEGER" />
+    <result column="poster_type" property="posterType" jdbcType="TINYINT" />
+    <result column="userid" property="userid" jdbcType="INTEGER" />
+    <result column="categoryid" property="categoryid" jdbcType="INTEGER" />
+    <result column="addressid" property="addressid" jdbcType="INTEGER" />
+    <result column="server_time" property="serverTime" jdbcType="TIMESTAMP" />
+    <result column="pic_ids" property="picIds" jdbcType="VARCHAR" />
+    <result column="expect_time" property="expectTime" jdbcType="REAL" />
+    <result column="aunt_m_count" property="auntMCount" jdbcType="INTEGER" />
+    <result column="aunt_w_count" property="auntWCount" jdbcType="INTEGER" />
+    <result column="day_time" property="dayTime" jdbcType="REAL" />
+    <result column="thing_count" property="thingCount" jdbcType="INTEGER" />
+    <result column="need_tools" property="needTools" jdbcType="TINYINT" />
+    <result column="expected_price" property="expectedPrice" jdbcType="DECIMAL" />
+    <result column="deposit_price" property="depositPrice" jdbcType="DECIMAL" />
+    <result column="tip_price" property="tipPrice" jdbcType="DECIMAL" />
+    <result column="order_type" property="orderType" jdbcType="TINYINT" />
+    <result column="accept_type" property="acceptType" jdbcType="TINYINT" />
+    <result column="order_source" property="orderSource" jdbcType="TINYINT" />
+    <result column="book" property="book" jdbcType="VARCHAR" />
+    <result column="foodselect" property="foodselect" jdbcType="VARCHAR" />
+    <result column="reason_mark" property="reasonMark" jdbcType="VARCHAR" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    orderid, poster_type, userid, categoryid, addressid, server_time, pic_ids, expect_time, 
+    aunt_m_count, aunt_w_count, day_time, thing_count, need_tools, expected_price, deposit_price, 
+    tip_price, order_type, accept_type, order_source, book, foodselect, reason_mark, 
+    addtime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_order_temp
+    where orderid = #{orderid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_order_temp
+    where orderid = #{orderid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.OrderTemp" >
+   <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="orderid">
+	SELECT LAST_INSERT_ID() AS orderid
+  </selectKey>
+    insert into t_order_temp (orderid, poster_type, userid, 
+      categoryid, addressid, server_time, 
+      pic_ids, expect_time, aunt_m_count, 
+      aunt_w_count, day_time, thing_count, 
+      need_tools, expected_price, deposit_price, 
+      tip_price, order_type, accept_type, 
+      order_source, book, foodselect, 
+      reason_mark, addtime)
+    values (#{orderid,jdbcType=INTEGER}, #{posterType,jdbcType=TINYINT}, #{userid,jdbcType=INTEGER}, 
+      #{categoryid,jdbcType=INTEGER}, #{addressid,jdbcType=INTEGER}, #{serverTime,jdbcType=TIMESTAMP}, 
+      #{picIds,jdbcType=VARCHAR}, #{expectTime,jdbcType=REAL}, #{auntMCount,jdbcType=INTEGER}, 
+      #{auntWCount,jdbcType=INTEGER}, #{dayTime,jdbcType=REAL}, #{thingCount,jdbcType=INTEGER}, 
+      #{needTools,jdbcType=TINYINT}, #{expectedPrice,jdbcType=DECIMAL}, #{depositPrice,jdbcType=DECIMAL}, 
+      #{tipPrice,jdbcType=DECIMAL}, #{orderType,jdbcType=TINYINT}, #{acceptType,jdbcType=TINYINT}, 
+      #{orderSource,jdbcType=TINYINT}, #{book,jdbcType=VARCHAR}, #{foodselect,jdbcType=VARCHAR}, 
+      #{reasonMark,jdbcType=VARCHAR}, #{addtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.OrderTemp" >
+    insert into t_order_temp
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderid != null" >
+        orderid,
+      </if>
+      <if test="posterType != null" >
+        poster_type,
+      </if>
+      <if test="userid != null" >
+        userid,
+      </if>
+      <if test="categoryid != null" >
+        categoryid,
+      </if>
+      <if test="addressid != null" >
+        addressid,
+      </if>
+      <if test="serverTime != null" >
+        server_time,
+      </if>
+      <if test="picIds != null" >
+        pic_ids,
+      </if>
+      <if test="expectTime != null" >
+        expect_time,
+      </if>
+      <if test="auntMCount != null" >
+        aunt_m_count,
+      </if>
+      <if test="auntWCount != null" >
+        aunt_w_count,
+      </if>
+      <if test="dayTime != null" >
+        day_time,
+      </if>
+      <if test="thingCount != null" >
+        thing_count,
+      </if>
+      <if test="needTools != null" >
+        need_tools,
+      </if>
+      <if test="expectedPrice != null" >
+        expected_price,
+      </if>
+      <if test="depositPrice != null" >
+        deposit_price,
+      </if>
+      <if test="tipPrice != null" >
+        tip_price,
+      </if>
+      <if test="orderType != null" >
+        order_type,
+      </if>
+      <if test="acceptType != null" >
+        accept_type,
+      </if>
+      <if test="orderSource != null" >
+        order_source,
+      </if>
+      <if test="book != null" >
+        book,
+      </if>
+      <if test="foodselect != null" >
+        foodselect,
+      </if>
+      <if test="reasonMark != null" >
+        reason_mark,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderid != null" >
+        #{orderid,jdbcType=INTEGER},
+      </if>
+      <if test="posterType != null" >
+        #{posterType,jdbcType=TINYINT},
+      </if>
+      <if test="userid != null" >
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="categoryid != null" >
+        #{categoryid,jdbcType=INTEGER},
+      </if>
+      <if test="addressid != null" >
+        #{addressid,jdbcType=INTEGER},
+      </if>
+      <if test="serverTime != null" >
+        #{serverTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="picIds != null" >
+        #{picIds,jdbcType=VARCHAR},
+      </if>
+      <if test="expectTime != null" >
+        #{expectTime,jdbcType=REAL},
+      </if>
+      <if test="auntMCount != null" >
+        #{auntMCount,jdbcType=INTEGER},
+      </if>
+      <if test="auntWCount != null" >
+        #{auntWCount,jdbcType=INTEGER},
+      </if>
+      <if test="dayTime != null" >
+        #{dayTime,jdbcType=REAL},
+      </if>
+      <if test="thingCount != null" >
+        #{thingCount,jdbcType=INTEGER},
+      </if>
+      <if test="needTools != null" >
+        #{needTools,jdbcType=TINYINT},
+      </if>
+      <if test="expectedPrice != null" >
+        #{expectedPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="depositPrice != null" >
+        #{depositPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="tipPrice != null" >
+        #{tipPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="orderType != null" >
+        #{orderType,jdbcType=TINYINT},
+      </if>
+      <if test="acceptType != null" >
+        #{acceptType,jdbcType=TINYINT},
+      </if>
+      <if test="orderSource != null" >
+        #{orderSource,jdbcType=TINYINT},
+      </if>
+      <if test="book != null" >
+        #{book,jdbcType=VARCHAR},
+      </if>
+      <if test="foodselect != null" >
+        #{foodselect,jdbcType=VARCHAR},
+      </if>
+      <if test="reasonMark != null" >
+        #{reasonMark,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.OrderTemp" >
+    update t_order_temp
+    <set >
+      <if test="posterType != null" >
+        poster_type = #{posterType,jdbcType=TINYINT},
+      </if>
+      <if test="userid != null" >
+        userid = #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="categoryid != null" >
+        categoryid = #{categoryid,jdbcType=INTEGER},
+      </if>
+      <if test="addressid != null" >
+        addressid = #{addressid,jdbcType=INTEGER},
+      </if>
+      <if test="serverTime != null" >
+        server_time = #{serverTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="picIds != null" >
+        pic_ids = #{picIds,jdbcType=VARCHAR},
+      </if>
+      <if test="expectTime != null" >
+        expect_time = #{expectTime,jdbcType=REAL},
+      </if>
+      <if test="auntMCount != null" >
+        aunt_m_count = #{auntMCount,jdbcType=INTEGER},
+      </if>
+      <if test="auntWCount != null" >
+        aunt_w_count = #{auntWCount,jdbcType=INTEGER},
+      </if>
+      <if test="dayTime != null" >
+        day_time = #{dayTime,jdbcType=REAL},
+      </if>
+      <if test="thingCount != null" >
+        thing_count = #{thingCount,jdbcType=INTEGER},
+      </if>
+      <if test="needTools != null" >
+        need_tools = #{needTools,jdbcType=TINYINT},
+      </if>
+      <if test="expectedPrice != null" >
+        expected_price = #{expectedPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="depositPrice != null" >
+        deposit_price = #{depositPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="tipPrice != null" >
+        tip_price = #{tipPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="orderType != null" >
+        order_type = #{orderType,jdbcType=TINYINT},
+      </if>
+      <if test="acceptType != null" >
+        accept_type = #{acceptType,jdbcType=TINYINT},
+      </if>
+      <if test="orderSource != null" >
+        order_source = #{orderSource,jdbcType=TINYINT},
+      </if>
+      <if test="book != null" >
+        book = #{book,jdbcType=VARCHAR},
+      </if>
+      <if test="foodselect != null" >
+        foodselect = #{foodselect,jdbcType=VARCHAR},
+      </if>
+      <if test="reasonMark != null" >
+        reason_mark = #{reasonMark,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where orderid = #{orderid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.OrderTemp" >
+    update t_order_temp
+    set poster_type = #{posterType,jdbcType=TINYINT},
+      userid = #{userid,jdbcType=INTEGER},
+      categoryid = #{categoryid,jdbcType=INTEGER},
+      addressid = #{addressid,jdbcType=INTEGER},
+      server_time = #{serverTime,jdbcType=TIMESTAMP},
+      pic_ids = #{picIds,jdbcType=VARCHAR},
+      expect_time = #{expectTime,jdbcType=REAL},
+      aunt_m_count = #{auntMCount,jdbcType=INTEGER},
+      aunt_w_count = #{auntWCount,jdbcType=INTEGER},
+      day_time = #{dayTime,jdbcType=REAL},
+      thing_count = #{thingCount,jdbcType=INTEGER},
+      need_tools = #{needTools,jdbcType=TINYINT},
+      expected_price = #{expectedPrice,jdbcType=DECIMAL},
+      deposit_price = #{depositPrice,jdbcType=DECIMAL},
+      tip_price = #{tipPrice,jdbcType=DECIMAL},
+      order_type = #{orderType,jdbcType=TINYINT},
+      accept_type = #{acceptType,jdbcType=TINYINT},
+      order_source = #{orderSource,jdbcType=TINYINT},
+      book = #{book,jdbcType=VARCHAR},
+      foodselect = #{foodselect,jdbcType=VARCHAR},
+      reason_mark = #{reasonMark,jdbcType=VARCHAR},
+      addtime = #{addtime,jdbcType=TIMESTAMP}
+    where orderid = #{orderid,jdbcType=INTEGER}
+  </update>
+</mapper>

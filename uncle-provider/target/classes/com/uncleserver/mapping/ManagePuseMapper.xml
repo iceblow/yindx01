@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.ManagePuseMapper">
+	<resultMap id="BaseResultMap" type="com.uncleserver.model.MessageSys">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="type" property="type" jdbcType="TINYINT" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="detail" property="detail" jdbcType="VARCHAR" />
+		<result column="link_title" property="link_title" jdbcType="VARCHAR" />
+		<result column="link_type" property="link_type" jdbcType="TINYINT" />
+		<result column="link_content" property="link_content" jdbcType="VARCHAR" />
+		<result column="city" property="city" jdbcType="VARCHAR" />
+		<result column="del_state" property="del_state" jdbcType="TINYINT" />
+		<result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, type,
+		title,detail,link_title,link_type,link_content,city,del_state,addtime
+	</sql>
+	<select id="getPuseList" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from t_message_sys
+		where del_state =0
+		order by addtime desc
+	</select>
+
+	<select id="getPuseListCount" resultType="java.lang.Long">
+		SELECT COUNT(*) from
+		t_message_sys where del_state=0
+	</select>
+
+	<select id="getPuseAuntList" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		*
+		from t_aunt_message_sys
+		where del_state=0
+		order by
+		addtime desc
+	</select>
+
+	<select id="getPuseAuntListCount" resultType="java.lang.Long">
+		SELECT COUNT(*)
+		from t_aunt_message_sys
+	</select>
+	<update id="delAuntPuse" parameterType="com.uncleserver.model.MessageSys">
+		update t_aunt_message_sys
+		<set>
+			del_state = 1,
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<delete id="delAuntPuseDetail" parameterType="java.lang.Integer">
+		delete from
+		t_aunt_message_detail
+		where sys_messageid = #{id,jdbcType=INTEGER}
+
+	</delete>
+	<update id="delPuse" parameterType="com.uncleserver.model.MessageSys">
+		update t_message_sys
+		<set>
+			del_state =1,
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<delete id="delPuseDetail" parameterType="java.lang.Integer">
+		delete from
+		t_message_detail
+		where sys_messageid = #{id,jdbcType=INTEGER}
+	</delete>
+
+	<insert id="addPuse" parameterType="com.uncleserver.model.MessageSys">
+		insert INTO t_message_sys
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="type != null">
+				type,
+			</if>
+			<if test="title != null">
+				title,
+			</if>
+			<if test="detail != null">
+				detail,
+			</if>
+			<if test="link_title != null">
+				link_title,
+			</if>
+			<if test="link_type !=null">
+				link_type,
+			</if>
+			<if test="link_content !=null">
+				link_content,
+			</if>
+			del_state,
+			<if test="city !=null">
+				city,
+			</if>
+			<if test="addtime !=null">
+				addtime
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="type != null">
+				#{type,jdbcType=TINYINT},
+			</if>
+			<if test="title != null">
+				#{title,jdbcType=VARCHAR},
+			</if>
+			<if test="detail != null">
+				#{detail,jdbcType=VARCHAR},
+			</if>
+			<if test="link_title != null">
+				#{link_title,jdbcType=VARCHAR},
+			</if>
+			<if test="link_content !=null">
+				#{link_content,jdbcType=VARCHAR},
+			</if>
+			0,
+			<if test="city !=null">
+				#{city,jdbcType=VARCHAR},
+			</if>
+			<if test="addtime !=null">
+				#{addtime,jdbcType=TIMESTAMP}
+			</if>
+		</trim>
+	</insert>
+
+	<insert id="addAuntPuse" parameterType="com.uncleserver.model.MessageSys">
+		insert INTO
+		t_aunt_message_sys
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="type != null">
+				type,
+			</if>
+			<if test="title != null">
+				title,
+			</if>
+			<if test="detail != null">
+				detail,
+			</if>
+			<if test="link_title != null">
+				link_title,
+			</if>
+			<if test="link_type !=null">
+				link_type,
+			</if>
+			<if test="link_content !=null">
+				link_content,
+			</if>
+			del_state,
+			<if test="city !=null">
+				city,
+			</if>
+			<if test="addtime !=null">
+				addtime
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="type != null">
+				#{type,jdbcType=TINYINT},
+			</if>
+			<if test="title != null">
+				#{title,jdbcType=VARCHAR},
+			</if>
+			<if test="detail != null">
+				#{detail,jdbcType=VARCHAR},
+			</if>
+			<if test="link_title != null">
+				#{link_title,jdbcType=VARCHAR},
+			</if>
+			<if test="link_content !=null">
+				#{link_content,jdbcType=VARCHAR},
+			</if>
+			0,
+			<if test="city !=null">
+				#{city,jdbcType=VARCHAR},
+			</if>
+			<if test="addtime !=null">
+				#{addtime,jdbcType=TIMESTAMP}
+			</if>
+		</trim>
+	</insert>
+</mapper>

@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.VersionMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.Version" >
+    <id column="versionid" property="versionid" jdbcType="INTEGER" />
+    <result column="versionstr" property="versionstr" jdbcType="VARCHAR" />
+    <result column="platformtype" property="platformtype" jdbcType="TINYINT" />
+    <result column="apptype" property="apptype" jdbcType="TINYINT" />
+    <result column="poststate" property="poststate" jdbcType="TINYINT" />
+    <result column="versiontype" property="versiontype" jdbcType="TINYINT" />
+    <result column="posttime" property="posttime" jdbcType="TIMESTAMP" />
+    <result column="downloadurl" property="downloadurl" jdbcType="VARCHAR" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.uncleserver.model.Version" extends="BaseResultMap" >
+    <result column="newcontent" property="newcontent" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    versionid, versionstr, platformtype, apptype, poststate, versiontype, posttime, downloadurl, 
+    addtime
+  </sql>
+  <sql id="Blob_Column_List" >
+    newcontent
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_version
+    where versionid = #{versionid,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectLastVersionByInfo" resultMap="ResultMapWithBLOBs" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_version
+    where  <![CDATA[ versionstr <> #{0}]]> and platformtype = #{2} and apptype = #{1} order by posttime desc limit 0,1
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_version
+    where versionid = #{versionid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.Version" >
+    insert into t_version (versionid, versionstr, platformtype, 
+      apptype, poststate, versiontype, 
+      posttime, downloadurl, addtime, 
+      newcontent)
+    values (#{versionid,jdbcType=INTEGER}, #{versionstr,jdbcType=VARCHAR}, #{platformtype,jdbcType=TINYINT}, 
+      #{apptype,jdbcType=TINYINT}, #{poststate,jdbcType=TINYINT}, #{versiontype,jdbcType=TINYINT}, 
+      #{posttime,jdbcType=TIMESTAMP}, #{downloadurl,jdbcType=VARCHAR}, #{addtime,jdbcType=TIMESTAMP}, 
+      #{newcontent,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.Version" >
+    insert into t_version
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="versionid != null" >
+        versionid,
+      </if>
+      <if test="versionstr != null" >
+        versionstr,
+      </if>
+      <if test="platformtype != null" >
+        platformtype,
+      </if>
+      <if test="apptype != null" >
+        apptype,
+      </if>
+      <if test="poststate != null" >
+        poststate,
+      </if>
+      <if test="versiontype != null" >
+        versiontype,
+      </if>
+      <if test="posttime != null" >
+        posttime,
+      </if>
+      <if test="downloadurl != null" >
+        downloadurl,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+      <if test="newcontent != null" >
+        newcontent,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="versionid != null" >
+        #{versionid,jdbcType=INTEGER},
+      </if>
+      <if test="versionstr != null" >
+        #{versionstr,jdbcType=VARCHAR},
+      </if>
+      <if test="platformtype != null" >
+        #{platformtype,jdbcType=TINYINT},
+      </if>
+      <if test="apptype != null" >
+        #{apptype,jdbcType=TINYINT},
+      </if>
+      <if test="poststate != null" >
+        #{poststate,jdbcType=TINYINT},
+      </if>
+      <if test="versiontype != null" >
+        #{versiontype,jdbcType=TINYINT},
+      </if>
+      <if test="posttime != null" >
+        #{posttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="downloadurl != null" >
+        #{downloadurl,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="newcontent != null" >
+        #{newcontent,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.Version" >
+    update t_version
+    <set >
+      <if test="versionstr != null" >
+        versionstr = #{versionstr,jdbcType=VARCHAR},
+      </if>
+      <if test="platformtype != null" >
+        platformtype = #{platformtype,jdbcType=TINYINT},
+      </if>
+      <if test="apptype != null" >
+        apptype = #{apptype,jdbcType=TINYINT},
+      </if>
+      <if test="poststate != null" >
+        poststate = #{poststate,jdbcType=TINYINT},
+      </if>
+      <if test="versiontype != null" >
+        versiontype = #{versiontype,jdbcType=TINYINT},
+      </if>
+      <if test="posttime != null" >
+        posttime = #{posttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="downloadurl != null" >
+        downloadurl = #{downloadurl,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="newcontent != null" >
+        newcontent = #{newcontent,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where versionid = #{versionid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.uncleserver.model.Version" >
+    update t_version
+    set versionstr = #{versionstr,jdbcType=VARCHAR},
+      platformtype = #{platformtype,jdbcType=TINYINT},
+      apptype = #{apptype,jdbcType=TINYINT},
+      poststate = #{poststate,jdbcType=TINYINT},
+      versiontype = #{versiontype,jdbcType=TINYINT},
+      posttime = #{posttime,jdbcType=TIMESTAMP},
+      downloadurl = #{downloadurl,jdbcType=VARCHAR},
+      addtime = #{addtime,jdbcType=TIMESTAMP},
+      newcontent = #{newcontent,jdbcType=LONGVARCHAR}
+    where versionid = #{versionid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.Version" >
+    update t_version
+    set versionstr = #{versionstr,jdbcType=VARCHAR},
+      platformtype = #{platformtype,jdbcType=TINYINT},
+      apptype = #{apptype,jdbcType=TINYINT},
+      poststate = #{poststate,jdbcType=TINYINT},
+      versiontype = #{versiontype,jdbcType=TINYINT},
+      posttime = #{posttime,jdbcType=TIMESTAMP},
+      downloadurl = #{downloadurl,jdbcType=VARCHAR},
+      addtime = #{addtime,jdbcType=TIMESTAMP}
+    where versionid = #{versionid,jdbcType=INTEGER}
+  </update>
+  <select id="getVsersion" resultMap="BaseResultMap" parameterType="map">
+  	SELECT
+		 <include refid="Base_Column_List" />
+	FROM
+		t_version as v
+	<where>
+		<if test="platformtype !=null">
+			v.platformtype = #{platformtype} 
+		</if>
+		<if test="apptype !=null">
+			AND	v.apptype = #{apptype} 
+		</if>
+		<if test="poststate !=null">
+			AND v.poststate = #{poststate}
+		</if>
+		<if test="versiontype !=null">
+			 AND v.versiontype = #{versiontype}
+		</if>
+	</where>
+  	Limit #{start},#{row}
+  </select>
+  <select id="getCount" parameterType="map" resultType="long">
+  	SELECT
+		COUNT(*)
+	FROM
+		t_version as v
+	<where>
+		<if test="platformtype !=null">
+			v.platformtype = #{platformtype} 
+		</if>
+		<if test="apptype !=null">
+			AND v.apptype = #{apptype} 
+		</if>
+		<if test="poststate !=null">
+			AND v.poststate = #{poststate} 
+		</if>
+		<if test="versiontype !=null">
+			AND v.versiontype = #{versiontype}
+		</if>
+	</where>
+
+  </select>
+</mapper>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.PermissionMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.Permission" >
+    <id column="permissionid" property="permissionid" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="fid" property="fid" jdbcType="INTEGER" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    permissionid, name, fid, addtime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_permission
+    where permissionid = #{permissionid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_permission
+    where permissionid = #{permissionid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.Permission" >
+    insert into t_permission (permissionid, name, fid, 
+      addtime)
+    values (#{permissionid,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{fid,jdbcType=INTEGER}, 
+      #{addtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.Permission" >
+    insert into t_permission
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="permissionid != null" >
+        permissionid,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="fid != null" >
+        fid,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="permissionid != null" >
+        #{permissionid,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="fid != null" >
+        #{fid,jdbcType=INTEGER},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.Permission" >
+    update t_permission
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="fid != null" >
+        fid = #{fid,jdbcType=INTEGER},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where permissionid = #{permissionid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.Permission" >
+    update t_permission
+    set name = #{name,jdbcType=VARCHAR},
+      fid = #{fid,jdbcType=INTEGER},
+      addtime = #{addtime,jdbcType=TIMESTAMP}
+    where permissionid = #{permissionid,jdbcType=INTEGER}
+  </update>
+  
+  <select id="managePagePermission" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_permission
+    limit #{startPage},#{rows}
+  </select>
+
+  <select id="managePagePermissionCount" resultType="java.lang.Long" >
+    select 
+    	count(*)
+    from t_permission
+  </select>
+</mapper>

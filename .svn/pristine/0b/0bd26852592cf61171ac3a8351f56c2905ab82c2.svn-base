@@ -1,0 +1,945 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.OrderAuntMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.OrderAunt" >
+    <id column="orderid" property="orderid" jdbcType="INTEGER" />
+    <result column="user_orderid" property="userOrderid" jdbcType="INTEGER" />
+    <result column="auntid" property="auntid" jdbcType="INTEGER" />
+    <result column="poster_type" property="posterType" jdbcType="TINYINT" />
+    <result column="userid" property="userid" jdbcType="INTEGER" />
+    <result column="ordernum" property="ordernum" jdbcType="VARCHAR" />
+    <result column="categoryid" property="categoryid" jdbcType="INTEGER" />
+    <result column="longitude" property="longitude" jdbcType="DOUBLE" />
+    <result column="latitude" property="latitude" jdbcType="DOUBLE" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="rname" property="rname" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="VARCHAR" />
+    <result column="addressname" property="addressname" jdbcType="VARCHAR" />
+    <result column="addressdetail" property="addressdetail" jdbcType="VARCHAR" />
+    <result column="server_time" property="serverTime" jdbcType="TIMESTAMP" />
+    <result column="pic_ids" property="picIds" jdbcType="VARCHAR" />
+    <result column="expect_time" property="expectTime" jdbcType="REAL" />
+    <result column="month" property="month" jdbcType="REAL" />
+    <result column="day_time" property="dayTime" jdbcType="REAL" />
+    <result column="thing_count" property="thingCount" jdbcType="INTEGER" />
+    <result column="need_tools" property="needTools" jdbcType="TINYINT" />
+    <result column="companyid" property="companyid" jdbcType="INTEGER" />
+    <result column="expected_price" property="expectedPrice" jdbcType="DECIMAL" />
+    <result column="deposit_price" property="depositPrice" jdbcType="DECIMAL" />
+    <result column="tip_price" property="tipPrice" jdbcType="DECIMAL" />
+    <result column="last_price" property="lastPrice" jdbcType="DECIMAL" />
+    <result column="other_pirce" property="otherPirce" jdbcType="DECIMAL" />
+    <result column="coupon_pirce" property="couponPirce" jdbcType="DECIMAL" />
+    <result column="order_type" property="orderType" jdbcType="TINYINT" />
+    <result column="relation_orderid" property="relationOrderid" jdbcType="INTEGER" />
+    <result column="ratio" property="ratio" jdbcType="REAL" />
+    <result column="ratio_money" property="ratioMoney" jdbcType="DECIMAL" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="complaint_state" property="complaintState" jdbcType="TINYINT" />
+    <result column="comment_state" property="commentState" jdbcType="TINYINT" />
+    <result column="accept_type" property="acceptType" jdbcType="TINYINT" />
+    <result column="order_source" property="orderSource" jdbcType="TINYINT" />
+    <result column="book" property="book" jdbcType="VARCHAR" />
+    <result column="out_time" property="outTime" jdbcType="TIMESTAMP" />
+    <result column="server_start_time" property="serverStartTime" jdbcType="TIMESTAMP" />
+    <result column="server_end_time" property="serverEndTime" jdbcType="TIMESTAMP" />
+    <result column="accept_time" property="acceptTime" jdbcType="TIMESTAMP" />
+    <result column="pay_time2" property="payTime2" jdbcType="TIMESTAMP" />
+    <result column="pay_time1" property="payTime1" jdbcType="TIMESTAMP" />
+    <result column="payed_time" property="payedTime" jdbcType="TIMESTAMP" />
+    <result column="foodselect" property="foodselect" jdbcType="VARCHAR" />
+    <result column="reason_mark" property="reasonMark" jdbcType="VARCHAR" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+    <result column="aunt_m_count" property="aunt_m_count" jdbcType="INTEGER" />
+    <result column="aunt_w_count" property="aunt_w_count" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.uncleserver.model.OrderAunt" extends="BaseResultMap" >
+    <result column="couponid" property="couponid" jdbcType="LONGVARCHAR" />
+   
+  </resultMap>
+  
+  <resultMap id="BaseAuntMap" type="com.uncleserver.modelVo.OrderAuntModel" >
+    <id column="orderid" property="orderid" jdbcType="INTEGER" />
+    <result column="categoryid" property="categoryid" jdbcType="INTEGER" />
+    <result column="server_time" property="server_time" jdbcType="TIMESTAMP" />
+    <result column="expect_time" property="expect_time" jdbcType="REAL" />
+    <result column="addressname" property="addressname" jdbcType="VARCHAR" />
+    <result column="addressdetail" property="addressdetail" jdbcType="VARCHAR" />
+    <result column="last_price" property="last_price" jdbcType="DECIMAL" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="complaint_state" property="complaint_state" jdbcType="TINYINT" />
+    <result column="order_type" property="order_type" jdbcType="TINYINT" />
+  </resultMap>
+  
+  
+  <sql id="Base_Column_List" >
+    orderid, user_orderid, auntid, poster_type, userid, ordernum, categoryid, longitude, 
+    latitude, phone, rname, sex, addressname, addressdetail, server_time, pic_ids, expect_time, month,
+    day_time, thing_count, need_tools, companyid, expected_price, deposit_price, tip_price, 
+    last_price, other_pirce, coupon_pirce, order_type, relation_orderid, 
+    ratio, ratio_money, state, complaint_state, comment_state, accept_type, 
+    order_source, book, out_time,server_start_time, server_end_time, accept_time, pay_time2, pay_time1, 
+    payed_time, foodselect, reason_mark, addtime,aunt_m_count, aunt_w_count
+  </sql>
+  <sql id="Blob_Column_List" >
+    couponid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_order_aunt
+    where orderid = #{orderid,jdbcType=INTEGER}
+  </select>
+  
+   <select id="selectByCondition" resultMap="BaseAuntMap">
+    select aunt.orderid,aunt.categoryid,aunt.server_time,aunt.expect_time,aunt.addressname,aunt.addressdetail,aunt.last_price,aunt.state,aunt.complaint_state,aunt.order_type
+    from t_order_aunt aunt 
+     <if test="comment_type != null" >
+        , t_order_comment comments
+    </if>
+     where 1 = 1
+      <if test="comment_type != null" >
+        and aunt.auntid = comments.auntid
+    </if>
+    <if test="auntid != null" >
+       and aunt.auntid=#{auntid}
+     </if>
+     <if test="companyid != null" >
+       and aunt.companyid=#{companyid}
+     </if>
+      <if test="serverid != null" >
+       and aunt.categoryid=#{serverid}
+     </if>
+     <if test="comment_type != null" >
+       and comments.comment_type = #{comment_type}
+     </if>
+       and (state = 5 or state = 6 or state = 7 or state = 12 or state = 14  or complaint_state = 1)
+     group by aunt.orderid order by <![CDATA[ aunt.addtime desc  ]]> limit #{offest},#{pageSize}
+  </select>
+  
+  <select id="selectByOrderidAndUserid" resultMap="ResultMapWithBLOBs" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_order_aunt
+    where user_orderid = #{orderid} and userid = #{userid} and poster_type = 0
+  </select>
+  
+   <select id="selectByOrderidAndCompanyid" resultMap="ResultMapWithBLOBs" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_order_aunt
+    where user_orderid = #{orderid} and userid = #{userid} and poster_type = 1
+  </select>
+  
+  <select id="selectOrderNumCount" resultType="java.lang.Long" >
+    select 
+    count(orderid)
+    from t_order_aunt
+    where <![CDATA[ TIMESTAMPDIFF(HOUR,DATE_FORMAT(addtime,"%Y-%m-%d %h"),DATE_FORMAT(now(),"%Y-%m-%d %h")) = 0 ]]> 
+  </select>
+  
+   <select id="selectAuntMCount" resultType="java.lang.Long" parameterType="java.lang.Integer" >
+    select 
+    sum(aunt_m_count)
+    from t_order_aunt
+    where user_orderid = #{orderid} and companyid !=0 and state = 16
+  </select>
+  
+   <select id="selectAuntCompleteOrder" resultType="java.lang.Long" >
+    select 
+    count(aunt_m_count)
+    from t_order_aunt
+    where auntid = #{0} and state = 6
+  </select>
+  
+   <select id="selectCompanyCompleteOrder" resultType="java.lang.Long" >
+    select 
+    count(aunt_m_count)
+    from t_order_aunt
+    where companyid = #{0} and state = 6
+  </select>
+  
+  
+  <select id="selectAuntWCount" resultType="java.lang.Long" parameterType="java.lang.Integer" >
+    select 
+    sum(aunt_w_count)
+    from t_order_aunt
+    where user_orderid = #{orderid} and companyid !=0 and state = 16
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+      delete from t_order_aunt
+    where orderid = #{0} and userid = #{1}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.OrderAunt" >
+    insert into t_order_aunt (orderid, user_orderid, auntid, 
+      poster_type, userid, ordernum, 
+      categoryid, longitude, latitude, 
+      phone, rname, sex, 
+      addressname, addressdetail, server_time, 
+      pic_ids, expect_time,month, day_time, 
+      thing_count, need_tools, companyid, 
+      expected_price, deposit_price, tip_price, 
+      last_price, other_pirce, coupon_pirce, 
+      order_type, 
+      relation_orderid, ratio, ratio_money, 
+      state, complaint_state, 
+      comment_state, accept_type, order_source, 
+      book, out_time,server_start_time, server_end_time, 
+      accept_time, pay_time2, pay_time1, 
+      payed_time, foodselect, reason_mark, 
+      addtime, couponid,aunt_m_count, aunt_w_count)
+    values (#{orderid,jdbcType=INTEGER}, #{userOrderid,jdbcType=INTEGER}, #{auntid,jdbcType=INTEGER}, 
+      #{posterType,jdbcType=TINYINT}, #{userid,jdbcType=INTEGER}, #{ordernum,jdbcType=VARCHAR}, 
+      #{categoryid,jdbcType=INTEGER}, #{longitude,jdbcType=DOUBLE}, #{latitude,jdbcType=DOUBLE}, 
+      #{phone,jdbcType=VARCHAR}, #{rname,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, 
+      #{addressname,jdbcType=VARCHAR}, #{addressdetail,jdbcType=VARCHAR}, #{serverTime,jdbcType=TIMESTAMP}, 
+      #{picIds,jdbcType=VARCHAR}, #{expectTime,jdbcType=REAL},#{month,jdbcType=REAL}, #{dayTime,jdbcType=REAL}, 
+      #{thingCount,jdbcType=INTEGER}, #{needTools,jdbcType=TINYINT}, #{companyid,jdbcType=INTEGER}, 
+      #{expectedPrice,jdbcType=DECIMAL}, #{depositPrice,jdbcType=DECIMAL}, #{tipPrice,jdbcType=DECIMAL}, 
+      #{lastPrice,jdbcType=DECIMAL}, #{otherPirce,jdbcType=DECIMAL}, #{couponPirce,jdbcType=DECIMAL}, 
+      #{orderType,jdbcType=TINYINT}, 
+      #{relationOrderid,jdbcType=INTEGER}, #{ratio,jdbcType=REAL}, #{ratioMoney,jdbcType=DECIMAL}, 
+      #{state,jdbcType=TINYINT}, #{complaintState,jdbcType=TINYINT}, 
+      #{commentState,jdbcType=TINYINT}, #{acceptType,jdbcType=TINYINT}, #{orderSource,jdbcType=TINYINT}, 
+      #{book,jdbcType=VARCHAR},#{outTime,jdbcType=TIMESTAMP}, #{serverStartTime,jdbcType=TIMESTAMP}, #{serverEndTime,jdbcType=TIMESTAMP}, 
+      #{acceptTime,jdbcType=TIMESTAMP}, #{payTime2,jdbcType=TIMESTAMP}, #{payTime1,jdbcType=TIMESTAMP}, 
+      #{payedTime,jdbcType=TIMESTAMP}, #{foodselect,jdbcType=VARCHAR}, #{reasonMark,jdbcType=VARCHAR}, 
+      #{addtime,jdbcType=TIMESTAMP}, #{couponid,jdbcType=LONGVARCHAR},#{aunt_m_count,jdbcType=INTEGER}, #{aunt_w_count,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.OrderAunt" >
+    insert into t_order_aunt
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderid != null" >
+        orderid,
+      </if>
+      <if test="userOrderid != null" >
+        user_orderid,
+      </if>
+      <if test="auntid != null" >
+        auntid,
+      </if>
+      <if test="posterType != null" >
+        poster_type,
+      </if>
+      <if test="userid != null" >
+        userid,
+      </if>
+      <if test="ordernum != null" >
+        ordernum,
+      </if>
+      <if test="categoryid != null" >
+        categoryid,
+      </if>
+      <if test="longitude != null" >
+        longitude,
+      </if>
+      <if test="latitude != null" >
+        latitude,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="rname != null" >
+        rname,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="addressname != null" >
+        addressname,
+      </if>
+      <if test="addressdetail != null" >
+        addressdetail,
+      </if>
+      <if test="serverTime != null" >
+        server_time,
+      </if>
+      <if test="picIds != null" >
+        pic_ids,
+      </if>
+      <if test="expectTime != null" >
+        expect_time,
+      </if>
+      <if test="month != null" >
+        month,
+      </if>
+      <if test="dayTime != null" >
+        day_time,
+      </if>
+      <if test="thingCount != null" >
+        thing_count,
+      </if>
+      <if test="needTools != null" >
+        need_tools,
+      </if>
+      <if test="companyid != null" >
+        companyid,
+      </if>
+      <if test="expectedPrice != null" >
+        expected_price,
+      </if>
+      <if test="depositPrice != null" >
+        deposit_price,
+      </if>
+      <if test="tipPrice != null" >
+        tip_price,
+      </if>
+      <if test="lastPrice != null" >
+        last_price,
+      </if>
+      <if test="otherPirce != null" >
+        other_pirce,
+      </if>
+      <if test="couponPirce != null" >
+        coupon_pirce,
+      </if>
+      <if test="orderType != null" >
+        order_type,
+      </if>
+      <if test="relationOrderid != null" >
+        relation_orderid,
+      </if>
+      <if test="ratio != null" >
+        ratio,
+      </if>
+      <if test="ratioMoney != null" >
+        ratio_money,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="complaintState != null" >
+        complaint_state,
+      </if>
+      <if test="commentState != null" >
+        comment_state,
+      </if>
+      <if test="acceptType != null" >
+        accept_type,
+      </if>
+      <if test="orderSource != null" >
+        order_source,
+      </if>
+      <if test="book != null" >
+        book,
+      </if>
+       <if test="outTime != null" >
+        out_time,
+      </if>
+      <if test="serverStartTime != null" >
+        server_start_time,
+      </if>
+      <if test="serverEndTime != null" >
+        server_end_time,
+      </if>
+      <if test="acceptTime != null" >
+        accept_time,
+      </if>
+      <if test="payTime2 != null" >
+        pay_time2,
+      </if>
+      <if test="payTime1 != null" >
+        pay_time1,
+      </if>
+      <if test="payedTime != null" >
+        payed_time,
+      </if>
+      <if test="foodselect != null" >
+        foodselect,
+      </if>
+      <if test="reasonMark != null" >
+        reason_mark,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+      <if test="couponid != null" >
+        couponid,
+      </if>
+       <if test="aunt_m_count != null" >
+        aunt_m_count,
+      </if>
+      <if test="aunt_w_count != null" >
+        aunt_w_count,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderid != null" >
+        #{orderid,jdbcType=INTEGER},
+      </if>
+      <if test="userOrderid != null" >
+        #{userOrderid,jdbcType=INTEGER},
+      </if>
+      <if test="auntid != null" >
+        #{auntid,jdbcType=INTEGER},
+      </if>
+      <if test="posterType != null" >
+        #{posterType,jdbcType=TINYINT},
+      </if>
+      <if test="userid != null" >
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="ordernum != null" >
+        #{ordernum,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryid != null" >
+        #{categoryid,jdbcType=INTEGER},
+      </if>
+      <if test="longitude != null" >
+        #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="latitude != null" >
+        #{latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="rname != null" >
+        #{rname,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="addressname != null" >
+        #{addressname,jdbcType=VARCHAR},
+      </if>
+      <if test="addressdetail != null" >
+        #{addressdetail,jdbcType=VARCHAR},
+      </if>
+      <if test="serverTime != null" >
+        #{serverTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="picIds != null" >
+        #{picIds,jdbcType=VARCHAR},
+      </if>
+      <if test="expectTime != null" >
+        #{expectTime,jdbcType=REAL},
+      </if>
+      <if test="month != null" >
+        #{month,jdbcType=REAL},
+      </if>
+      <if test="dayTime != null" >
+        #{dayTime,jdbcType=REAL},
+      </if>
+      <if test="thingCount != null" >
+        #{thingCount,jdbcType=INTEGER},
+      </if>
+      <if test="needTools != null" >
+        #{needTools,jdbcType=TINYINT},
+      </if>
+      <if test="companyid != null" >
+        #{companyid,jdbcType=INTEGER},
+      </if>
+      <if test="expectedPrice != null" >
+        #{expectedPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="depositPrice != null" >
+        #{depositPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="tipPrice != null" >
+        #{tipPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="lastPrice != null" >
+        #{lastPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="otherPirce != null" >
+        #{otherPirce,jdbcType=DECIMAL},
+      </if>
+      <if test="couponPirce != null" >
+        #{couponPirce,jdbcType=DECIMAL},
+      </if>
+      <if test="orderType != null" >
+        #{orderType,jdbcType=TINYINT},
+      </if>
+      <if test="relationOrderid != null" >
+        #{relationOrderid,jdbcType=INTEGER},
+      </if>
+      <if test="ratio != null" >
+        #{ratio,jdbcType=REAL},
+      </if>
+      <if test="ratioMoney != null" >
+        #{ratioMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=TINYINT},
+      </if>
+      <if test="complaintState != null" >
+        #{complaintState,jdbcType=TINYINT},
+      </if>
+      <if test="commentState != null" >
+        #{commentState,jdbcType=TINYINT},
+      </if>
+      <if test="acceptType != null" >
+        #{acceptType,jdbcType=TINYINT},
+      </if>
+      <if test="orderSource != null" >
+        #{orderSource,jdbcType=TINYINT},
+      </if>
+      <if test="book != null" >
+        #{book,jdbcType=VARCHAR},
+      </if>
+       <if test="outTime != null" >
+        #{outTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="serverStartTime != null" >
+        #{serverStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="serverEndTime != null" >
+        #{serverEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="acceptTime != null" >
+        #{acceptTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payTime2 != null" >
+        #{payTime2,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payTime1 != null" >
+        #{payTime1,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payedTime != null" >
+        #{payedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="foodselect != null" >
+        #{foodselect,jdbcType=VARCHAR},
+      </if>
+      <if test="reasonMark != null" >
+        #{reasonMark,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="couponid != null" >
+        #{couponid,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="aunt_m_count != null" >
+        #{aunt_m_count,jdbcType=INTEGER},
+      </if>
+      <if test="aunt_w_count != null" >
+        #{aunt_w_count,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.OrderAunt" >
+    update t_order_aunt
+    <set >
+      <if test="userOrderid != null" >
+        user_orderid = #{userOrderid,jdbcType=INTEGER},
+      </if>
+      <if test="auntid != null" >
+        auntid = #{auntid,jdbcType=INTEGER},
+      </if>
+      <if test="posterType != null" >
+        poster_type = #{posterType,jdbcType=TINYINT},
+      </if>
+      <if test="userid != null" >
+        userid = #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="ordernum != null" >
+        ordernum = #{ordernum,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryid != null" >
+        categoryid = #{categoryid,jdbcType=INTEGER},
+      </if>
+      <if test="longitude != null" >
+        longitude = #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="latitude != null" >
+        latitude = #{latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="rname != null" >
+        rname = #{rname,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="addressname != null" >
+        addressname = #{addressname,jdbcType=VARCHAR},
+      </if>
+      <if test="addressdetail != null" >
+        addressdetail = #{addressdetail,jdbcType=VARCHAR},
+      </if>
+      <if test="serverTime != null" >
+        server_time = #{serverTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="picIds != null" >
+        pic_ids = #{picIds,jdbcType=VARCHAR},
+      </if>
+      <if test="expectTime != null" >
+        expect_time = #{expectTime,jdbcType=REAL},
+      </if>
+      <if test="month != null" >
+        month = #{month,jdbcType=REAL},
+      </if>
+      <if test="dayTime != null" >
+        day_time = #{dayTime,jdbcType=REAL},
+      </if>
+      <if test="thingCount != null" >
+        thing_count = #{thingCount,jdbcType=INTEGER},
+      </if>
+      <if test="needTools != null" >
+        need_tools = #{needTools,jdbcType=TINYINT},
+      </if>
+      <if test="companyid != null" >
+        companyid = #{companyid,jdbcType=INTEGER},
+      </if>
+      <if test="expectedPrice != null" >
+        expected_price = #{expectedPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="depositPrice != null" >
+        deposit_price = #{depositPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="tipPrice != null" >
+        tip_price = #{tipPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="lastPrice != null" >
+        last_price = #{lastPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="otherPirce != null" >
+        other_pirce = #{otherPirce,jdbcType=DECIMAL},
+      </if>
+      <if test="couponPirce != null" >
+        coupon_pirce = #{couponPirce,jdbcType=DECIMAL},
+      </if>
+      <if test="orderType != null" >
+        order_type = #{orderType,jdbcType=TINYINT},
+      </if>
+      <if test="relationOrderid != null" >
+        relation_orderid = #{relationOrderid,jdbcType=INTEGER},
+      </if>
+      <if test="ratio != null" >
+        ratio = #{ratio,jdbcType=REAL},
+      </if>
+      <if test="ratioMoney != null" >
+        ratio_money = #{ratioMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=TINYINT},
+      </if>
+      <if test="complaintState != null" >
+        complaint_state = #{complaintState,jdbcType=TINYINT},
+      </if>
+      <if test="commentState != null" >
+        comment_state = #{commentState,jdbcType=TINYINT},
+      </if>
+      <if test="acceptType != null" >
+        accept_type = #{acceptType,jdbcType=TINYINT},
+      </if>
+      <if test="orderSource != null" >
+        order_source = #{orderSource,jdbcType=TINYINT},
+      </if>
+      <if test="book != null" >
+        book = #{book,jdbcType=VARCHAR},
+      </if>
+      <if test="outTime != null" >
+        out_time = #{outTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="serverStartTime != null" >
+        server_start_time = #{serverStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="serverEndTime != null" >
+        server_end_time = #{serverEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="acceptTime != null" >
+        accept_time = #{acceptTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payTime2 != null" >
+        pay_time2 = #{payTime2,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payTime1 != null" >
+        pay_time1 = #{payTime1,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payedTime != null" >
+        payed_time = #{payedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="foodselect != null" >
+        foodselect = #{foodselect,jdbcType=VARCHAR},
+      </if>
+      <if test="reasonMark != null" >
+        reason_mark = #{reasonMark,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="couponid != null" >
+        couponid = #{couponid,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="aunt_m_count != null" >
+        aunt_m_count = #{aunt_m_count,jdbcType=INTEGER},
+      </if>
+      <if test="aunt_w_count != null" >
+        aunt_w_count = #{aunt_w_count,jdbcType=INTEGER},
+      </if>
+    </set>
+    where orderid = #{orderid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.uncleserver.model.OrderAunt" >
+    update t_order_aunt
+    set user_orderid = #{userOrderid,jdbcType=INTEGER},
+      auntid = #{auntid,jdbcType=INTEGER},
+      poster_type = #{posterType,jdbcType=TINYINT},
+      userid = #{userid,jdbcType=INTEGER},
+      ordernum = #{ordernum,jdbcType=VARCHAR},
+      categoryid = #{categoryid,jdbcType=INTEGER},
+      longitude = #{longitude,jdbcType=DOUBLE},
+      latitude = #{latitude,jdbcType=DOUBLE},
+      phone = #{phone,jdbcType=VARCHAR},
+      rname = #{rname,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=VARCHAR},
+      addressname = #{addressname,jdbcType=VARCHAR},
+      addressdetail = #{addressdetail,jdbcType=VARCHAR},
+      server_time = #{serverTime,jdbcType=TIMESTAMP},
+      pic_ids = #{picIds,jdbcType=VARCHAR},
+      expect_time = #{expectTime,jdbcType=REAL},
+      month = #{month,jdbcType=REAL},
+      day_time = #{dayTime,jdbcType=REAL},
+      thing_count = #{thingCount,jdbcType=INTEGER},
+      need_tools = #{needTools,jdbcType=TINYINT},
+      companyid = #{companyid,jdbcType=INTEGER},
+      expected_price = #{expectedPrice,jdbcType=DECIMAL},
+      deposit_price = #{depositPrice,jdbcType=DECIMAL},
+      tip_price = #{tipPrice,jdbcType=DECIMAL},
+      last_price = #{lastPrice,jdbcType=DECIMAL},
+      other_pirce = #{otherPirce,jdbcType=DECIMAL},
+      coupon_pirce = #{couponPirce,jdbcType=DECIMAL},
+      order_type = #{orderType,jdbcType=TINYINT},
+      relation_orderid = #{relationOrderid,jdbcType=INTEGER},
+      ratio = #{ratio,jdbcType=REAL},
+      ratio_money = #{ratioMoney,jdbcType=DECIMAL},
+      state = #{state,jdbcType=TINYINT},
+      complaint_state = #{complaintState,jdbcType=TINYINT},
+      comment_state = #{commentState,jdbcType=TINYINT},
+      accept_type = #{acceptType,jdbcType=TINYINT},
+      order_source = #{orderSource,jdbcType=TINYINT},
+      book = #{book,jdbcType=VARCHAR},
+      out_time = #{outTime,jdbcType=TIMESTAMP},
+      server_start_time = #{serverStartTime,jdbcType=TIMESTAMP},
+      server_end_time = #{serverEndTime,jdbcType=TIMESTAMP},
+      accept_time = #{acceptTime,jdbcType=TIMESTAMP},
+      pay_time2 = #{payTime2,jdbcType=TIMESTAMP},
+      pay_time1 = #{payTime1,jdbcType=TIMESTAMP},
+      payed_time = #{payedTime,jdbcType=TIMESTAMP},
+      foodselect = #{foodselect,jdbcType=VARCHAR},
+      reason_mark = #{reasonMark,jdbcType=VARCHAR},
+      addtime = #{addtime,jdbcType=TIMESTAMP},
+      couponid = #{couponid,jdbcType=LONGVARCHAR},
+       aunt_m_count = #{aunt_m_count,jdbcType=INTEGER},
+      aunt_w_count = #{aunt_w_count,jdbcType=INTEGER}
+    where orderid = #{orderid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.OrderAunt" >
+    update t_order_aunt
+    set user_orderid = #{userOrderid,jdbcType=INTEGER},
+      auntid = #{auntid,jdbcType=INTEGER},
+      poster_type = #{posterType,jdbcType=TINYINT},
+      userid = #{userid,jdbcType=INTEGER},
+      ordernum = #{ordernum,jdbcType=VARCHAR},
+      categoryid = #{categoryid,jdbcType=INTEGER},
+      longitude = #{longitude,jdbcType=DOUBLE},
+      latitude = #{latitude,jdbcType=DOUBLE},
+      phone = #{phone,jdbcType=VARCHAR},
+      rname = #{rname,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=VARCHAR},
+      addressname = #{addressname,jdbcType=VARCHAR},
+      addressdetail = #{addressdetail,jdbcType=VARCHAR},
+      server_time = #{serverTime,jdbcType=TIMESTAMP},
+      pic_ids = #{picIds,jdbcType=VARCHAR},
+      expect_time = #{expectTime,jdbcType=REAL},
+      month = #{month,jdbcType=REAL},
+      day_time = #{dayTime,jdbcType=REAL},
+      thing_count = #{thingCount,jdbcType=INTEGER},
+      need_tools = #{needTools,jdbcType=TINYINT},
+      companyid = #{companyid,jdbcType=INTEGER},
+      expected_price = #{expectedPrice,jdbcType=DECIMAL},
+      deposit_price = #{depositPrice,jdbcType=DECIMAL},
+      tip_price = #{tipPrice,jdbcType=DECIMAL},
+      last_price = #{lastPrice,jdbcType=DECIMAL},
+      other_pirce = #{otherPirce,jdbcType=DECIMAL},
+      coupon_pirce = #{couponPirce,jdbcType=DECIMAL},
+      order_type = #{orderType,jdbcType=TINYINT},
+      relation_orderid = #{relationOrderid,jdbcType=INTEGER},
+      ratio = #{ratio,jdbcType=REAL},
+      ratio_money = #{ratioMoney,jdbcType=DECIMAL},
+      state = #{state,jdbcType=TINYINT},
+      complaint_state = #{complaintState,jdbcType=TINYINT},
+      comment_state = #{commentState,jdbcType=TINYINT},
+      accept_type = #{acceptType,jdbcType=TINYINT},
+      order_source = #{orderSource,jdbcType=TINYINT},
+      book = #{book,jdbcType=VARCHAR},
+      out_time = #{outTime,jdbcType=TIMESTAMP},
+      server_start_time = #{serverStartTime,jdbcType=TIMESTAMP},
+      server_end_time = #{serverEndTime,jdbcType=TIMESTAMP},
+      accept_time = #{acceptTime,jdbcType=TIMESTAMP},
+      pay_time2 = #{payTime2,jdbcType=TIMESTAMP},
+      pay_time1 = #{payTime1,jdbcType=TIMESTAMP},
+      payed_time = #{payedTime,jdbcType=TIMESTAMP},
+      foodselect = #{foodselect,jdbcType=VARCHAR},
+      reason_mark = #{reasonMark,jdbcType=VARCHAR},
+      addtime = #{addtime,jdbcType=TIMESTAMP},
+      aunt_m_count = #{aunt_m_count,jdbcType=INTEGER},
+      aunt_w_count = #{aunt_w_count,jdbcType=INTEGER}
+    where orderid = #{orderid,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectByUserOrderId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_order_aunt
+    where user_orderid = #{user_orderid,jdbcType=INTEGER} and state != 8
+  </select>
+  
+    <select id="selectAcceptByUserOrderId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_order_aunt
+    where user_orderid = #{user_orderid,jdbcType=INTEGER} and state = 16
+  </select>
+  
+    <select id="selectSingleAuntAcceptByUserOrderId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_order_aunt
+    where user_orderid = #{user_orderid,jdbcType=INTEGER} and state = 16 and companyid = 0
+  </select>
+  
+  
+   <select id="selectRefuseByUserOrderId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_order_aunt
+    where user_orderid = #{user_orderid,jdbcType=INTEGER} and state = 8
+  </select>
+  
+            <select id="getHistoryOrder" resultMap="BaseResultMap">
+    select *
+    from t_order_aunt where poster_type = 1 and auntid = #{companyid} and (state = 2 or state = 3 or state = 4 or state = 5)
+    order by addtime desc
+    <if test="startPage != null and rows != null ">limit #{startPage}, #{rows}</if>
+  </select>
+  
+      <select id="getHistoryOrderCount" resultType="java.lang.Long">
+    select count(*)
+    from t_order_aunt where poster_type = 1 and auntid = #{companyid} and (state = 2 or state = 3 or state = 4 or state = 5)
+  </select>
+  
+  
+    <select id="getInServiceOrder" resultMap="BaseResultMap">
+    select *
+    from t_order_aunt where poster_type = 1 and auntid = #{companyid} and (state = 6 or state = 7)
+    order by addtime desc
+    <if test="startPage != null and rows != null ">limit #{startPage}, #{rows}</if>
+  </select>
+  
+  
+   <select id="getOrderList" resultMap="BaseResultMap">
+    select *
+    from t_order_aunt where 1=1 
+    <if test="auntid != null">
+     and auntid = #{auntid}
+    </if>
+    <if test="companyid !=null">
+     and companyid = #{companyid}
+    </if>
+    and (state = 2 or state = 3 or state = 4 or state = 10 or state = 11 or state = 13 or state = 16 or complaint_state = 1)
+    order by addtime desc
+    <if test="startPage != null and rows != null ">limit #{startPage}, #{rows}</if>
+  </select>
+  
+  <select id="getIngOrder" resultMap="BaseResultMap">
+    select *
+    from t_order_aunt where 1=1 
+    <if test="auntid != null ">
+     and auntid = #{auntid}
+    </if>
+    <if test="companyid != null">
+     and companyid = #{companyid}
+    </if>
+    and (state = 3 or state = 4) and complaint_state = 0
+    order by addtime desc
+  </select>
+  
+  <select id="getInServiceOrderCount" resultType="java.lang.Long">
+    select count(*)
+    from t_order_aunt where poster_type = 1 and auntid = #{companyid} and (state = 6 or state = 7)
+  </select>
+  
+  
+   <select id="getAuntInServiceOrderCount" resultType="java.lang.Long">
+    select count(*)
+    from t_order_aunt
+    where auntid = #{dataid}
+    and <![CDATA[ TIMESTAMPDIFF(HOUR,server_time,now())>= -3 and TIMESTAMPDIFF(HOUR,server_time,now()) <=3 and state <> 5 and state <> 6 and state <> 7 
+    and state <> 9 and state <> 12 and state <> 14 and complaint_state = 0 ]]> 
+  </select>
+
+  <select id="getCompanyAuntOrderCount" resultType="java.lang.Long">
+    select count(*)
+    from t_order_aunt 
+    <where> 
+    <if test="companyid != null">
+    and  auntid in 
+    (select auntid from t_aunt where companyid = #{companyid})
+    </if>
+    <if test="startDate != null">
+    	and addtime &gt;= #{startDate}
+    </if>
+    <if test="endDate != null">
+    	and addtime &lt;= #{endDate}
+    </if>
+    </where>
+  </select>
+
+  <select id="getCompanyTotalPrice" resultType="java.lang.Float">
+    select sum(last_price)
+    from t_order_aunt where state = 6
+    <if test="companyid != null">
+   	 and auntid in 
+    (select auntid from t_aunt where companyid = #{companyid})
+    </if>
+    <if test="startDate != null">
+    	and addtime &gt;= #{startDate}
+    </if>
+    <if test="endDate != null">
+    	and addtime &lt;= #{endDate}
+    </if>
+  </select>
+
+  <select id="getTotalTimeByCompany" resultType="java.lang.Float">
+    select sum(expect_time)
+    from t_order_aunt where state = 6
+    <if test="companyid != null">
+    and auntid in 
+    (select auntid from t_aunt where companyid = #{companyid})
+    </if>
+    <if test="startDate != null">
+    	and addtime &gt;= #{startDate}
+    </if>
+    <if test="endDate != null">
+    	and addtime &lt;= #{endDate}
+    </if>
+    <if test="type == 1">
+    	and categoryid in (1,2,3,8)
+    </if>
+    <if test="type == 2">
+    	and categoryid in (14,15,16,17,18)
+    </if>
+  </select>
+  
+</mapper>

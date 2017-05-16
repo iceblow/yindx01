@@ -1,0 +1,55 @@
+package com.uncleserver.dao;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.uncleserver.model.Order;
+
+public interface OrderMapper {
+	int deleteByPrimaryKey(Integer orderid);
+
+	int insert(Order record);
+
+	int insertSelective(Order record);
+
+	Order selectByPrimaryKey(Integer orderid);
+
+	int updateByPrimaryKeySelective(Order record);
+
+	int updateByPrimaryKeyWithBLOBs(Order record);
+
+	int updateByPrimaryKey(Order record);
+
+	List<Order> selectByUseridAndTpye(@Param("userid") int userid, @Param("type") int type, @Param("page") int page);
+	
+	List<Order> selectByCompanyidAndTpye(@Param("userid") int userid, @Param("type") int type, @Param("page") int page);
+
+	Long selectByUseridAndTpyeCount(@Param("userid") int userid, @Param("type") int type, @Param("page") int page);
+	
+	Long selectByCompanyidAndTpyeCount(@Param("userid") int userid, @Param("type") int type, @Param("page") int page);
+
+	Long selectOrderCount();
+
+	Order selectByOrderNum(String ordernum);
+
+	List<Order> managePageOrder(@Param(value = "startPage") Integer startPage, @Param(value = "rows") Integer rows,
+			@Param(value = "type") Integer type);
+	
+	List<Order> managePageOrderList(@Param(value = "startPage") Integer startPage, @Param(value = "rows") Integer rows,
+			@Param(value = "type") Integer type,@Param(value = "ordernum") String ordernum,@Param(value = "categoryid") Integer categoryid,@Param(value = "phone") String phone);
+
+	Long managePageOrderCount(@Param(value = "type") Integer type);
+	
+	Long managePageOrderListCount(@Param(value = "type") Integer type,@Param(value = "ordernum") String ordernum,@Param(value = "categoryid") Integer categoryid,@Param(value = "phone") String phone);
+
+	List<Order> selectFailedOrderList();
+	
+	List<Order> selectOrderUnComfirmed();
+
+	List<Order> selectOverTimeOrderList();
+	
+	Long selectCompleteOrderList(Integer userid,Integer userType);
+
+	List<Order> selectTwoHourAlermOrder(String stime, String etime);
+}

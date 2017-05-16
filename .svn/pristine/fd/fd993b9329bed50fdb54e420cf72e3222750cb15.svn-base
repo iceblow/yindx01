@@ -1,0 +1,1866 @@
+package com.uncleserver.service.api.Impl;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.uncleserver.common.CommonUtils;
+import com.uncleserver.common.alipay.AlipayRefundTrade;
+import com.uncleserver.common.wxpay.WxRefund;
+import com.uncleserver.dao.OrderMapper;
+import com.uncleserver.model.Aunt;
+import com.uncleserver.model.AuntExtra;
+import com.uncleserver.model.CategorySecond;
+import com.uncleserver.model.Company;
+import com.uncleserver.model.CompanyExtra;
+import com.uncleserver.model.Order;
+import com.uncleserver.model.OrderAunt;
+import com.uncleserver.model.OrderComplaint;
+import com.uncleserver.model.OrderPay;
+import com.uncleserver.model.OrderPool;
+import com.uncleserver.model.OrderRefund;
+import com.uncleserver.model.OrderThird;
+import com.uncleserver.model.UserExtra;
+import com.uncleserver.modelVo.ApiResult;
+import com.uncleserver.modelVo.IngOrderValue;
+import com.uncleserver.modelVo.OrderAuntDetailValue;
+import com.uncleserver.modelVo.OrderAuntModel;
+import com.uncleserver.modelVo.OrderAuntValue;
+import com.uncleserver.service.api.AuntOrderService;
+
+@Service("auntOrderService")
+public class AuntOrderServiceImpl extends BaseServiceImpl implements AuntOrderService {
+	
+	private ScheduledExecutorService scheduledOrderPayService = Executors.newScheduledThreadPool(10);
+	
+	private ExecutorService fixedThreadPool = Executors.newFixedThreadPool(8);
+
+	@Override
+	public ApiResult orderList(String userid, int user_type, String accesstoken) {
+		ApiResult result = new ApiResult();
+		HashMap<String, Object> map = new HashMap<>();
+		if (user_type == 0) {
+			Aunt aunt = auntMapper.selectByPrimaryKey(CommonUtils.parseInt(userid, 0));
+			if (aunt == null) {
+				result.setCode("106");
+				result.setMessage("用户不存在");
+				return result;
+			}
+			AuntExtra extra = auntExtramapper.selectByAuntId(CommonUtils.parseInt(userid, 0));
+			if (!checkSession(accesstoken, extra)) {
+				result.setCode("105");
+				result.setMessage("您的账号已经在别处登录,请重新登录");
+				return result;
+			}
+
+			if (checkTokenTime(extra.getTokenTime())) {
+				result.setCode("107");
+				result.setMessage("登录信息过期,请重新登录");
+				return result;
+			}
+			List<OrderAunt> ingOrderList = orderAuntMapper.getIngOrder(CommonUtils.parseInt(userid, 0), null);
+			if (ingOrderList != null && ingOrderList.size() > 0) {
+
+				for (OrderAunt orderAunt : ingOrderList) {
+					IngOrderValue value = new IngOrderValue();
+					value.setOrderid(orderAunt.getOrderid());
+
+					CategorySecond second = categorySecondMapper.selectByPrimaryKey(orderAunt.getCategoryid());
+					String detail = "";
+					if (null != second) {
+						detail += second.getName();
+					}
+					value.setDetail(detail + orderAunt.getAddressname() + orderAunt.getAddressdetail());
+					if (orderAunt.getState() == 3) {
+						if (orderAunt.getOutTime() != null) {
+							value.setTime((int) ((new Date().getTime() - orderAunt.getOutTime().getTime()) / 1000));
+						} else {
+							value.setTime(0);
+						}
+
+					} else if (orderAunt.getState() == 4) {
+						if (orderAunt.getServerStartTime() != null) {
+							Date nowTime = new Date();
+							long timeDiff = nowTime.getTime() - orderAunt.getServerStartTime().getTime();
+							value.setTime((int) (timeDiff / 1000));
+						} else {
+							value.setTime(0);
+						}
+					}
+
+					if (orderAunt.getComplaintState() != null && orderAunt.getComplaintState() == 1) {
+						value.setState(20);
+					} else {
+						value.setState(orderAunt.getState());
+					}
+
+					if (orderAunt.getOrderType() != null) {
+						value.setOrder_type(orderAunt.getOrderType());
+					} else {
+						value.setOrder_type(0);
+					}
+
+					map.put("ingOrder", value);
+					break;
+				}
+			}
+			List<OrderAunt> orderAuntList = orderAuntMapper.getOrderList(CommonUtils.parseInt(userid, 0), null, 0, 10);
+			List<OrderAuntValue> orderList = new ArrayList<OrderAuntValue>();
+			map.put("orderList", orderList);
+			if (orderAuntList != null && orderAuntList.size() > 0) {
+				for (OrderAunt orderAunt : orderAuntList) {
+					OrderAuntValue value = new OrderAuntValue();
+					value.setOrderid(orderAunt.getOrderid());
+					CategorySecond second = categorySecondMapper.selectByPrimaryKey(orderAunt.getCategoryid());
+					String detail = "";
+					if (null != second) {
+						detail += second.getName();
+					}
+					value.setServername(detail);
+					value.setCategoryid(orderAunt.getCategoryid());
+					value.setTimetitle(CommonUtils.getTimeFormat(orderAunt.getServerTime(), "yyyy-MM-dd HH:mm"));
+					value.setAddress(orderAunt.getAddressname() + orderAunt.getAddressdetail());
+					value.setPrice(orderAunt.getLastPrice().setScale(2, BigDecimal.ROUND_UP).toPlainString());
+					if (orderAunt.getComplaintState() != null && orderAunt.getComplaintState() == 1) {
+						value.setState("投诉中");
+					} else {
+						if (orderAunt.getState() == 2) {
+							value.setState("接单/抢单成功");
+						} else if (orderAunt.getState() == 3) {
+							value.setState("已出发");
+						} else if (orderAunt.getState() == 4) {
+							value.setState("开始服务");
+						} else if (orderAunt.getState() == 5) {
+							value.setState("待支付");
+						} else if (orderAunt.getState() == 6) {
+							value.setState("已支付");
+						} else if (orderAunt.getState() == 7) {
+							value.setState("已退单");
+						} else if (orderAunt.getState() == 10) {
+							value.setState("等待客户确认");
+						} else if (orderAunt.getState() == 11) {
+							if(second.getFid() >= 14 && second.getFid() <= 18){
+								value.setState("待确认工资");
+							}else {
+								value.setState("待支付维修金");
+							}
+							
+						} else if (orderAunt.getState() == 13) {
+							value.setState("申请退单");
+						}else if(orderAunt.getState() == 16){
+							value.setState("待他人确认");
+						}
+					}
+
+					if (orderAunt.getOrderType() != null) {
+						value.setOrder_type(orderAunt.getOrderType());
+					} else {
+						value.setOrder_type(0);
+					}
+
+					orderList.add(value);
+				}
+
+			}
+		} else if (user_type == 1) {
+			Company company = companyMapper.selectByPrimaryKey(CommonUtils.parseInt(userid, 0));
+			if (company == null) {
+				result.setCode("106");
+				result.setMessage("用户不存在");
+				return result;
+			}
+			CompanyExtra extra = companyExtraMapper.selectByCompanyId(CommonUtils.parseInt(userid, 0));
+			if (!checkSession(accesstoken, extra)) {
+				result.setCode("105");
+				result.setMessage("您的账号已经在别处登录,请重新登录");
+				return result;
+			}
+
+			if (checkTokenTime(extra.getTokenTime())) {
+				result.setCode("107");
+				result.setMessage("登录信息过期,请重新登录");
+				return result;
+			}
+			List<OrderAunt> ingOrderList = orderAuntMapper.getIngOrder(null, CommonUtils.parseInt(userid, 0));
+			if (ingOrderList != null && ingOrderList.size() > 0) {
+
+				for (OrderAunt orderAunt : ingOrderList) {
+					IngOrderValue value = new IngOrderValue();
+					value.setOrderid(orderAunt.getOrderid());
+					value.setState(orderAunt.getState());
+					CategorySecond second = categorySecondMapper.selectByPrimaryKey(orderAunt.getCategoryid());
+					String detail = "";
+					if (null != second) {
+						detail += second.getName();
+					}
+					value.setDetail(detail + orderAunt.getAddressname() + orderAunt.getAddressdetail());
+					if (orderAunt.getState() == 3) {
+						if (orderAunt.getOutTime() != null) {
+							value.setTime((int) orderAunt.getOutTime().getTime() / 1000);
+						}
+					} else if (orderAunt.getState() == 4) {
+						if (orderAunt.getServerStartTime() != null) {
+							value.setTime((int) orderAunt.getServerStartTime().getTime() / 1000);
+						}
+					}
+					map.put("ingOrder", value);
+					break;
+				}
+			}
+			List<OrderAunt> orderAuntList = orderAuntMapper.getOrderList(null, CommonUtils.parseInt(userid, 0), 0, 10);
+			List<OrderAuntValue> orderList = new ArrayList<OrderAuntValue>();
+			map.put("orderList", orderList);
+			if (orderAuntList != null && orderAuntList.size() > 0) {
+				for (OrderAunt orderAunt : orderAuntList) {
+					OrderAuntValue value = new OrderAuntValue();
+					value.setOrderid(orderAunt.getOrderid());
+					CategorySecond second = categorySecondMapper.selectByPrimaryKey(orderAunt.getCategoryid());
+					String detail = "";
+					if (null != second) {
+						detail += second.getName();
+					}
+					value.setServername(detail);
+					value.setCategoryid(orderAunt.getCategoryid());
+					value.setTimetitle(CommonUtils.getTimeFormat(orderAunt.getServerTime(), "yyyy-MM-dd HH:mm"));
+					value.setAddress(orderAunt.getAddressname() + orderAunt.getAddressdetail());
+					value.setPrice(orderAunt.getLastPrice().setScale(2, BigDecimal.ROUND_UP).toPlainString());
+					if (orderAunt.getComplaintState() != null && orderAunt.getComplaintState() == 1) {
+						value.setState("投诉中");
+					} else {
+						if (orderAunt.getState() == 2) {
+							value.setState("接单/抢单成功");
+						} else if (orderAunt.getState() == 3) {
+							value.setState("已出发");
+						} else if (orderAunt.getState() == 4) {
+							value.setState("开始服务");
+						} else if (orderAunt.getState() == 5) {
+							value.setState("待支付");
+						} else if (orderAunt.getState() == 6) {
+							value.setState("已支付");
+						} else if (orderAunt.getState() == 7) {
+							value.setState("已退单");
+						} else if (orderAunt.getState() == 10) {
+							value.setState("等待客户确认");
+						} else if (orderAunt.getState() == 11) {
+							if(second.getFid() >= 14 && second.getFid() <= 18){
+								value.setState("待确认工资");
+							}else {
+								value.setState("待支付维修金");
+							}
+						} else if (orderAunt.getState() == 13) {
+							value.setState("申请退单");
+						}else if(orderAunt.getState() == 16){
+							value.setState("待他人确认");
+						}
+					}
+					orderList.add(value);
+				}
+
+			}
+		}
+
+		result.setCode("1");
+		result.setMessage("请求成功");
+		result.setResult(map);
+		return result;
+	}
+
+	@Override
+	public ApiResult orderListHis(String userid, int user_type, Integer serverid, Integer comment_type, Integer page,
+			String accesstoken) {
+		ApiResult result = new ApiResult();
+		HashMap<String, Object> map = new HashMap<>();
+		if (user_type == 0) {
+			Aunt aunt = auntMapper.selectByPrimaryKey(CommonUtils.parseInt(userid, 0));
+			if (aunt == null) {
+				result.setCode("106");
+				result.setMessage("用户不存在");
+				return result;
+			}
+			AuntExtra extra = auntExtramapper.selectByAuntId(CommonUtils.parseInt(userid, 0));
+			if (!checkSession(accesstoken, extra)) {
+				result.setCode("105");
+				result.setMessage("您的账号已经在别处登录,请重新登录");
+				return result;
+			}
+
+			if (checkTokenTime(extra.getTokenTime())) {
+				result.setCode("107");
+				result.setMessage("登录信息过期,请重新登录");
+				return result;
+			}
+			List<OrderAuntModel> modelList = orderAuntMapper.selectByCondition(CommonUtils.parseInt(userid, 0), null,
+					serverid, comment_type, (page - 1) * 10, 10);
+			List<OrderAuntModel> modelListMore = orderAuntMapper.selectByCondition(CommonUtils.parseInt(userid, 0),
+					null, serverid, comment_type, (page) * 10, 10);
+			if (modelListMore != null && modelListMore.size() > 0) {
+				map.put("havemore", 1);
+			} else {
+				map.put("havemore", 0);
+			}
+			List<OrderAuntValue> valueList = new ArrayList<>();
+			map.put("orderList", valueList);
+			if (modelList != null && modelList.size() > 0) {
+				for (OrderAuntModel model : modelList) {
+					OrderAuntValue value = new OrderAuntValue();
+					value.setOrderid(model.getOrderid());
+					CategorySecond second = categorySecondMapper.selectByPrimaryKey(model.getCategoryid());
+					String detail = "";
+					if (null != second) {
+						detail += second.getName();
+					}
+					value.setServername(detail);
+					value.setTimetitle(CommonUtils.getTimeFormat(model.getServer_time(), "yyyy-MM-dd HH:mm"));
+					value.setAddress(model.getAddressname() + model.getAddressdetail());
+					value.setPrice(model.getLast_price().setScale(2, BigDecimal.ROUND_UP).toPlainString());
+					if (model.getComplaint_state() != null && model.getComplaint_state() == 1) {
+						value.setState("投诉中");
+					} else {
+						if (model.getState() == 5) {
+							value.setState("待支付");
+						} else if (model.getState() == 6) {
+							value.setState("服务完成");
+						} else if (model.getState() == 7) {
+							value.setState("已退单");
+						} else if (model.getState() == 12) {
+							value.setState("待确认");
+						} else if (model.getState() == 14) {
+							value.setState("退单待支付");
+						}
+					}
+
+					if (model.getOrder_type() != null) {
+						value.setOrder_type(model.getOrder_type());
+					} else {
+						value.setOrder_type(0);
+					}
+
+					valueList.add(value);
+				}
+			}
+		} else if (user_type == 1) {
+			Company company = companyMapper.selectByPrimaryKey(CommonUtils.parseInt(userid, 0));
+			if (company == null) {
+				result.setCode("106");
+				result.setMessage("用户不存在");
+				return result;
+			}
+			CompanyExtra extra = companyExtraMapper.selectByCompanyId(CommonUtils.parseInt(userid, 0));
+			if (!checkSession(accesstoken, extra)) {
+				result.setCode("105");
+				result.setMessage("您的账号已经在别处登录,请重新登录");
+				return result;
+			}
+
+			if (checkTokenTime(extra.getTokenTime())) {
+				result.setCode("107");
+				result.setMessage("登录信息过期,请重新登录");
+				return result;
+			}
+			List<OrderAuntModel> modelList = orderAuntMapper.selectByCondition(null, CommonUtils.parseInt(userid, 0),
+					serverid, comment_type, (page - 1) * 10, 10);
+			List<OrderAuntModel> modelListMore = orderAuntMapper.selectByCondition(null,
+					CommonUtils.parseInt(userid, 0), serverid, comment_type, (page) * 10, 10);
+			if (modelListMore != null && modelListMore.size() > 0) {
+				map.put("havemore", 1);
+			} else {
+				map.put("havemore", 0);
+			}
+			List<OrderAuntValue> valueList = new ArrayList<>();
+			map.put("orderList", valueList);
+			if (modelList != null && modelList.size() > 0) {
+				for (OrderAuntModel model : modelList) {
+					OrderAuntValue value = new OrderAuntValue();
+					value.setOrderid(model.getOrderid());
+					CategorySecond second = categorySecondMapper.selectByPrimaryKey(model.getCategoryid());
+					String detail = "";
+					if (null != second) {
+						detail += second.getName();
+					}
+					value.setServername(detail);
+					value.setTimetitle(CommonUtils.getTimeFormat(model.getServer_time(), "yyyy-MM-dd HH:mm"));
+					value.setAddress(model.getAddressname() + model.getAddressdetail());
+					value.setPrice(model.getLast_price().setScale(2, BigDecimal.ROUND_UP).toPlainString());
+					if (model.getComplaint_state() != null && model.getComplaint_state() == 1) {
+						value.setState("投诉中");
+					} else {
+						if (model.getState() == 5) {
+							value.setState("待支付");
+						} else if (model.getState() == 6) {
+							value.setState("服务完成");
+						} else if (model.getState() == 7) {
+							value.setState("已退单");
+						} else if (model.getState() == 12) {
+							value.setState("待确认");
+						} else if (model.getState() == 14) {
+							value.setState("退单待支付");
+						}
+					}
+
+					if (model.getOrder_type() != null) {
+						value.setOrder_type(model.getOrder_type());
+					} else {
+						value.setOrder_type(0);
+					}
+					valueList.add(value);
+				}
+			}
+		}
+		result.setCode("1");
+		result.setMessage("请求成功");
+		result.setResult(map);
+		return result;
+	}
+
+	@Override
+	public ApiResult orderDetail(String userid, int user_type, Integer orderid, String accesstoken, String type) {
+		ApiResult result = new ApiResult();
+		HashMap<String, Object> map = new HashMap<>();
+		int typeInt = CommonUtils.parseInt(type, 1);// 1.首页 2.订单列表
+		if (user_type == 0) {
+			Aunt aunt = auntMapper.selectByPrimaryKey(CommonUtils.parseInt(userid, 0));
+			if (aunt == null) {
+				result.setCode("106");
+				result.setMessage("用户不存在");
+				return result;
+			}
+			AuntExtra extra = auntExtramapper.selectByAuntId(CommonUtils.parseInt(userid, 0));
+			if (!checkSession(accesstoken, extra)) {
+				result.setCode("105");
+				result.setMessage("您的账号已经在别处登录,请重新登录");
+				return result;
+			}
+
+			if (checkTokenTime(extra.getTokenTime())) {
+				result.setCode("107");
+				result.setMessage("登录信息过期,请重新登录");
+				return result;
+			}
+			if (typeInt == 1) {
+				Order order = orderMapper.selectByPrimaryKey(orderid);
+				if (null != order) {
+					OrderAuntDetailValue value = new OrderAuntDetailValue();
+					value.setOrderid(order.getOrderid());
+					CategorySecond second = categorySecondMapper.selectByPrimaryKey(order.getCategoryid());
+					String detail = "";
+					if (null != second) {
+						detail += second.getName();
+					}
+					String expect_time = "";
+					value.setServername(detail);
+					value.setCategoryid(order.getCategoryid());
+					float time = order.getExpectTime();
+					value.setTimetitle(CommonUtils.getTimeFormat(order.getServerTime(), "yyyy-MM-dd HH:mm") + "服务时长 "
+							+ (int) time + "小时");
+					value.setAddress(order.getAddressname() + order.getAddressdetail());
+					if (order.getPayTime1() != null) {
+						value.setPaylasttime((int) order.getPayTime1().getTime() / 1000);
+					}
+					if (order.getServerStartTime() != null && order.getServerEndTime() != null) {
+						value.setServertime(
+								order.getServerStartTime().getTime() - order.getServerEndTime().getTime() + "");
+						expect_time = order.getServerStartTime().getTime() - order.getServerEndTime().getTime() + "";
+
+					}
+					value.setExpect_time("" + (int) time);
+					// if (order.getComplaintState() == 0) {
+					// value.setState(order.getState());
+					// } else {
+					// value.setState(10);
+					// }
+					value.setAccept_type(order.getAcceptType());
+					value.setComment_state(order.getAcceptType());
+					value.setDay_time("" + order.getDayTime());
+					value.setServer_time(CommonUtils.getTimeFormat(order.getServerTime(), "yyyy-MM-dd HH:mm"));
+					if (order.getTipPrice() != null && order.getTipPrice().compareTo(new BigDecimal("0")) == 1) {
+						value.setTip_state(1);
+					} else {
+						value.setTip_state(0);
+					}
+
+					value.setDay_time("" + order.getDayTime());
+					value.setDistance("");
+					value.setBook(order.getBook());
+					if (!CommonUtils.isEmptyString(order.getPicIds())) {
+						String[] ids = order.getPicIds().split(",");
+						List<String> picurlList = new ArrayList<>();
+						if (ids != null) {
+							for (int i = 0; i < ids.length; i++) {
+								String picUrl = getFilePathById(Integer.parseInt(ids[i]));
+								picurlList.add(picUrl);
+
+							}
+							value.setPicurlList(picurlList);
+						}
+					}
+
+					value.setLongitude("" + order.getLongitude());
+					value.setLatitude("" + order.getLatitude());
+					value.setPhone(order.getPhone());
+					value.setRname(order.getRname());
+					value.setSex(order.getSex());
+					value.setAddressname(order.getAddressname());
+					value.setAddressdetail(order.getAddressdetail());
+					List<OrderThird> thirdList = orderThirdMapper.selectByOrderid(order.getOrderid());
+					String contentdes = "";
+					if (thirdList != null && thirdList.size() > 0) {
+						int count = 0;
+						for (OrderThird orderThird : thirdList) {
+							if (count == 0) {
+								contentdes += orderThird.getName();
+							} else {
+								contentdes += "," + orderThird.getName();
+							}
+							count++;
+						}
+					}
+					value.setContentdes(contentdes);
+					
+					int auntMCount = order.getAuntMCount();  //需要男性数量
+					int auntWCount = order.getAuntWCount();  //需要女性数量
+					int totalNeedCount = auntMCount + auntWCount;
+					// int alAcceptCount = 0;
+					Long alMCount = orderAuntMapper.selectAuntMCount(order.getOrderid());
+					Long alWCount = orderAuntMapper.selectAuntWCount(order.getOrderid());
+					long alMCountL = 0;
+					long alWCountL = 0;
+					if(alMCount == null){
+						
+					}else {
+						alMCountL = alMCount;
+					}
+					if(alWCount == null){
+						
+					}else {
+						alWCountL = alWCount;
+					}
+					int alMCountI = (int)alMCountL;
+					int alWCountI = (int)alWCountL;
+					
+					List<OrderAunt> auntList = orderAuntMapper.selectSingleAuntAcceptByUserOrderId(order.getOrderid());
+					if(auntList != null && auntList.size() >0){
+						for(OrderAunt orderAunt:auntList){
+							Aunt auntDetail = auntMapper.selectByPrimaryKey(orderAunt.getAuntid());
+							if(auntDetail != null){
+								if(!CommonUtils.isEmptyString(auntDetail.getSex())){
+									if(aunt.getSex().equals(" 男")){
+										alMCountI++;
+									}else{
+										alWCountI++;
+									}
+								}else {
+									alMCountI ++;
+								}
+							}
+						}
+					}
+					value.setAunt_m_count(auntMCount - alMCountI);
+					value.setAunt_w_count(auntWCount - alWCountI);
+					value.setOrdernum(order.getOrdernum());
+					map.put("orderInfo", value);
+				}
+			} else {
+				OrderAunt orderAunt = orderAuntMapper.selectByPrimaryKey(orderid);
+				if (null != orderAunt) {
+					OrderAuntDetailValue value = new OrderAuntDetailValue();
+					value.setOrderid(orderAunt.getOrderid());
+					CategorySecond second = categorySecondMapper.selectByPrimaryKey(orderAunt.getCategoryid());
+					String detail = "";
+					if (null != second) {
+						detail += second.getName();
+					}
+					String expect_time = "";
+					value.setServername(detail);
+					value.setCategoryid(orderAunt.getCategoryid());
+					float time = orderAunt.getExpectTime();
+					value.setTimetitle(CommonUtils.getTimeFormat(orderAunt.getServerTime(), "yyyy-MM-dd HH:mm")
+							+ "服务时长 " + (int) time + "小时");
+					value.setAddress(orderAunt.getAddressname() + orderAunt.getAddressdetail());
+					if (orderAunt.getPayTime1() != null) {
+						value.setPaylasttime((int) orderAunt.getPayTime1().getTime() / 1000);
+					}
+					if (orderAunt.getServerStartTime() != null && orderAunt.getServerEndTime() != null) {
+						value.setServertime(
+								orderAunt.getServerStartTime().getTime() - orderAunt.getServerEndTime().getTime() + "");
+						expect_time = orderAunt.getServerStartTime().getTime() - orderAunt.getServerEndTime().getTime()
+								+ "";
+					}
+					value.setExpect_time("" + (int) time);
+					if (orderAunt.getComplaintState() != null && orderAunt.getComplaintState() == 1) {
+						value.setState(20);
+					} else {
+						value.setState(orderAunt.getState());
+					}
+					value.setAccept_type(orderAunt.getAcceptType());
+					value.setComment_state(orderAunt.getAcceptType());
+					value.setDay_time("" + orderAunt.getDayTime());
+					value.setServer_time(CommonUtils.getTimeFormat(orderAunt.getServerTime(), "yyyy-MM-dd HH:mm"));
+					if (orderAunt.getTipPrice() != null
+							&& orderAunt.getTipPrice().compareTo(new BigDecimal("0")) == 1) {
+						value.setTip_state(1);
+					} else {
+						value.setTip_state(0);
+					}
+					if(orderAunt.getServerStartTime() != null){
+						value.setStart_time(CommonUtils.getTimeFormat(orderAunt.getServerStartTime(), "yyyy-MM-dd HH:mm"));
+					}
+					if(orderAunt.getServerEndTime() != null){
+						value.setEnd_time(CommonUtils.getTimeFormat(orderAunt.getServerEndTime(), "yyyy-MM-dd HH:mm"));
+					}
+
+					value.setDay_time("" + orderAunt.getDayTime());
+					value.setDistance("");
+					value.setBook(orderAunt.getBook());
+					if (!CommonUtils.isEmptyString(orderAunt.getPicIds())) {
+						String[] ids = orderAunt.getPicIds().split(",");
+						List<String> picurlList = new ArrayList<>();
+						if (ids != null) {
+							for (int i = 0; i < ids.length; i++) {
+								String picUrl = getFilePathById(Integer.parseInt(ids[0]));
+								picurlList.add(picUrl);
+
+							}
+							value.setPicurlList(picurlList);
+						}
+					}
+					if (orderAunt.getServerStartTime() != null) {
+						Date nowTime = new Date();
+						long timeDiff = nowTime.getTime() - orderAunt.getServerStartTime().getTime();
+						value.setServertime("" + (timeDiff / 1000));
+					}
+					value.setLongitude("" + orderAunt.getLongitude());
+					value.setLatitude("" + orderAunt.getLatitude());
+					value.setPhone(orderAunt.getPhone());
+					value.setRname(orderAunt.getRname());
+					value.setSex(orderAunt.getSex());
+					value.setAddressname(orderAunt.getAddressname());
+					value.setAddressdetail(orderAunt.getAddressdetail());
+					List<OrderThird> thirdList = orderThirdMapper.selectByOrderid(orderAunt.getUserOrderid());
+					String contentdes = "";
+					if(orderAunt.getCategoryid() == 13 || orderAunt.getCategoryid() == 4){
+						if(orderAunt.getCategoryid() == 13){
+							   String foodselected = orderAunt.getFoodselect();
+							   if(!CommonUtils.isEmptyString(foodselected)){
+								   String[] foodIds = foodselected.split(",");
+								   int count = 0;
+								   for(int i=0;i<foodIds.length;i++){
+									   int id = CommonUtils.parseInt(foodIds[i], 0);
+									   if(count == 0){
+										   contentdes += getFoodSelectStr(13, id);
+									   }else {
+										   contentdes += ","+getFoodSelectStr(13, id);
+									   }
+									   count++;
+								   }
+							   }
+							   value.setContentdes(contentdes);
+								
+							}else if(orderAunt.getCategoryid() == 4){
+								 String foodselected = orderAunt.getFoodselect();
+								   if(!CommonUtils.isEmptyString(foodselected)){
+									   String[] foodIds = foodselected.split(",");
+									   int count = 0;
+									   for(int i=0;i<foodIds.length;i++){
+										   int id = CommonUtils.parseInt(foodIds[i], 0);
+										   if(count == 0){
+											   contentdes += getFoodSelectStr(4, id);
+										   }else {
+											   contentdes += ","+getFoodSelectStr(4, id);
+										   }
+										   count++;
+									   }
+								   }
+								   value.setContentdes(contentdes);
+							}
+						
+					}else {
+						if (thirdList != null && thirdList.size() > 0) {
+							int count = 0;
+							for (OrderThird orderThird : thirdList) {
+								if (count == 0) {
+									contentdes += orderThird.getName();
+								} else {
+									contentdes += "," + orderThird.getName();
+								}
+								count++;
+							}
+						}
+						value.setContentdes(contentdes);
+					}
+					
+					if (orderAunt.getOrderType() != null) {
+						value.setOrder_type(orderAunt.getOrderType());
+					} else {
+						value.setOrder_type(0);
+					}
+					value.setOrdernum(orderAunt.getOrdernum());
+					map.put("orderInfo", value);
+				}
+			}
+
+		} else if (user_type == 1) {
+			Company company = companyMapper.selectByPrimaryKey(CommonUtils.parseInt(userid, 0));
+			if (company == null) {
+				result.setCode("106");
+				result.setMessage("用户不存在");
+				return result;
+			}
+			CompanyExtra extra = companyExtraMapper.selectByCompanyId(CommonUtils.parseInt(userid, 0));
+			if (!checkSession(accesstoken, extra)) {
+				result.setCode("105");
+				result.setMessage("您的账号已经在别处登录,请重新登录");
+				return result;
+			}
+
+			if (checkTokenTime(extra.getTokenTime())) {
+				result.setCode("107");
+				result.setMessage("登录信息过期,请重新登录");
+				return result;
+			}
+			if (typeInt == 1) {
+				Order order = orderMapper.selectByPrimaryKey(orderid);
+				if (null != order) {
+					OrderAuntDetailValue value = new OrderAuntDetailValue();
+					value.setOrderid(order.getOrderid());
+					CategorySecond second = categorySecondMapper.selectByPrimaryKey(order.getCategoryid());
+					String detail = "";
+					if (null != second) {
+						detail += second.getName();
+					}
+					String expect_time = "";
+					value.setServername(detail);
+					value.setCategoryid(order.getCategoryid());
+					float time = order.getExpectTime();
+					value.setTimetitle(CommonUtils.getTimeFormat(order.getServerTime(), "yyyy-MM-dd HH:mm") + "服务时长 "
+							+ (int) time + "小时");
+					value.setAddress(order.getAddressname() + order.getAddressdetail());
+					if (order.getPayTime1() != null) {
+						value.setPaylasttime((int) order.getPayTime1().getTime() / 1000);
+					}
+					if (order.getServerStartTime() != null && order.getServerEndTime() != null) {
+						value.setServertime(
+								order.getServerStartTime().getTime() - order.getServerEndTime().getTime() + "");
+						expect_time = order.getServerStartTime().getTime() - order.getServerEndTime().getTime() + "";
+
+					}
+					value.setExpect_time("" + (int) time);
+					if (order.getComplaintState() != null && order.getComplaintState() == 0) {
+						value.setState(20);
+					} else {
+						value.setState(order.getState());
+					}
+					value.setAccept_type(order.getAcceptType());
+					value.setComment_state(order.getAcceptType());
+					value.setDay_time("" + order.getDayTime());
+					value.setServer_time(CommonUtils.getTimeFormat(order.getServerTime(), "yyyy-MM-dd HH:mm"));
+					if (order.getTipPrice() != null && order.getTipPrice().compareTo(new BigDecimal("0")) == 1) {
+						value.setTip_state(1);
+					} else {
+						value.setTip_state(0);
+					}
+					if(order.getServerStartTime() != null){
+						value.setStart_time(CommonUtils.getTimeFormat(order.getServerStartTime(), "yyyy-MM-dd HH:mm"));
+					}
+					if(order.getServerEndTime() != null){
+						value.setEnd_time(CommonUtils.getTimeFormat(order.getServerEndTime(), "yyyy-MM-dd HH:mm"));
+					}
+					// value.setState(order.getState());
+					value.setDay_time("" + order.getDayTime());
+					value.setDistance("");
+					value.setBook(order.getBook());
+					if (!CommonUtils.isEmptyString(order.getPicIds())) {
+						String[] ids = order.getPicIds().split(",");
+						List<String> picurlList = new ArrayList<>();
+						if (ids != null) {
+							for (int i = 0; i < ids.length; i++) {
+								String picUrl = getFilePathById(Integer.parseInt(ids[0]));
+								picurlList.add(picUrl);
+
+							}
+							value.setPicurlList(picurlList);
+						}
+					}
+					value.setLongitude("" + order.getLongitude());
+					value.setLatitude("" + order.getLatitude());
+					value.setPhone(order.getPhone());
+					value.setRname(order.getRname());
+					value.setSex(order.getSex());
+					value.setAddressname(order.getAddressname());
+					value.setAddressdetail(order.getAddressdetail());
+					List<OrderThird> thirdList = orderThirdMapper.selectByOrderid(order.getOrderid());
+					String contentdes = "";
+					if (thirdList != null && thirdList.size() > 0) {
+						int count = 0;
+						for (OrderThird orderThird : thirdList) {
+							if (count == 0) {
+								contentdes += orderThird.getName();
+							} else {
+								contentdes += "," + orderThird.getName();
+							}
+							count++;
+						}
+					}
+					value.setOrdernum(order.getOrdernum());
+					value.setContentdes(contentdes);
+					map.put("orderInfo", value);
+				}
+			} else {
+				OrderAunt orderAunt = orderAuntMapper.selectByPrimaryKey(orderid);
+				if (null != orderAunt) {
+					OrderAuntDetailValue value = new OrderAuntDetailValue();
+					value.setOrderid(orderAunt.getOrderid());
+					CategorySecond second = categorySecondMapper.selectByPrimaryKey(orderAunt.getCategoryid());
+					String detail = "";
+					if (null != second) {
+						detail += second.getName();
+					}
+					String expect_time = "";
+					value.setServername(detail);
+					value.setCategoryid(orderAunt.getCategoryid());
+					float time = orderAunt.getExpectTime();
+					value.setTimetitle(CommonUtils.getTimeFormat(orderAunt.getServerTime(), "yyyy-MM-dd HH:mm")
+							+ "服务时长 " + (int) time + "小时");
+					value.setAddress(orderAunt.getAddressname() + orderAunt.getAddressdetail());
+					if (orderAunt.getPayTime1() != null) {
+						value.setPaylasttime((int) orderAunt.getPayTime1().getTime() / 1000);
+					}
+					if (orderAunt.getServerStartTime() != null && orderAunt.getServerEndTime() != null) {
+						value.setServertime(
+								orderAunt.getServerStartTime().getTime() - orderAunt.getServerEndTime().getTime() + "");
+						expect_time = orderAunt.getServerStartTime().getTime() - orderAunt.getServerEndTime().getTime()
+								+ "";
+					}
+					value.setExpect_time("" + (int) time);
+					if (orderAunt.getComplaintState() != null && orderAunt.getComplaintState() == 1) {
+						value.setState(20);
+					} else {
+						value.setState(orderAunt.getState());
+					}
+					value.setAccept_type(orderAunt.getAcceptType());
+					value.setComment_state(orderAunt.getAcceptType());
+					value.setDay_time("" + orderAunt.getDayTime());
+					value.setServer_time(CommonUtils.getTimeFormat(orderAunt.getServerTime(), "yyyy-MM-dd HH:mm"));
+					if (orderAunt.getTipPrice() != null
+							&& orderAunt.getTipPrice().compareTo(new BigDecimal("0")) == 1) {
+						value.setTip_state(1);
+					} else {
+						value.setTip_state(0);
+					}
+					if(orderAunt.getServerStartTime() != null){
+						value.setStart_time(CommonUtils.getTimeFormat(orderAunt.getServerStartTime(), "yyyy-MM-dd HH:mm"));
+					}
+					if(orderAunt.getServerEndTime() != null){
+						value.setEnd_time(CommonUtils.getTimeFormat(orderAunt.getServerEndTime(), "yyyy-MM-dd HH:mm"));
+					}
+					// value.setState(orderAunt.getState());
+					value.setDay_time("" + orderAunt.getDayTime());
+					value.setDistance("");
+					value.setBook(orderAunt.getBook());
+					Order order = orderMapper.selectByPrimaryKey(orderAunt.getUserOrderid());
+					if (!CommonUtils.isEmptyString(order.getPicIds())) {
+						String[] ids = order.getPicIds().split(",");
+						List<String> picurlList = new ArrayList<>();
+						if (ids != null) {
+							for (int i = 0; i < ids.length; i++) {
+								String picUrl = getFilePathById(Integer.parseInt(ids[0]));
+								picurlList.add(picUrl);
+
+							}
+							value.setPicurlList(picurlList);
+						}
+					}
+					if (orderAunt.getServerStartTime() != null) {
+						Date nowTime = new Date();
+						long timeDiff = nowTime.getTime() - orderAunt.getServerStartTime().getTime();
+						value.setServertime("" + (timeDiff / 1000));
+					}
+					value.setLongitude("" + orderAunt.getLongitude());
+					value.setLatitude("" + orderAunt.getLatitude());
+					value.setPhone(orderAunt.getPhone());
+					value.setRname(orderAunt.getRname());
+					value.setSex(orderAunt.getSex());
+					value.setAddressname(orderAunt.getAddressname());
+					value.setAddressdetail(orderAunt.getAddressdetail());
+					List<OrderThird> thirdList = orderThirdMapper.selectByOrderid(orderAunt.getUserOrderid());
+					String contentdes = "";
+					if(orderAunt.getCategoryid() == 13 || orderAunt.getCategoryid() == 4){
+						if(orderAunt.getCategoryid() == 13){
+							   String foodselected = orderAunt.getFoodselect();
+							   if(!CommonUtils.isEmptyString(foodselected)){
+								   String[] foodIds = foodselected.split(",");
+								   int count = 0;
+								   for(int i=0;i<foodIds.length;i++){
+									   int id = CommonUtils.parseInt(foodIds[i], 0);
+									   if(count == 0){
+										   contentdes += getFoodSelectStr(13, id);
+									   }else {
+										   contentdes += ","+getFoodSelectStr(13, id);
+									   }
+									   count++;
+									  
+								   }
+							   }
+							   value.setContentdes(contentdes);
+								
+							}else if(orderAunt.getCategoryid() == 4){
+								 String foodselected = orderAunt.getFoodselect();
+								   if(!CommonUtils.isEmptyString(foodselected)){
+									   String[] foodIds = foodselected.split(",");
+									   int count = 0;
+									   for(int i=0;i<foodIds.length;i++){
+										   int id = CommonUtils.parseInt(foodIds[i], 0);
+										   if(count == 0){
+											   contentdes += getFoodSelectStr(4, id);
+										   }else {
+											   contentdes += ","+getFoodSelectStr(4, id);
+										   }
+										   count++;
+									   }
+								   }
+								   value.setContentdes(contentdes);
+							}
+						
+					}else {
+						if (thirdList != null && thirdList.size() > 0) {
+							int count = 0;
+							for (OrderThird orderThird : thirdList) {
+								if (count == 0) {
+									contentdes += orderThird.getName();
+								} else {
+									contentdes += "," + orderThird.getName();
+								}
+								count++;
+							}
+						}
+						value.setContentdes(contentdes);
+					}
+					value.setOrdernum(order.getOrdernum());
+					value.setContentdes(contentdes);
+
+					if (orderAunt.getOrderType() != null) {
+						value.setOrder_type(orderAunt.getOrderType());
+					} else {
+						value.setOrder_type(0);
+					}
+
+					map.put("orderInfo", value);
+				}
+			}
+
+		}
+		result.setCode("1");
+		result.setMessage("请求成功");
+		result.setResult(map);
+		return result;
+	}
+
+	// @Override
+	// public ApiResult cancel(String userid, Integer orderid, String
+	// accesstoken) {
+	// ApiResult result = new ApiResult();
+	// HashMap<String, Object> map = new HashMap<>();
+	// Aunt aunt = auntMapper.selectByPrimaryKey(CommonUtils.parseInt(userid,
+	// 0));
+	// if (aunt == null) {
+	// result.setCode("106");
+	// result.setMessage("用户不存在");
+	// return result;
+	// }
+	// AuntExtra extra =
+	// auntExtramapper.selectByAuntId(CommonUtils.parseInt(userid, 0));
+	// if (!checkSession(accesstoken, extra)) {
+	// result.setCode("105");
+	// result.setMessage("您的账号已经在别处登录,请重新登录");
+	// return result;
+	// }
+	//
+	// if (checkTokenTime(extra.getTokenTime())) {
+	// result.setCode("107");
+	// result.setMessage("登录信息过期,请重新登录");
+	// return result;
+	// }
+	// OrderAunt orderAunt = orderAuntMapper.selectByPrimaryKey(orderid);
+	// if (orderAunt == null) {
+	// result.setCode("2");
+	// result.setMessage("退单失败,订单不存在");
+	// return result;
+	// }
+	// if (orderAunt.getState() != 2 && orderAunt.getState() != 3 &&
+	// orderAunt.getState() != 10
+	// && orderAunt.getState() != 11) {
+	// result.setCode("3");
+	// result.setMessage("退单失败,订单状态错误");
+	// return result;
+	// }
+	// switch (orderAunt.getState()) {
+	// case 2:
+	// // 退单: 1.定金全退
+	// map.put("state", "待出发");
+	// map.put("money", orderAunt.getDepositPrice().divide(new BigDecimal(2)));
+	// map.put("moneystr", "定金一半");
+	// break;
+	// case 3:
+	// // 退单: 定金退一半
+	// map.put("state", "已出发");
+	// map.put("money", "");
+	// map.put("moneystr", "不退");
+	// break;
+	// case 4:
+	// // 退单: 不退定金
+	// map.put("state", "服务中");
+	// map.put("money", 0);
+	// map.put("moneystr", "不退定金");
+	// SerPrice serPrice =
+	// serPriceMapper.selectByCategoryAndCity(orderAunt.getCategoryid(), "杭州");
+	// if (serPrice != null && orderAunt.getServerStartTime() != null) {
+	// Calendar calendar = Calendar.getInstance();
+	// Date date = calendar.getTime();
+	// long a = date.getTime() - orderAunt.getServerStartTime().getTime();
+	// double price = (double) a / (60 * 60 * 1000);
+	// // 向上取整的小时数*配置的价格
+	// map.put("price", serPrice.getPrice().multiply(new
+	// BigDecimal(Math.ceil(price))));
+	// map.put("pricestr", "共收费" + serPrice.getPrice().multiply(new
+	// BigDecimal(Math.ceil(price))));
+	// }
+	// break;
+	// case 5:
+	// // 退单: 按小时收钱
+	// map.put("state", "待支付");
+	// map.put("money", 0);
+	// map.put("moneystr", "不退定金");
+	// break;
+	// case 6:
+	// map.put("state", "已支付");
+	// break;
+	// case 7:
+	// map.put("state", "已退单");
+	// break;
+	//
+	// }
+	//
+	// // map.put("money", "");
+	// // map.put("moneystr", "");
+	// result.setCode("1");
+	// result.setMessage("请求成功");
+	// result.setResult(map);
+	// return result;
+	//
+	// }
+
+	@Override
+	@Transactional(readOnly = false, propagation = Propagation.SUPPORTS)
+	public ApiResult cancelOrder(String userid, Integer orderid, String reason, String content, String accesstoken) {
+		ApiResult result = new ApiResult();
+		Aunt aunt = auntMapper.selectByPrimaryKey(CommonUtils.parseInt(userid, 0));
+		if (aunt == null) {
+			result.setCode("106");
+			result.setMessage("用户不存在");
+			return result;
+		}
+		AuntExtra extra = auntExtramapper.selectByAuntId(CommonUtils.parseInt(userid, 0));
+		if (!checkSession(accesstoken, extra)) {
+			result.setCode("105");
+			result.setMessage("您的账号已经在别处登录,请重新登录");
+			return result;
+		}
+
+		if (checkTokenTime(extra.getTokenTime())) {
+			result.setCode("107");
+			result.setMessage("登录信息过期,请重新登录");
+			return result;
+		}
+		OrderComplaint orderComplaint = new OrderComplaint();
+		orderComplaint.setOrderid(orderid);
+		orderComplaint.setUserid(CommonUtils.parseInt(userid, 0));
+		orderComplaint.setUserType((short) 2);
+		orderComplaint.setTitle(reason);
+		orderComplaint.setContent(content);
+		orderComplaint.setDataType((short) 3);
+		orderComplaint.setAddtime(new Date());
+		orderComplaintMapper.insert(orderComplaint);
+
+		OrderAunt orderAunt = orderAuntMapper.selectByPrimaryKey(orderid);
+		if (orderAunt == null) {
+			result.setCode("2");
+			result.setMessage("订单信息不存在，退单失败");
+			return result;
+		}
+		short state = orderAunt.getState();
+		if (state != 2 && state != 3 && state != 10 && state != 11) {
+			result.setCode("2");
+			result.setMessage("订单状态错误，退单失败");
+			return result;
+		}
+		Order order = orderMapper.selectByPrimaryKey(orderAunt.getUserOrderid());
+		final Order orderQuete = order;
+		if (order == null) {
+			result.setCode("2");
+			result.setMessage("用户订单不存在!");
+			return result;
+		}
+		OrderPay payInfo = orderPayMapper.getdownPayMent(order.getOrderid());
+		Long refundOrdernum = orderRefundMapper.selectOrderRefundCount();
+		String refundNumId = createOrderNum(5, refundOrdernum);
+		short orderPayType = payInfo.getPayType();
+		OrderRefund oRefund = new OrderRefund();
+		oRefund.setAddtime(new Date());
+		oRefund.setOrderid(order.getOrderid());
+		oRefund.setOrderpayid(payInfo.getDataid());
+		oRefund.setOrdernum(refundNumId);
+		oRefund.setType((byte) 1);
+		oRefund.setState((byte) 0);
+		oRefund.setPayType((byte) orderPayType);
+		oRefund.setPirce(payInfo.getPirce());
+		orderRefundMapper.insertSelective(oRefund);
+		if (orderPayType == 1) {
+			boolean refundresult = AlipayRefundTrade.alipayRefundRequest(refundNumId, payInfo.getOrdernum(),
+					payInfo.getThirdOrderid(), payInfo.getPirce().doubleValue());
+			if (!refundresult) {
+				result.setCode("2");
+				result.setMessage("用户订金退款异常，请联系平台");
+				return result;
+			} else {
+				oRefund.setState((byte) 1);
+				orderRefundMapper.updateByPrimaryKeySelective(oRefund);
+			}
+		} else if (orderPayType == 2) {
+			boolean refundresult = WxRefund.doRefund(orderPayType, payInfo.getOrdernum(), refundNumId,
+					payInfo.getPirce().floatValue(), payInfo.getPirce().floatValue());
+			if (!refundresult) {
+				result.setCode("2");
+				result.setMessage("用户订金退款异常，请联系平台");
+				return result;
+			} else {
+				oRefund.setState((byte) 1);
+				orderRefundMapper.updateByPrimaryKeySelective(oRefund);
+			}
+		} else if (orderPayType == 3) {
+			UserExtra userExtra = userExtraMapper.selectByUserId(order.getUserid());
+			if (userExtra == null) {
+				result.setCode("2");
+				result.setMessage("该用户信息不存在");
+				return result;
+			}
+			userExtra.setBalance(userExtra.getBalance().add(payInfo.getPirce()));
+			userExtraMapper.updateByPrimaryKey(userExtra);
+			oRefund.setState((byte) 1);
+			orderRefundMapper.updateByPrimaryKeySelective(oRefund);
+		}
+		order.setState((short) 7);
+		orderMapper.updateByPrimaryKey(order);
+		List<OrderPay> tipList = orderPayMapper.getTipList(order.getOrderid());
+		for (OrderPay tipPay : tipList) {
+			if (tipPay.getPirce().doubleValue() > 0) {
+				Long tipRefundOrdernum = orderRefundMapper.selectOrderRefundCount();
+				String tipRefundNumId = createOrderNum(5, tipRefundOrdernum);
+				short tipOrderPayType = tipPay.getPayType();
+				OrderRefund tipoRefund = new OrderRefund();
+				tipoRefund.setAddtime(new Date());
+				tipoRefund.setOrderid(order.getOrderid());
+				tipoRefund.setOrderpayid(tipPay.getDataid());
+				tipoRefund.setOrdernum(tipRefundNumId);
+				tipoRefund.setType((byte) 1);
+				tipoRefund.setState((byte) 0);
+				tipoRefund.setPayType((byte) orderPayType);
+				tipoRefund.setPirce(tipPay.getPirce());
+				orderRefundMapper.insertSelective(tipoRefund);
+				if (tipOrderPayType == 1) {
+					boolean refundresult = AlipayRefundTrade.alipayRefundRequest(tipRefundNumId, tipPay.getOrdernum(),
+							tipPay.getThirdOrderid(), tipPay.getPirce().doubleValue());
+					if (refundresult) {
+						tipoRefund.setState((byte) 1);
+						orderRefundMapper.updateByPrimaryKeySelective(tipoRefund);
+					}
+				} else if (tipOrderPayType == 2) {
+					boolean refundresult = WxRefund.doRefund(orderPayType, tipPay.getOrdernum(), tipRefundNumId,
+							tipPay.getPirce().floatValue(), tipPay.getPirce().floatValue());
+					if (refundresult) {
+						tipoRefund.setState((byte) 1);
+						orderRefundMapper.updateByPrimaryKeySelective(tipoRefund);
+					}
+				} else if (tipOrderPayType == 3) {
+					UserExtra userExtra = userExtraMapper.selectByUserId(order.getUserid());
+					userExtra.setBalance(userExtra.getBalance().add(tipPay.getPirce()));
+					userExtraMapper.updateByPrimaryKey(userExtra);
+					tipoRefund.setState((byte) 1);
+					orderRefundMapper.updateByPrimaryKeySelective(tipoRefund);
+				}
+			}
+		}
+		// 更新阿姨端订单状态
+		List<OrderAunt> orderAuntList = orderAuntMapper.selectByUserOrderId(order.getOrderid());
+		if (orderAuntList != null && orderAuntList.size() > 0) {
+			for (OrderAunt otherAunt : orderAuntList) {
+				otherAunt.setState((short) 7);
+				orderAuntMapper.updateByPrimaryKey(otherAunt);
+			}
+		}
+		fixedThreadPool.execute(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				sendCancelMessageToUser(orderQuete);
+			}
+		});
+		
+		
+		// TODO
+		// 如果存在多个人接单的情况下需要去把所有的阿姨端的订单设置为退单
+		// orderAunt.setState((short) 7);
+		// orderAuntMapper.updateByPrimaryKey(orderAunt);
+
+		result.setCode("1");
+		result.setMessage("退单成功");
+		return result;
+	}
+
+	@Override
+	@Transactional(readOnly = false, propagation = Propagation.SUPPORTS)
+	public ApiResult complaintOrder(String userid, Integer orderid, String content, String accesstoken) {
+		ApiResult result = new ApiResult();
+		HashMap<String, Object> map = new HashMap<>();
+		Aunt aunt = auntMapper.selectByPrimaryKey(CommonUtils.parseInt(userid, 0));
+		if (aunt == null) {
+			result.setCode("106");
+			result.setMessage("用户不存在");
+			return result;
+		}
+		AuntExtra extra = auntExtramapper.selectByAuntId(CommonUtils.parseInt(userid, 0));
+		if (!checkSession(accesstoken, extra)) {
+			result.setCode("105");
+			result.setMessage("您的账号已经在别处登录,请重新登录");
+			return result;
+		}
+
+		if (checkTokenTime(extra.getTokenTime())) {
+			result.setCode("107");
+			result.setMessage("登录信息过期,请重新登录");
+			return result;
+		}
+		OrderAunt orderAunt = orderAuntMapper.selectByPrimaryKey(orderid);
+		if (orderAunt == null) {
+			result.setCode("3");
+			result.setMessage("订单不存在");
+			return result;
+		}
+		Order order = orderMapper.selectByPrimaryKey(orderAunt.getUserOrderid());
+
+		if(order != null && order.getCategoryid() == 5 || order.getCategoryid() == 6){
+			List<OrderAunt> auntList = orderAuntMapper.selectByUserOrderId(order.getOrderid());
+			if(auntList != null && auntList.size()>0){
+				for(OrderAunt auntOrder :auntList){
+					auntOrder.setComplaintState((short) 1);
+					orderAuntMapper.updateByPrimaryKey(auntOrder);
+					OrderComplaint orderComplaint = new OrderComplaint();
+					orderComplaint.setOrderid(orderid);
+					if(auntOrder.getAuntid() != null && auntOrder.getAuntid()>0){
+						orderComplaint.setUserid(auntOrder.getAuntid());
+						orderComplaint.setUserType((short) 0);
+					}else if(auntOrder.getCompanyid() != null && auntOrder.getCompanyid()>0){
+						orderComplaint.setUserid(auntOrder.getCompanyid());
+						orderComplaint.setUserType((short) 1);
+					}
+					orderComplaint.setTitle("");
+					orderComplaint.setDataType((short) 2);
+					orderComplaint.setContent(content);
+					orderComplaint.setAddtime(new Date());
+					orderComplaintMapper.insert(orderComplaint);
+				}
+			}
+
+		}else {
+			orderAunt.setComplaintState((short) 1);
+			orderAuntMapper.updateByPrimaryKey(orderAunt);
+			OrderComplaint orderComplaint = new OrderComplaint();
+			orderComplaint.setOrderid(orderid);
+			orderComplaint.setUserid(CommonUtils.parseInt(userid, 0));
+			orderComplaint.setUserType((short) 1);
+			orderComplaint.setTitle("");
+			orderComplaint.setDataType((short) 2);
+			orderComplaint.setContent(content);
+			orderComplaint.setAddtime(new Date());
+			orderComplaintMapper.insert(orderComplaint);
+		}
+		result.setCode("1");
+		result.setMessage("请求成功");
+		return result;
+	}
+
+	@Override
+	@Transactional(readOnly = false, propagation = Propagation.SUPPORTS)
+	public ApiResult out(String userid, Integer orderid, String accesstoken) {
+		ApiResult result = new ApiResult();
+		HashMap<String, Object> map = new HashMap<>();
+		Aunt aunt = auntMapper.selectByPrimaryKey(CommonUtils.parseInt(userid, 0));
+		if (aunt == null) {
+			result.setCode("106");
+			result.setMessage("用户不存在");
+			return result;
+		}
+	
+		AuntExtra extra = auntExtramapper.selectByAuntId(CommonUtils.parseInt(userid, 0));
+		if (!checkSession(accesstoken, extra)) {
+			result.setCode("105");
+			result.setMessage("您的账号已经在别处登录,请重新登录");
+			return result;
+		}
+
+		if (checkTokenTime(extra.getTokenTime())) {
+			result.setCode("107");
+			result.setMessage("登录信息过期,请重新登录");
+			return result;
+		}
+		OrderAunt orderAunt = orderAuntMapper.selectByPrimaryKey(orderid);
+		if (orderAunt == null) {
+			result.setCode("3");
+			result.setMessage("订单不存在");
+			return result;
+		}
+		Order order = orderMapper.selectByPrimaryKey(orderAunt.getUserOrderid());
+		if (order == null) {
+			result.setCode("3");
+			result.setMessage("订单不存在");
+			return result;
+		}
+		if(order.getCategoryid() == 5 || order.getCategoryid() == 6){
+			
+			order.setState((short) 3);
+			orderMapper.updateByPrimaryKey(order);
+			List<OrderAunt> orderAuntList = orderAuntMapper.selectByUserOrderId(order.getOrderid());
+			if(orderAuntList != null && orderAuntList.size()>0){
+				for(OrderAunt orderAt : orderAuntList){
+					orderAt.setState((short) 3);
+					orderAt.setOutTime(new Date());
+					orderAuntMapper.updateByPrimaryKey(orderAt);
+				}
+			}
+			
+			
+		}else {
+			
+			order.setState((short) 3);
+			orderMapper.updateByPrimaryKey(order);
+
+			orderAunt.setState((short) 3);
+			orderAunt.setOutTime(new Date());
+			orderAuntMapper.updateByPrimaryKey(orderAunt);
+		}
+		
+		result.setCode("1");
+		result.setMessage("请求成功");
+		return result;
+	}
+
+	@Override
+	@Transactional(readOnly = false, propagation = Propagation.SUPPORTS)
+	public ApiResult start(String userid, Integer orderid, String price, String month, String accesstoken) {
+		ApiResult result = new ApiResult();
+		HashMap<String, Object> map = new HashMap<>();
+		Aunt aunt = auntMapper.selectByPrimaryKey(CommonUtils.parseInt(userid, 0));
+		if (aunt == null) {
+			result.setCode("106");
+			result.setMessage("用户不存在");
+			return result;
+		}
+		AuntExtra extra = auntExtramapper.selectByAuntId(CommonUtils.parseInt(userid, 0));
+		if (!checkSession(accesstoken, extra)) {
+			result.setCode("105");
+			result.setMessage("您的账号已经在别处登录,请重新登录");
+			return result;
+		}
+
+		if (checkTokenTime(extra.getTokenTime())) {
+			result.setCode("107");
+			result.setMessage("登录信息过期,请重新登录");
+			return result;
+		}
+		OrderAunt orderAunt = orderAuntMapper.selectByPrimaryKey(orderid);
+		if (orderAunt == null) {
+			result.setCode("3");
+			result.setMessage("订单不存在");
+			return result;
+		}
+		Order order = orderMapper.selectByPrimaryKey(orderAunt.getUserOrderid());
+		if (order == null) {
+			result.setCode("3");
+			result.setMessage("订单不存在");
+			return result;
+		}
+
+		if (order.getCategoryid() == 1 || order.getCategoryid() == 2 || order.getCategoryid() == 8) {// 钟点工按小时
+			order.setState((short) 4);
+			order.setServerStartTime(new Date());
+			orderMapper.updateByPrimaryKey(order);
+
+			orderAunt.setState((short) 4);
+			orderAunt.setServerStartTime(new Date());
+			orderAuntMapper.updateByPrimaryKey(orderAunt);
+		} else if (order.getCategoryid() == 5 || order.getCategoryid() == 6) {// 多人服务
+
+			order.setState((short) 4);
+			order.setServerStartTime(new Date());
+			orderMapper.updateByPrimaryKey(order);
+
+			List<OrderAunt> orderAuntList = orderAuntMapper.selectByUserOrderId(order.getOrderid());
+			if(orderAuntList != null && orderAuntList.size()>0){
+				for(OrderAunt orderAt : orderAuntList){
+					orderAt.setState((short) 4);
+					orderAt.setServerStartTime(new Date());
+					orderAuntMapper.updateByPrimaryKey(orderAt);
+				}
+			}
+			
+		} else if (order.getCategoryid() == 3 || order.getCategoryid() == 4 || order.getCategoryid() == 7
+				|| order.getCategoryid() == 9 || order.getCategoryid() == 10 || order.getCategoryid() == 11
+				|| order.getCategoryid() == 12 || order.getCategoryid() == 13) {
+			if (CommonUtils.isEmptyString(price)) {
+				result.setCode("5");
+				result.setMessage("请求失败,请输入服务费用");
+				return result;
+			}
+
+			order.setState((short) 11);
+			order.setLastPrice(new BigDecimal(price));
+			order.setServerStartTime(new Date());
+			orderMapper.updateByPrimaryKey(order);
+
+			orderAunt.setState((short) 11);
+			orderAunt.setLastPrice(new BigDecimal(price));
+			orderAunt.setServerStartTime(new Date());
+			orderAuntMapper.updateByPrimaryKey(orderAunt);
+
+		} else if (order.getCategoryid() >= 14 && order.getCategoryid() <= 18) {
+			
+			if(order.getOrderType() == 0){
+				if (CommonUtils.isEmptyString(price)) {
+					result.setCode("5");
+					result.setMessage("请求失败,请输入服务每月的工资");
+					return result;
+				}
+				
+				if (CommonUtils.isEmptyString(month)) {
+					result.setCode("5");
+					result.setMessage("请求失败,请输入服务月份");
+					return result;
+				}
+				
+				order.setState((short) 11);
+				order.setExpectedPrice(new BigDecimal(price));
+				order.setExpectTime(CommonUtils.parseFloat(month, 1));
+				order.setServerStartTime(new Date());
+				orderMapper.updateByPrimaryKey(order);
+
+				orderAunt.setState((short) 11);
+				orderAunt.setExpectedPrice(new BigDecimal(price));
+				orderAunt.setExpectTime(CommonUtils.parseFloat(month, 1));
+				orderAunt.setServerStartTime(new Date());
+				orderAuntMapper.updateByPrimaryKey(orderAunt);
+
+				
+			}else if(order.getOrderType() == 1){
+				order.setState((short) 4);
+				order.setServerStartTime(new Date());
+				orderMapper.updateByPrimaryKey(order);
+
+				orderAunt.setState((short) 4);
+				orderAunt.setServerStartTime(new Date());
+				orderAuntMapper.updateByPrimaryKey(orderAunt);
+			}else {
+				
+			}
+			
+		} else {
+			result.setCode("4");
+			result.setMessage("请求失败,数据错误");
+			return result;
+		}
+
+		result.setCode("1");
+		result.setMessage("请求成功");
+		return result;
+	}
+
+	@Override
+	@Transactional(readOnly = false, propagation = Propagation.SUPPORTS)
+	public ApiResult end(String userid, Integer orderid, String accesstoken, String price) {
+		ApiResult result = new ApiResult();
+		// HashMap<String, Object> map = new HashMap<>();
+		Aunt aunt = auntMapper.selectByPrimaryKey(CommonUtils.parseInt(userid, 0));
+		if (aunt == null) {
+			result.setCode("106");
+			result.setMessage("用户不存在");
+			return result;
+		}
+		AuntExtra extra = auntExtramapper.selectByAuntId(CommonUtils.parseInt(userid, 0));
+		if (!checkSession(accesstoken, extra)) {
+			result.setCode("105");
+			result.setMessage("您的账号已经在别处登录,请重新登录");
+			return result;
+		}
+
+		if (checkTokenTime(extra.getTokenTime())) {
+			result.setCode("107");
+			result.setMessage("登录信息过期,请重新登录");
+			return result;
+		}
+		OrderAunt orderAunt = orderAuntMapper.selectByPrimaryKey(orderid);
+		if (orderAunt == null) {
+			result.setCode("3");
+			result.setMessage("订单不存在");
+			return result;
+		}
+		Order order = orderMapper.selectByPrimaryKey(orderAunt.getUserOrderid());
+		if (order == null) {
+			result.setCode("3");
+			result.setMessage("订单不存在");
+			return result;
+		}
+
+		int cid = order.getCategoryid();
+		if (cid == 14 || cid == 15 || cid == 16 || cid == 17 || cid == 18) {
+			// 长期工
+			if (order.getOrderType() == 0) {
+				// 正式单
+				if (!CommonUtils.isEmptyString(price)) {
+
+					int payedMonth = order.getMonth().intValue();
+					int exceptMonth = order.getExpectTime().intValue();
+					if (payedMonth == exceptMonth) {
+						order.setState((short) 5);
+						order.setServerEndTime(new Date());
+						orderAunt.setState((short) 5);
+						orderAunt.setServerEndTime(new Date());
+						order.setOtherPirce(new BigDecimal(price));
+						orderAunt.setOtherPirce(new BigDecimal(price));
+						orderAuntMapper.updateByPrimaryKey(orderAunt);
+						orderMapper.updateByPrimaryKey(order);
+						final Order orderQuete = order;
+						fixedThreadPool.execute(new Runnable() {
+							
+							@Override
+							public void run() {
+								sendEndMessageToUser(orderQuete);
+								
+							}
+						});
+					} else {
+						order.setState((short) 5);
+						order.setServerEndTime(new Date());
+						orderAunt.setState((short) 5);
+						orderAunt.setServerEndTime(new Date());
+						order.setOtherPirce(new BigDecimal(price));
+						orderAunt.setOtherPirce(new BigDecimal(price));
+						orderAuntMapper.updateByPrimaryKey(orderAunt);
+						orderMapper.updateByPrimaryKey(order);
+						final Order orderQuete = order;
+						fixedThreadPool.execute(new Runnable() {
+							
+							@Override
+							public void run() {
+								sendEndMessageToUser(orderQuete);
+								
+							}
+						});
+					}
+
+				} else {
+					int payedMonth = order.getMonth().intValue();
+					int exceptMonth = order.getExpectTime().intValue();
+					if (payedMonth == exceptMonth) {
+						order.setState((short) 6);
+						order.setServerEndTime(new Date());
+						orderAunt.setState((short) 6);
+						orderAunt.setServerEndTime(new Date());
+						orderAuntMapper.updateByPrimaryKey(orderAunt);
+						orderMapper.updateByPrimaryKey(order);
+					} else {
+						order.setState((short) 5);
+						order.setServerEndTime(new Date());
+						orderAunt.setState((short) 5);
+						orderAunt.setServerEndTime(new Date());
+						orderAuntMapper.updateByPrimaryKey(orderAunt);
+						orderMapper.updateByPrimaryKey(order);
+						final Order orderQuete = order;
+						fixedThreadPool.execute(new Runnable() {
+							
+							@Override
+							public void run() {
+								sendEndMessageToUser(orderQuete);
+								
+							}
+						});
+					}
+				}
+
+			} else {
+				// 试单
+
+				order.setState((short) 5);
+
+				order.setServerEndTime(new Date());
+				if (!CommonUtils.isEmptyString(price)) {
+					order.setOtherPirce(new BigDecimal(price));
+					orderAunt.setOtherPirce(new BigDecimal(price));
+				}
+				orderAunt.setState((short) 5);
+				orderAunt.setServerEndTime(new Date());
+				orderAuntMapper.updateByPrimaryKey(orderAunt);
+				orderMapper.updateByPrimaryKey(order);
+				final Order orderQuete = order;
+				fixedThreadPool.execute(new Runnable() {
+					
+					@Override
+					public void run() {
+						sendEndMessageToUser(orderQuete);
+						
+					}
+				});
+				
+			}
+
+		} else {
+			// 非长期工
+
+			if(cid == 5 || cid == 6){
+				
+				order.setState((short) 5);
+				order.setServerEndTime(new Date());
+				if(!CommonUtils.isEmptyString(price)){
+					order.setOtherPirce(new BigDecimal(price));
+				}
+				orderMapper.updateByPrimaryKey(order);
+				List<OrderAunt> orderAuntList = orderAuntMapper.selectByUserOrderId(order.getOrderid());
+				if(orderAuntList != null && orderAuntList.size()>0){
+					for(OrderAunt orderAt:orderAuntList){
+						if(!CommonUtils.isEmptyString(price)){
+							orderAt.setOtherPirce(new BigDecimal(price));
+						}
+						orderAt.setState((short) 5);
+						orderAt.setServerEndTime(new Date());
+						orderAuntMapper.updateByPrimaryKey(orderAt);
+					}
+				}
+				final Order orderQuete = order;
+				fixedThreadPool.execute(new Runnable() {
+					
+					@Override
+					public void run() {
+						sendEndMessageToUser(orderQuete);
+						
+					}
+				});
+				
+				
+			}else {
+				if (!CommonUtils.isEmptyString(price)) {
+					order.setState((short) 5);
+					order.setServerEndTime(new Date());
+					order.setOtherPirce(new BigDecimal(price));
+					orderAunt.setOtherPirce(new BigDecimal(price));
+					orderAunt.setState((short) 5);
+					orderAunt.setServerEndTime(new Date());
+					orderAuntMapper.updateByPrimaryKey(orderAunt);
+					orderMapper.updateByPrimaryKey(order);
+					final Order orderQuete = order;
+					fixedThreadPool.execute(new Runnable() {
+						
+						@Override
+						public void run() {
+							sendEndMessageToUser(orderQuete);
+							
+						}
+					});
+				}else {
+					
+					if(cid == 1 || cid == 2 || cid == 8){
+						order.setState((short) 5);
+						order.setServerEndTime(new Date());
+						orderAunt.setState((short) 5);
+						orderAunt.setServerEndTime(new Date());
+						orderAuntMapper.updateByPrimaryKey(orderAunt);
+						orderMapper.updateByPrimaryKey(order);
+						final Order orderQuete = order;
+						fixedThreadPool.execute(new Runnable() {
+							
+							@Override
+							public void run() {
+								sendEndMessageToUser(orderQuete);
+								
+							}
+						});
+					}else {
+						order.setState((short) 12);
+						order.setServerEndTime(new Date());
+						orderAunt.setState((short) 12);
+						orderAunt.setServerEndTime(new Date());
+						orderAuntMapper.updateByPrimaryKey(orderAunt);
+						orderMapper.updateByPrimaryKey(order);
+						final Order orderQueto = order;
+						scheduledOrderPayService.schedule(new Runnable() {
+							
+							@Override
+							public void run() {
+								// TODO Auto-generated method stub
+								doCanCelUnConfirmOrder(orderQueto.getOrderid());
+							}
+						}, 3*24*60*60, TimeUnit.SECONDS);
+						
+						final Order orderQuete = order;
+						fixedThreadPool.execute(new Runnable() {
+							
+							@Override
+							public void run() {
+								sendEndMessageToUser(orderQuete);
+								
+							}
+						});
+					}
+				
+				}
+			}
+			
+			
+		}
+
+		result.setCode("1");
+		result.setMessage("请求成功");
+		return result;
+	}
+	
+	private void doCanCelUnConfirmOrder(Integer orderid){
+		Order order = orderMapper.selectByPrimaryKey(orderid);
+		if(order != null && order.getState() == 12){
+			order.setState((short) 6);
+			orderMapper.updateByPrimaryKey(order);
+			List<OrderAunt> orderAuntList = orderAuntMapper.selectByUserOrderId(order.getOrderid());
+			if(orderAuntList != null && orderAuntList.size()>0){
+				for(OrderAunt orderAunt:orderAuntList){
+					orderAunt.setState((short) 6);
+					orderAuntMapper.updateByPrimaryKey(orderAunt);
+				}
+			}
+		}
+	}
+	
+	
+	
+	
+	
+	
+
+	@Override
+	public ApiResult modifyPrice(String userid, Integer orderid, String price, String month, String accesstoken) {
+		ApiResult result = new ApiResult();
+		// HashMap<String, Object> map = new HashMap<>();
+		Aunt aunt = auntMapper.selectByPrimaryKey(CommonUtils.parseInt(userid, 0));
+		if (aunt == null) {
+			result.setCode("106");
+			result.setMessage("用户不存在");
+			return result;
+		}
+		AuntExtra extra = auntExtramapper.selectByAuntId(CommonUtils.parseInt(userid, 0));
+		if (!checkSession(accesstoken, extra)) {
+			result.setCode("105");
+			result.setMessage("您的账号已经在别处登录,请重新登录");
+			return result;
+		}
+
+		if (checkTokenTime(extra.getTokenTime())) {
+			result.setCode("107");
+			result.setMessage("登录信息过期,请重新登录");
+			return result;
+		}
+		OrderAunt orderAunt = orderAuntMapper.selectByPrimaryKey(orderid);
+		if (orderAunt == null) {
+			result.setCode("3");
+			result.setMessage("订单不存在");
+			return result;
+		}
+		Order order = orderMapper.selectByPrimaryKey(orderAunt.getUserOrderid());
+		if (order == null) {
+			result.setCode("3");
+			result.setMessage("订单不存在");
+			return result;
+		}
+
+		if (order.getCategoryid() >= 14 && order.getCategoryid() <= 18) {
+			if (CommonUtils.isEmptyString(price)) {
+				result.setCode("5");
+				result.setMessage("请求失败,请输入服务每月的工资");
+				return result;
+			}
+
+			orderAunt.setExpectedPrice(new BigDecimal(price));
+			orderAunt.setExpectTime(CommonUtils.parseFloat(month, 1));
+			order.setExpectedPrice(new BigDecimal(price));
+			order.setExpectTime(CommonUtils.parseFloat(month, 1));
+			orderAuntMapper.updateByPrimaryKey(orderAunt);
+			orderMapper.updateByPrimaryKey(order);
+
+		} else if (order.getCategoryid() == 3 || order.getCategoryid() == 4 || order.getCategoryid() == 7
+				|| order.getCategoryid() == 9 || order.getCategoryid() == 10 || order.getCategoryid() == 11
+				|| order.getCategoryid() == 12 || order.getCategoryid() == 13) {
+			if (CommonUtils.isEmptyString(price)) {
+				result.setCode("5");
+				result.setMessage("请求失败,请输入服务费用");
+				return result;
+			}
+			orderAunt.setLastPrice(new BigDecimal(price));
+			order.setLastPrice(new BigDecimal(price));
+			orderAuntMapper.updateByPrimaryKey(orderAunt);
+			orderMapper.updateByPrimaryKey(order);
+		}
+
+		result.setCode("1");
+		result.setMessage("请求成功");
+		return result;
+	}
+
+	private String getFoodSelectStr(int category,int id){
+		String result = "";
+		if(category == 4){
+			if(id == 1){
+				result = "晚餐";
+			}else if(id == 2){
+				result = "午餐";
+			}else if(id == 3){
+				result = "早餐";
+			}else if(id == 4){
+				result = "买菜";
+			}else if(id == 5){
+				result = "做饭";
+			}else if(id == 6){
+				result = "洗碗";
+			}
+		}else if(category == 13){
+			if(id == 1){
+				result = "换锁 ";
+			}else if(id == 2){
+				result = "修锁 ";
+			}else if(id == 3){
+				result = "装锁 ";
+			}
+		}
+		
+		return result;
+		
+	}
+	
+	
+	
+	
+	
+	
+}

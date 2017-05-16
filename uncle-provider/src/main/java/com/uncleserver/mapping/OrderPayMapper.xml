@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.OrderPayMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.OrderPay" >
+    <id column="dataid" property="dataid" jdbcType="INTEGER" />
+    <result column="ordernum" property="ordernum" jdbcType="VARCHAR" />
+    <result column="orderid" property="orderid" jdbcType="INTEGER" />
+    <result column="month" property="month" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="TINYINT" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="pay_type" property="payType" jdbcType="TINYINT" />
+    <result column="third_orderid" property="thirdOrderid" jdbcType="VARCHAR" />
+    <result column="pay_account_info" property="payAccountInfo" jdbcType="VARCHAR" />
+    <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+    <result column="couponid" property="couponid" jdbcType="INTEGER" />
+    <result column="coupon_pirce" property="couponPirce" jdbcType="DECIMAL" />
+    <result column="pirce" property="pirce" jdbcType="DECIMAL" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    dataid, ordernum, orderid,month, type, state, pay_type, third_orderid, pay_account_info, 
+    pay_time, couponid, coupon_pirce, pirce, addtime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_order_pay
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByOrderNum" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_order_pay
+    where ordernum = #{ordernum,jdbcType=VARCHAR}
+  </select>
+  
+  
+   <select id="selectOrderNumCount" resultType="java.lang.Long" >
+    select 
+    count(dataid)
+    from t_order_pay
+    where <![CDATA[ TIMESTAMPDIFF(HOUR,DATE_FORMAT(addtime,"%Y-%m-%d %h"),DATE_FORMAT(now(),"%Y-%m-%d %h")) = 0 ]]> 
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_order_pay
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.OrderPay" >
+   <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="dataid">
+	SELECT LAST_INSERT_ID() AS dataid
+  </selectKey>
+    insert into t_order_pay (dataid, ordernum, orderid, month,
+      type, state, pay_type, 
+      third_orderid, pay_account_info, pay_time, 
+      couponid, coupon_pirce, pirce, 
+      addtime)
+    values (#{dataid,jdbcType=INTEGER}, #{ordernum,jdbcType=VARCHAR}, #{orderid,jdbcType=INTEGER}, #{month,jdbcType=INTEGER}, 
+      #{type,jdbcType=TINYINT}, #{state,jdbcType=TINYINT}, #{payType,jdbcType=TINYINT}, 
+      #{thirdOrderid,jdbcType=VARCHAR}, #{payAccountInfo,jdbcType=VARCHAR}, #{payTime,jdbcType=TIMESTAMP}, 
+      #{couponid,jdbcType=INTEGER}, #{couponPirce,jdbcType=DECIMAL}, #{pirce,jdbcType=DECIMAL}, 
+      #{addtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.OrderPay" >
+  <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="dataid">
+	SELECT LAST_INSERT_ID() AS dataid
+  </selectKey>
+    insert into t_order_pay
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="dataid != null" >
+        dataid,
+      </if>
+      <if test="ordernum != null" >
+        ordernum,
+      </if>
+      <if test="orderid != null" >
+        orderid,
+      </if>
+      <if test="month != null" >
+        month,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="payType != null" >
+        pay_type,
+      </if>
+      <if test="thirdOrderid != null" >
+        third_orderid,
+      </if>
+      <if test="payAccountInfo != null" >
+        pay_account_info,
+      </if>
+      <if test="payTime != null" >
+        pay_time,
+      </if>
+      <if test="couponid != null" >
+        couponid,
+      </if>
+      <if test="couponPirce != null" >
+        coupon_pirce,
+      </if>
+      <if test="pirce != null" >
+        pirce,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="dataid != null" >
+        #{dataid,jdbcType=INTEGER},
+      </if>
+      <if test="ordernum != null" >
+        #{ordernum,jdbcType=VARCHAR},
+      </if>
+      <if test="orderid != null" >
+        #{orderid,jdbcType=INTEGER},
+      </if>
+      <if test="month != null" >
+        #{month,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=TINYINT},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=TINYINT},
+      </if>
+      <if test="payType != null" >
+        #{payType,jdbcType=TINYINT},
+      </if>
+      <if test="thirdOrderid != null" >
+        #{thirdOrderid,jdbcType=VARCHAR},
+      </if>
+      <if test="payAccountInfo != null" >
+        #{payAccountInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="payTime != null" >
+        #{payTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="couponid != null" >
+        #{couponid,jdbcType=INTEGER},
+      </if>
+      <if test="couponPirce != null" >
+        #{couponPirce,jdbcType=DECIMAL},
+      </if>
+      <if test="pirce != null" >
+        #{pirce,jdbcType=DECIMAL},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.OrderPay" >
+    update t_order_pay
+    <set >
+      <if test="ordernum != null" >
+        ordernum = #{ordernum,jdbcType=VARCHAR},
+      </if>
+      <if test="orderid != null" >
+        orderid = #{orderid,jdbcType=INTEGER},
+      </if>
+      <if test="month != null" >
+        month = #{month,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=TINYINT},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=TINYINT},
+      </if>
+      <if test="payType != null" >
+        pay_type = #{payType,jdbcType=TINYINT},
+      </if>
+      <if test="thirdOrderid != null" >
+        third_orderid = #{thirdOrderid,jdbcType=VARCHAR},
+      </if>
+      <if test="payAccountInfo != null" >
+        pay_account_info = #{payAccountInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="payTime != null" >
+        pay_time = #{payTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="couponid != null" >
+        couponid = #{couponid,jdbcType=INTEGER},
+      </if>
+      <if test="couponPirce != null" >
+        coupon_pirce = #{couponPirce,jdbcType=DECIMAL},
+      </if>
+      <if test="pirce != null" >
+        pirce = #{pirce,jdbcType=DECIMAL},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.OrderPay" >
+    update t_order_pay
+    set ordernum = #{ordernum,jdbcType=VARCHAR},
+      orderid = #{orderid,jdbcType=INTEGER},
+      month = #{month,jdbcType=INTEGER},
+      type = #{type,jdbcType=TINYINT},
+      state = #{state,jdbcType=TINYINT},
+      pay_type = #{payType,jdbcType=TINYINT},
+      third_orderid = #{thirdOrderid,jdbcType=VARCHAR},
+      pay_account_info = #{payAccountInfo,jdbcType=VARCHAR},
+      pay_time = #{payTime,jdbcType=TIMESTAMP},
+      couponid = #{couponid,jdbcType=INTEGER},
+      coupon_pirce = #{couponPirce,jdbcType=DECIMAL},
+      pirce = #{pirce,jdbcType=DECIMAL},
+      addtime = #{addtime,jdbcType=TIMESTAMP}
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectByOrderId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_order_pay
+    where orderid = #{orderid,jdbcType=INTEGER} order by addtime desc limit 0,1
+  </select>
+  
+   <select id="getdownPayMent" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_order_pay
+    where orderid = #{orderid,jdbcType=INTEGER} and state = 1 and (type = 1 or type = 5) order by addtime desc limit 0,1
+  </select>
+  
+  <select id="getTipList"  resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+  	select 
+  	 <include refid="Base_Column_List" />
+    from t_order_pay
+    where orderid = #{orderid,jdbcType=INTEGER} and state = 1 and type = 3 
+  </select>
+</mapper>

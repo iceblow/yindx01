@@ -1,0 +1,38 @@
+package com.uncleserver.service.manage.Impl;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import com.uncleserver.dao.CategorySecondMapper;
+import com.uncleserver.dao.OrderMapper;
+import com.uncleserver.model.CategorySecond;
+import com.uncleserver.model.Order;
+import com.uncleserver.model.Result.PQuery;
+import com.uncleserver.model.Result.QueryResult;
+import com.uncleserver.service.manage.ManageOrderService;
+
+@Service("manageOrderService")
+public class ManageOrderServiceImpl implements ManageOrderService {
+
+	@Resource
+	private OrderMapper orderMapper;
+	
+	@Resource
+	private CategorySecondMapper categorySecondMapper;
+	
+	@Override
+	public QueryResult<Order> pageOrder(PQuery pquery, Integer type) {
+		List<Order> list = orderMapper.managePageOrder(pquery.getStartPage(), pquery.getRows(), type);
+		long total = orderMapper.managePageOrderCount(type);
+		for (Order order : list) {
+			CategorySecond category = categorySecondMapper.selectByPrimaryKey(order.getCategoryid());
+			if (category != null) {
+				order.setCategoryname(category.getName());
+			}
+		}
+		return new QueryResult<Order>(list, total, pquery.getPage(), pquery.getRows());
+	}
+}

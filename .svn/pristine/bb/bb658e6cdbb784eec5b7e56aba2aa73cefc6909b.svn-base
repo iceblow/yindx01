@@ -1,0 +1,14 @@
+#webRootUrl=http://www.uncleserv.com/uncle-web/
+#ios_aunt_push_file_path=/root/appServer/push/biaoshuyun_auntpush_dis.p12
+#ios_push_file_path=/root/appServer/push/biaoshuyun_pro_push.p12
+#ios_push_file_psw=123456
+#sms_base_url=app.cloopen.com
+#sms_server_port=8883
+
+webRootUrl=http://www.hzdaoshun.com:8014/uncle-web/
+ios_aunt_push_file_path=D:\\biaoshuyun_auntpush_dis.p12\\
+ios_push_file_path=D:\\biaoshuyun_pro_push.p12\\
+ios_push_file_psw=123456
+sms_base_url=app.cloopen.com
+sms_server_port=8883
+WXAPPP12=D:/apiclient_cert.p12

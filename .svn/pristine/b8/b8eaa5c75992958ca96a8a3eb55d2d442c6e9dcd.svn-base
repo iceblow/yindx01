@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.OrderCommentMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.OrderComment" >
+    <id column="commentid" property="commentid" jdbcType="INTEGER" />
+    <result column="orderid" property="orderid" jdbcType="INTEGER" />
+    <result column="userid" property="userid" jdbcType="INTEGER" />
+    <result column="auntid" property="auntid" jdbcType="INTEGER" />
+    <result column="comment_type" property="commentType" jdbcType="TINYINT" />
+    <result column="label" property="label" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="score1" property="score1" jdbcType="TINYINT" />
+    <result column="score2" property="score2" jdbcType="TINYINT" />
+    <result column="score3" property="score3" jdbcType="TINYINT" />
+     <result column="user_type" property="user_type" jdbcType="TINYINT" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    commentid, orderid, userid, auntid, comment_type, label, content, score1, score2, 
+    score3, user_type,addtime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_order_comment
+    where commentid = #{commentid,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByAuntId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_order_comment
+    where auntid = #{auntid,jdbcType=INTEGER}
+  </select>
+  <select id="selectAuntScoreTotal" resultType="java.lang.Long"  >
+    select sum(score1 + score2 + score3)
+    from t_order_comment
+    where auntid = #{0}
+  </select>
+  <select id="selectAuntScoreCount" resultType="java.lang.Long"  >
+    select count(*)
+    from t_order_comment
+    where auntid = #{0}
+  </select>
+  
+   <select id="selectCompanyScoreTotal" resultType="java.lang.Long"  >
+    select sum(c.score1 + c.score2 + c.score3)
+    from t_order_comment c,t_aunt a
+    where c.auntid = a.auntid and a.companyid = #{0}
+  </select>
+  <select id="selectCompanyScoreCount" resultType="java.lang.Long"  >
+    select count(*)
+    from t_order_comment c,t_aunt a
+    where c.auntid = a.auntid and a.companyid = #{0}
+  </select>
+  
+   <select id="selectByAuntIdAndPage" resultMap="BaseResultMap"  >
+    select 
+    <include refid="Base_Column_List" />
+    from t_order_comment
+    where auntid = #{0} order by addtime desc limit #{1},#{2}
+  </select>
+  
+  <select id="selectByAuntIdsAndPage" resultMap="BaseResultMap"  >
+    select 
+    <include refid="Base_Column_List" />
+    from t_order_comment
+    where auntid in #{0} order by addtime desc limit #{1},#{2}
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_order_comment
+    where commentid = #{commentid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.OrderComment" >
+    insert into t_order_comment (commentid, orderid, userid, 
+      auntid, comment_type, label, 
+      content, score1, score2, 
+      score3,user_type, addtime)
+    values (#{commentid,jdbcType=INTEGER}, #{orderid,jdbcType=INTEGER}, #{userid,jdbcType=INTEGER}, 
+      #{auntid,jdbcType=INTEGER}, #{commentType,jdbcType=TINYINT}, #{label,jdbcType=VARCHAR}, 
+      #{content,jdbcType=VARCHAR}, #{score1,jdbcType=TINYINT}, #{score2,jdbcType=TINYINT}, 
+      #{score3,jdbcType=TINYINT},  #{user_type,jdbcType=TINYINT},#{addtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.OrderComment" >
+    insert into t_order_comment
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="commentid != null" >
+        commentid,
+      </if>
+      <if test="orderid != null" >
+        orderid,
+      </if>
+      <if test="userid != null" >
+        userid,
+      </if>
+      <if test="auntid != null" >
+        auntid,
+      </if>
+      <if test="commentType != null" >
+        comment_type,
+      </if>
+      <if test="label != null" >
+        label,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="score1 != null" >
+        score1,
+      </if>
+      <if test="score2 != null" >
+        score2,
+      </if>
+      <if test="score3 != null" >
+        score3,
+      </if>
+      <if test="user_type != null" >
+        user_type,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="commentid != null" >
+        #{commentid,jdbcType=INTEGER},
+      </if>
+      <if test="orderid != null" >
+        #{orderid,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null" >
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="auntid != null" >
+        #{auntid,jdbcType=INTEGER},
+      </if>
+      <if test="commentType != null" >
+        #{commentType,jdbcType=TINYINT},
+      </if>
+      <if test="label != null" >
+        #{label,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="score1 != null" >
+        #{score1,jdbcType=TINYINT},
+      </if>
+      <if test="score2 != null" >
+        #{score2,jdbcType=TINYINT},
+      </if>
+      <if test="score3 != null" >
+        #{score3,jdbcType=TINYINT},
+      </if>
+       <if test="user_type != null" >
+        #{user_type,jdbcType=TINYINT},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.OrderComment" >
+    update t_order_comment
+    <set >
+      <if test="orderid != null" >
+        orderid = #{orderid,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null" >
+        userid = #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="auntid != null" >
+        auntid = #{auntid,jdbcType=INTEGER},
+      </if>
+      <if test="commentType != null" >
+        comment_type = #{commentType,jdbcType=TINYINT},
+      </if>
+      <if test="label != null" >
+        label = #{label,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="score1 != null" >
+        score1 = #{score1,jdbcType=TINYINT},
+      </if>
+      <if test="score2 != null" >
+        score2 = #{score2,jdbcType=TINYINT},
+      </if>
+      <if test="score3 != null" >
+        score3 = #{score3,jdbcType=TINYINT},
+      </if>
+       <if test="user_type != null" >
+        user_type = #{user_type,jdbcType=TINYINT},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where commentid = #{commentid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.OrderComment" >
+    update t_order_comment
+    set orderid = #{orderid,jdbcType=INTEGER},
+      userid = #{userid,jdbcType=INTEGER},
+      auntid = #{auntid,jdbcType=INTEGER},
+      comment_type = #{commentType,jdbcType=TINYINT},
+      label = #{label,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      score1 = #{score1,jdbcType=TINYINT},
+      score2 = #{score2,jdbcType=TINYINT},
+      score3 = #{score3,jdbcType=TINYINT},
+      user_type = #{user_type,jdbcType=TINYINT},
+      addtime = #{addtime,jdbcType=TIMESTAMP}
+    where commentid = #{commentid,jdbcType=INTEGER}
+  </update>
+</mapper>

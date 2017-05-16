@@ -1,0 +1,153 @@
+/*regist*/
+.top{
+    width: 100%;
+    height: 40px;
+    font-size:15px;
+    color: white;
+    text-align: center;
+    line-height: 40px;
+    position: relative;
+    background-image:linear-gradient(to right, #78c6ff, #5d8ff9);
+ /*    background-image:-webkit-linear-gradient(to right, orange, green);*/
+/*    background: linear-gradient(left, blue, white);*/
+}
+.leftArr{
+    width:10px;
+    position:absolute;
+    top:10px;
+    left:10px;
+}
+.shuru{
+    width: 80%;
+    height: 40px;
+    border-bottom: 1px solid #e5e5e5;
+    margin-left: 10%;
+    margin-top: 30px;
+    position: relative;
+}
+.shuru2{
+    border-bottom: 1px solid #5d92f9;
+}
+.input_phone{
+    width: 12px;
+    vertical-align: top;
+    margin-top: 10px;
+}
+.phone2,.vcode2,.pwd2,.key2{
+    display: none;
+}
+.shu_vcode{
+    position: relative;
+}
+.input_vcode{
+    width: 16px;
+    vertical-align: top;
+    margin-top: 12px;
+}
+.ipt{
+    width: 50%;
+    height: 34px;
+    border: none;
+    margin-left: 10px;
+}
+.get_vcode{
+    width: 68px;
+    height: 20px;
+    font-size: 11px;
+    /*    color: #5e93f9;*/
+    color: #adadad;
+    text-align: center;
+    line-height: 20px;
+    position: absolute;
+    right: 5px;
+    top: 10px;
+}
+.vcode_once{
+    border: 1px solid #adadad;
+    border-radius: 5px;
+}
+.vcode_again{
+    color: #20bf7a;
+    display: none;
+}
+.butn{
+    width: 80%;
+    height: 34px;
+    color: #fff;
+    font-size: 14px;
+    text-align: center;
+    line-height: 34px;
+    margin-top: 50px;
+    margin-left: 10%;
+    border-radius: 20px;
+    background-color: #adadad;
+/*    background-image:linear-gradient(to bottom, #78c6ff, #5d8ff9);*/
+}
+.agree{
+    margin-left: 10%;
+    width: 80%;
+    font-size: 12px;
+}
+.xieyi{
+    color: #5e93f9;
+}
+
+/*密码*/
+.input_key{
+    width: 16px;
+    vertical-align: top;
+    margin-top: 10px;
+}
+.eye{
+    width: 14px;
+    position: absolute;
+    right: 15px;
+    top: 17px;
+}
+
+/*login*/
+.login{
+/*    width: 90%;
+    margin: 0 auto;*/
+    height: 155px;
+    background-image: url("../img/regist/login_bg.png");
+    background-size: 100% 155px;
+    background-repeat:no-repeat;
+}
+.top_pic{
+    width: 90%;
+    margin-left: 5%;
+}
+.cha{
+    width: 15px;
+}
+.top_login{
+    width: 100%;
+    font-size: 19px;
+    color: white;
+    text-align: center;
+    margin-top: 16px;
+}
+.bottom{
+    width: 70%;
+    margin: 0 auto;
+}
+.bot{
+    display: inline-block;
+    font-size: 12px;
+    color: #959495;
+}
+.forget_pwd,.reg_now{
+    width: 40%;
+    text-align: center;
+}
+.mid{
+    width: 15%;
+    text-align: center;
+}
+.input_pwd{
+    width: 13px;
+    vertical-align: top;
+    margin-top: 10px;
+}
+

@@ -1,0 +1,19 @@
+package com.uncleserver.dao;
+
+import com.uncleserver.model.PointProgress;
+
+public interface PointProgressMapper {
+    int deleteByPrimaryKey(Integer recordid);
+
+    int insert(PointProgress record);
+
+    int insertSelective(PointProgress record);
+
+    PointProgress selectByPrimaryKey(Integer recordid);
+
+    int updateByPrimaryKeySelective(PointProgress record);
+
+    int updateByPrimaryKey(PointProgress record);
+    
+    PointProgress selectByUserid(Integer userid);
+}

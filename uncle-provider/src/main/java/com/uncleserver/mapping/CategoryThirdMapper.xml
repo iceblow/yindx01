@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.CategoryThirdMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.CategoryThird" >
+    <id column="dataid" property="dataid" jdbcType="INTEGER" />
+    <result column="categoryid" property="categoryid" jdbcType="INTEGER" />
+    <result column="fid" property="fid" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    dataid, categoryid, fid, name, addtime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_category_third
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </select>
+  <select id="selectByCategoryid" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_category_third
+    where categoryid = #{categoryid,jdbcType=INTEGER} and fid = 0
+  </select>
+  <select id="selectByFid" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_category_third
+    where fid = #{dataid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_category_third
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.CategoryThird" >
+    insert into t_category_third (dataid, categoryid, fid, 
+      name, addtime)
+    values (#{dataid,jdbcType=INTEGER}, #{categoryid,jdbcType=INTEGER}, #{fid,jdbcType=INTEGER}, 
+      #{name,jdbcType=VARCHAR}, #{addtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.CategoryThird" >
+    insert into t_category_third
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="dataid != null" >
+        dataid,
+      </if>
+      <if test="categoryid != null" >
+        categoryid,
+      </if>
+      <if test="fid != null" >
+        fid,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="dataid != null" >
+        #{dataid,jdbcType=INTEGER},
+      </if>
+      <if test="categoryid != null" >
+        #{categoryid,jdbcType=INTEGER},
+      </if>
+      <if test="fid != null" >
+        #{fid,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.CategoryThird" >
+    update t_category_third
+    <set >
+      <if test="categoryid != null" >
+        categoryid = #{categoryid,jdbcType=INTEGER},
+      </if>
+      <if test="fid != null" >
+        fid = #{fid,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.CategoryThird" >
+    update t_category_third
+    set categoryid = #{categoryid,jdbcType=INTEGER},
+      fid = #{fid,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      addtime = #{addtime,jdbcType=TIMESTAMP}
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getServiceTwoCategory" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_category_third where 1 = 1
+		<if test="category != null" >and categoryid = #{category}</if>
+		<if test="threeCategory != null" >and fid = #{threeCategory}</if>
+		 order by addtime desc
+    	<if test="startPage != null and rows != null ">limit #{startPage}, #{rows}</if>
+	</select>
+	<select id="getServiceTwoCategoryCount" resultType="java.lang.Long">
+		select count(*)
+		from t_category_third where 1 = 1
+		<if test="category != null" >and categoryid = #{category}</if>
+		<if test="threeCategory != null" >and fid = #{threeCategory}</if>
+	</select>
+	<select id="selectByCategoryIds" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_category_third where 1 = 1 
+		<if test="category != null" >and categoryid = #{category}</if>
+		and fid = 0
+		 order by addtime desc
+	</select>
+	<select id="selectByNameTwo" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_category_third where name = #{name} 
+		<if test="id != null" >and fid = #{id}</if>
+		<if test="threeCategoryTwo != null" >and categoryid = #{threeCategoryTwo}</if>
+		 order by addtime desc
+	</select>
+	
+	<select id="selectOther" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_category_third where (categoryid = 3 or categoryid = 7 or categoryid = 9)
+		and fid != 0
+		 order by addtime desc
+	</select>
+	
+	
+</mapper>

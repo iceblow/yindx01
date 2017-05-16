@@ -1,0 +1,27 @@
+package com.uncleserver.service.api;
+
+import com.uncleserver.modelVo.ApiResult;
+
+public interface AuntOrderService extends BaseService {
+
+	ApiResult orderList(String userid, int user_type, String accesstoken);
+
+	ApiResult orderListHis(String userid, int user_type, Integer serverid, Integer comment_type, Integer page,
+			String accesstoken);
+
+	ApiResult orderDetail(String userid, int user_type, Integer orderid, String accesstoken, String type);
+
+	// ApiResult cancel(String userid,Integer orderid,String accesstoken);
+
+	ApiResult cancelOrder(String userid, Integer orderid, String reason, String content, String accesstoken);
+
+	ApiResult complaintOrder(String userid, Integer orderid, String content, String accesstoken);
+
+	ApiResult out(String userid, Integer orderid, String accesstoken);
+
+	ApiResult start(String userid, Integer orderid, String price, String month, String accesstoken);
+
+	ApiResult end(String userid, Integer orderid, String accesstoken, String price);
+	
+	ApiResult modifyPrice(String userid,Integer orderid,String price,String month,String accesstoken);
+}

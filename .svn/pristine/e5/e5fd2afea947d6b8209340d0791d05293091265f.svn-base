@@ -1,0 +1,85 @@
+package com.uncleserver.service.company.Impl;
+
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.uncleserver.dao.AuntMapper;
+import com.uncleserver.dao.CompanyMapper;
+import com.uncleserver.dao.FileInfoMapper;
+import com.uncleserver.model.Aunt;
+import com.uncleserver.model.CompanyWithBLOBs;
+import com.uncleserver.model.FileInfo;
+import com.uncleserver.model.Result.PQuery;
+import com.uncleserver.model.Result.QueryResult;
+import com.uncleserver.service.api.Impl.BaseServiceImpl;
+import com.uncleserver.service.company.CompanyService;
+
+@Service(value="companyService")
+public class CompanyServiceImpl extends BaseServiceImpl implements CompanyService {
+	
+	@Resource
+	private AuntMapper auntMapper;
+	
+	@Resource
+	private CompanyMapper companyMapper;
+	
+	@Resource
+	private FileInfoMapper fileInfoMapper;
+
+	@Override
+	public QueryResult<Aunt> getStaffList(PQuery pquery, Integer companyId, String keywords){
+		List<Aunt> list = auntMapper.selectAuntByCompanyId(companyId, keywords, pquery.getStartPage(), pquery.getRows());
+		long count = auntMapper.countAuntByCompanyId(companyId, keywords);
+		return new QueryResult<>(list, count, pquery.getPage(), pquery.getRows());
+	}
+	
+	@Override
+	public List<Aunt> selectByids(Integer[] ids){
+		return auntMapper.selectByids(ids);
+	}
+	
+	@Override
+	@Transactional(readOnly = false, propagation = Propagation.SUPPORTS)
+	public void updateAunt(Aunt aunt){
+		auntMapper.updateByPrimaryKeySelective(aunt);
+	}
+	
+	@Override
+	public Aunt selectById(Integer id) {
+		return auntMapper.selectByPrimaryKey(id);
+	}
+	
+	@Transactional(readOnly = false, propagation = Propagation.SUPPORTS)
+	public void updateByPrimaryKeyWithBLOBs(CompanyWithBLOBs record){
+		companyMapper.updateByPrimaryKeyWithBLOBs(record);
+	}
+	
+	@Override
+	public FileInfo selectFileInfo(Integer id) {
+		return fileInfoMapper.selectByPrimaryKey(id);
+	}
+	
+	@Override
+	@Transactional(readOnly = false, propagation = Propagation.SUPPORTS)
+	public Integer saveFileInfo(String key) {
+		FileInfo fileInfo = new FileInfo();
+		fileInfo.setAddtime(new Date());
+		fileInfo.setFiletype((byte)0);
+		fileInfo.setState((byte)1);
+		fileInfo.setFilePath(key);
+		fileInfoMapper.insert(fileInfo);
+		return fileInfo.getFileid();
+	}
+	
+	@Override
+	@Transactional(readOnly = false, propagation = Propagation.SUPPORTS)
+	public void updateFileInfo(FileInfo file) {
+		fileInfoMapper.updateByPrimaryKey(file);
+	}
+}

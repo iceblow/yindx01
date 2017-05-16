@@ -1,0 +1,65 @@
+.chat{
+	height: 500px;
+    width: 500px;
+    position: fixed;
+    left: 43%;
+    overflow-y: auto;
+    /* background-image:url("../assets/images/server/black.jpg"); */
+    background-color: #eff3f8;
+    border: 1px solid #ddd;
+}
+
+.users{
+   border-color: #eff3f8;
+    width: 127px;
+    height: 600px;
+    position: fixed;
+    margin-left: 9px;
+    left: 36%; 
+    overflow-y: auto;
+    background-color: #fafafa;
+}
+
+.ct{
+  	height: 100px;
+    width: 500px;
+    background-color: #eff3f8;
+    position: fixed;
+    top: 595px;
+    left: 43%;
+    border: 1px solid #fafafa;
+    
+}
+.userSay{
+	background-color: rgba(135, 184, 127, 0.38);
+    width: 230px;
+    border-radius: 7px;
+    font-size: 15px;
+    margin-top:20px;
+}
+.adminSay{
+	background-color: #b8d45c;
+    border-radius: 7px;
+    font-size: 15px;
+    margin-top:20px;
+    margin-left: 238px;
+    width: 240px;
+}
+.send{
+	position: fixed;
+    height: 23px;
+    width: 58px;
+    left: 66%;
+    top: 664px;
+    text-align: center;
+    margin-top: 5px;
+    margin-left: 8px;
+}
+.timeDiv{
+	color: #999;
+}
+
+
+
+
+

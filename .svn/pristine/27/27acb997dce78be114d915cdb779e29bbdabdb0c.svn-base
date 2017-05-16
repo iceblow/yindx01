@@ -1,0 +1,96 @@
+package com.uncleserver.task;
+
+import java.util.Calendar;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import com.uncleserver.common.CommonUtils;
+import com.uncleserver.model.Order;
+import com.uncleserver.model.OrderAunt;
+import com.uncleserver.service.api.OrderService;
+
+/**
+ * 定时任务,每五分钟执行一次,获取订单中意见过了上门时间但是还没成功接单的订单修改状态
+ * 
+ * @author guok
+ *
+ */
+@Component
+public class TimingTaskFiveMinute {
+
+	@Autowired
+	private OrderService orderService;
+
+	@Scheduled(cron = "0 0/5 * * * ?") // 每五分钟执行一次
+	public void doTimeTask() {
+		// 查询出来订单是未接单状态,且当前上门时间已经过期的订单
+		List<Order> orderList = orderService.selectOrderFailed();
+		if (orderList != null) {
+			for (Order order : orderList) {
+				order.setState((short) 9);
+				orderService.updateOrder(order);
+
+				// 删除OrderPool里面的数据
+				orderService.deleteOrderPoolDate(order.getOrderid());
+
+				// 发送消息给用户提醒
+				orderService.messageToUserOrderFailed(order);
+
+				// 如果是多人接单的数据的话,设置已经接单的数据为取消状态
+
+				List<OrderAunt> auntorderList = orderService.selectAuntOrderByUserOrder(order.getOrderid());
+				if (auntorderList != null) {
+					for (OrderAunt orderAunt : auntorderList) {
+						orderAunt.setState((short) 9);
+						orderService.updateAuntOrder(orderAunt);
+						// 发送消息给阿姨或者公司
+						orderService.messageToAuntOrderFailed(orderAunt);
+					}
+				}
+			}
+		}
+		
+		List<Order> unComfirmList = orderService.selectOrderUnComfirmed();
+		if (unComfirmList != null) {
+			for (Order order : unComfirmList) {
+				order.setState((short) 9);
+				orderService.updateOrder(order);
+				// 删除OrderPool里面的数据
+				orderService.deleteOrderPoolDate(order.getOrderid());
+				// 发送消息给用户提醒
+				orderService.messageToUserOrderFailed(order);
+
+				// 如果是多人接单的数据的话,设置已经接单的数据为取消状态
+				List<OrderAunt> auntorderList = orderService.selectAuntOrderByUserOrder(order.getOrderid());
+				if (auntorderList != null) {
+					for (OrderAunt orderAunt : auntorderList) {
+						orderAunt.setState((short) 9);
+						orderService.updateAuntOrder(orderAunt);
+						// 发送消息给阿姨或者公司
+						orderService.messageToAuntOrderFailed(orderAunt);
+					}
+				}
+			}
+		}
+		
+		
+
+		// 查询出来距离订单上门时间还有两小时且未出发的订单
+		Calendar now = Calendar.getInstance();
+		now.add(Calendar.HOUR_OF_DAY, 2);
+		String etime = CommonUtils.getTimeFormat(now.getTime(), "yyyy-MM-dd HH:mm:ss");
+		now.add(Calendar.MINUTE, -5);
+		String stime = CommonUtils.getTimeFormat(now.getTime(), "yyyy-MM-dd HH:mm:ss");
+
+		List<Order> orderToAlermList = orderService.selectTwoHourAlermOrder(stime, etime);
+		if (orderToAlermList != null) {
+			for (Order order : orderToAlermList) {
+				orderService.sendAlarmMessageToUser(order);
+				orderService.sendAlarmMessageToAunt(order);
+			}
+		}
+	}
+}

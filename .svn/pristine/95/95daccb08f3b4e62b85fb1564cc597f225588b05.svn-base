@@ -1,0 +1,272 @@
+package com.uncleserver.model;
+
+import java.io.Serializable;
+import java.util.Date;
+
+public class Company implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private Integer companyid;
+
+	private String name;
+
+	private String name_letter;
+
+	private Byte type;
+
+	private Integer listpic;
+
+	private String profile;
+
+	private String city;
+
+	private String phone;
+
+	private String password;
+
+	private Integer logoPicid;
+
+	private Double longitude;
+
+	private Double latitude;
+
+	private Date yearCreate;
+
+	private Integer peopleCount;
+
+	private String address;
+
+	private String relationPeople;
+
+	private String relationPhone;
+
+	private Byte stateDel;
+
+	private Byte title;
+
+	private Byte star;
+
+	private String mainBusiness;
+
+	private Byte timeTrain;
+
+	private Date addtime;
+
+	private String logourl;
+
+	private String listpicurl;
+
+	private String picurllist;
+
+	public Integer getCompanyid() {
+		return companyid;
+	}
+
+	public void setCompanyid(Integer companyid) {
+		this.companyid = companyid;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name == null ? null : name.trim();
+	}
+
+	public Byte getType() {
+		return type;
+	}
+
+	public void setType(Byte type) {
+		this.type = type;
+	}
+
+	public Integer getListpic() {
+		return listpic;
+	}
+
+	public void setListpic(Integer listpic) {
+		this.listpic = listpic;
+	}
+
+	public String getProfile() {
+		return profile;
+	}
+
+	public void setProfile(String profile) {
+		this.profile = profile == null ? null : profile.trim();
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city == null ? null : city.trim();
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone == null ? null : phone.trim();
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password == null ? null : password.trim();
+	}
+
+	public Integer getLogoPicid() {
+		return logoPicid;
+	}
+
+	public void setLogoPicid(Integer logoPicid) {
+		this.logoPicid = logoPicid;
+	}
+
+	public Double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(Double longitude) {
+		this.longitude = longitude;
+	}
+
+	public Double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(Double latitude) {
+		this.latitude = latitude;
+	}
+
+	public Date getYearCreate() {
+		return yearCreate;
+	}
+
+	public void setYearCreate(Date yearCreate) {
+		this.yearCreate = yearCreate;
+	}
+
+	public Integer getPeopleCount() {
+		return peopleCount;
+	}
+
+	public void setPeopleCount(Integer peopleCount) {
+		this.peopleCount = peopleCount;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address == null ? null : address.trim();
+	}
+
+	public String getRelationPeople() {
+		return relationPeople;
+	}
+
+	public void setRelationPeople(String relationPeople) {
+		this.relationPeople = relationPeople == null ? null : relationPeople.trim();
+	}
+
+	public String getRelationPhone() {
+		return relationPhone;
+	}
+
+	public void setRelationPhone(String relationPhone) {
+		this.relationPhone = relationPhone == null ? null : relationPhone.trim();
+	}
+
+	public Byte getStateDel() {
+		return stateDel;
+	}
+
+	public void setStateDel(Byte stateDel) {
+		this.stateDel = stateDel;
+	}
+
+	public Byte getTitle() {
+		return title;
+	}
+
+	public void setTitle(Byte title) {
+		this.title = title;
+	}
+
+	public Byte getStar() {
+		return star;
+	}
+
+	public void setStar(Byte star) {
+		this.star = star;
+	}
+
+	public String getMainBusiness() {
+		return mainBusiness;
+	}
+
+	public void setMainBusiness(String mainBusiness) {
+		this.mainBusiness = mainBusiness == null ? null : mainBusiness.trim();
+	}
+
+	public Byte getTimeTrain() {
+		return timeTrain;
+	}
+
+	public void setTimeTrain(Byte timeTrain) {
+		this.timeTrain = timeTrain;
+	}
+
+	public Date getAddtime() {
+		return addtime;
+	}
+
+	public void setAddtime(Date addtime) {
+		this.addtime = addtime;
+	}
+
+	public String getName_letter() {
+		return name_letter;
+	}
+
+	public void setName_letter(String name_letter) {
+		this.name_letter = name_letter;
+	}
+
+	public String getLogourl() {
+		return logourl;
+	}
+
+	public void setLogourl(String logourl) {
+		this.logourl = logourl;
+	}
+
+	public String getListpicurl() {
+		return listpicurl;
+	}
+
+	public void setListpicurl(String listpicurl) {
+		this.listpicurl = listpicurl;
+	}
+
+	public String getPicurllist() {
+		return picurllist;
+	}
+
+	public void setPicurllist(String picurllist) {
+		this.picurllist = picurllist;
+	}
+
+}

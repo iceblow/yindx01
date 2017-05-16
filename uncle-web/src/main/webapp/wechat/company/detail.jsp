@@ -1,0 +1,236 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+    pageEncoding="utf-8"%>
+<html xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>首页</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--星星评价-->
+    <link rel="stylesheet" href="../css/bottom.css" />
+    <link rel="stylesheet" href="../css/common.css" />
+    <!--sui-ui-->
+    <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+    <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/??sm.min.css,sm-extend.min.css">
+    <style>
+        .top_bg{height: 100px;background-image: linear-gradient(to right, #78c6ff, #5d8ff9);position: absolute;width: 100%;}
+        .money_head:after{background-color: transparent !important}
+        .detail_box{padding: 15px;position: absolute;width: 100%}
+        .head_box{box-shadow:0 0.05rem 0.1rem rgba(0,0,0,.3);position: relative;padding-top: 25px;margin-top: 25px;background-color: white;padding: 15px}
+        .company_img{position: absolute;text-align: center;top: -25px;left: 50%;margin-left: -25px}
+        .company_img img{height: 50px;border-radius: 50%;}
+        .company_name{margin-top: 15px}
+        .company_phone{margin: 0}
+        .company_address, .company_phone{color: #959495}
+        .line_title{line-height: 20px;width: 126px;margin: 0 auto;font-size: 12px;text-align: center;position: relative;margin-top: 20px}
+        .line_title  img{width: 100%;position: absolute;left: 0;height: 4px;top: 50%;margin-top: -2px}
+        .line_title_name{font-size: 14px;margin: 0}
+        .company_about{font-size: 14px;color: #959495;text-align: center}
+        .company_foot_img_box:after{
+            content:".";
+            display:block;
+            height:0;
+            clear:both;
+            visibility:hidden;
+        }
+        .company_foot_img_box{padding-top: 15px;padding-left: 35px;padding-right: 35px}
+        .company_foot_img img{height: 50px;border-radius: 50%}
+        .company_foot_img {float: left;width: 25%;text-align: center}
+        .company_foot_img p{margin-top: 5px;font-size: 14px}
+        .company_btn{position: fixed;bottom: 0;width: 100%;padding: 15px;background-color: white;border-top: 1px solid #c0d8f1}
+        .company_btn span{color: #6babfc;}
+        .company_btn a{width: 80px;background-color: #6babfc;height: 30px;line-height: 30px;color: white;border: none;border-radius: 0}
+        /*弹窗*/
+        .my_alert{position: absolute;z-index: 999;width: 100%;height: 100%;background: rgba(0,0,0,0.5)}
+        .alert_box{
+            border-radius: 10px;
+            width: 85%;
+            position: absolute;
+            background-color: white;
+            top:50%;
+            left: 50%;
+            -webkit-transform: translate(-50%,-50%);
+            overflow: hidden;
+        }
+        .alert_head{background-image: linear-gradient(to right, #78c6ff, #5d8ff9);width: 100%;height: 65px;line-height: 65px;padding: 0 15px}
+        .alert_text{background-color: white}
+        .about_img_box{text-align: center}
+        .about_img_box img{width: 30%}
+        .company_btn_box :after{
+            content:".";
+            display:block;
+            height:0;
+            clear:both;
+            visibility:hidden;
+        }
+        .company_btn_box{padding: 0 20px}
+        .company_btn_box .alert_company_button{float: left;width: 50%;padding: 10px}
+
+
+    </style>
+</head>
+<body>
+<div class="page-group">
+    <div class="page page-current" id="user_home">
+        <header class="bar bar-nav my_head money_head">
+            <!-- <a class="button button-link button-nav pull-left back">
+                <span class="icon icon-left" style="margin-top: 15px"></span>
+            </a> -->
+        </header>
+        <div class="my_alert" v-if="alert" v-cloak>
+            <div class="alert_box">
+                <div class="alert_head ">
+                    <p class="text-center" style="color: white;margin-top: 0;">
+                        <span class="pull-left" v-on:click="unBook">取消</span>
+                        <span class="pull-right" v-on:click="selected">确定</span>
+                        服务内容
+                    </p>
+                </div>
+                <div class="alert_text">
+                    <div class="company_btn_box">
+                        <div class="alert_company_button" v-for="server in companyInfo.serverlist">
+                            <a class="button serve_btn" v-on:click="select(server.serverid)">{{server.server_name}}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content" style="background-color: #ffffff">
+            <!-- 这里是页面内容区 -->
+            <div class="top_bg"></div>
+            <div class="detail_box" style="height: 500px">
+                <div class="head_box">
+                    <div class="company_img">
+                        <img src="../img/user/default_head_pic.png" :src="companyInfo.logo_url"/>
+                    </div>
+                    <div class="company_detail">
+                        <h4 class="company_name text-center" v-cloak>{{companyInfo.name}}</h4>
+                        <p class="text-center company_address" style="margin-bottom: 0" v-cloak>{{companyInfo.address}}</p>
+                        <p class="company_phone text-center" v-cloak>{{companyInfo.relation_phone}}</p>
+
+                    </div>
+                </div>
+                <div class="company_middle">
+                    <div class="line_title">
+                        <img src="../img/serve/t_line.png" />
+                        <h4 class="line_title_name">公司简介</h4>
+                    </div>
+                    <p class="company_about" v-cloak>{{companyInfo.profile}}</p>
+                </div>
+                <div class="company_middle">
+                    <div class="line_title">
+                        <img src="../img/serve/t_line.png" />
+                        <h4 class="line_title_name">主营业务</h4>
+                    </div>
+                    <p class="company_about"><span v-for="server in companyInfo.serverlist">{{server.server_name}} |</span></p>
+                    <div class="about_img_box">
+                        <img src="../img/home/list1.png" />
+                        <img src="../img/home/list1.png" />
+                        <img src="../img/home/list1.png" />
+                    </div>
+                </div>
+                <div class="company_middle">
+                    <div class="line_title">
+                        <img src="../img/serve/t_line.png" />
+                        <h4 class="line_title_name">团队展示</h4>
+                    </div>
+                    <div class="company_foot_img_box">
+                        <div class="company_foot_img" v-for="aunt in auntList" v-cloak>
+                            <img src="../img/user/default_head_pic.png" :src="aunt.avatarurl" />
+                            <p>{{aunt.name}}</p>
+                        </div>
+                    </div>
+                    <p class="text-center" v-on:click="getMore" v-if="havemove"><span style="color: #959495" class="icon icon-down"></span></p>
+                </div>
+            </div>
+            <div class="company_btn">
+                <span class="pull-left">选择服务内容</span>
+                <a class="button pull-right" v-on:click="book">立即预约</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script>var Zepto = jQuery</script>
+<!--sui-ui-->
+<!--<script type='text/javascript' src='//g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>-->
+<script type='text/javascript' src='//g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+<script type='text/javascript' src='//g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
+
+<script type='text/javascript' src='../js/plugins/md5.js' charset='utf-8'></script>
+<script type='text/javascript' src='../js/van-common.js' charset='utf-8'></script>
+<script src="../js/vue/vue.min.js"></script>
+<script src="../js/vue/vue-resource.min.js"></script>
+<script>
+var home = new Vue({
+    el: '#user_home',
+    data: {
+        apiCompanyDetailUrl: '/home/companyDetail',
+        apiCompanyDetailMoreUrl: '/home/companyDetailMore',
+        companyid: getItem('company_id'), serverId: 0,
+        auntList: [], companyInfo: {}, havemove: 1, page: 1, alert: false
+    },
+    mounted: function() {
+        this.getCustomers();
+    },
+    methods: {
+        getCustomers: function () {
+            this.$http.get(createUrl(this.apiCompanyDetailUrl, {companyid: this.companyid}, false))
+                .then(function(response) {
+                    if (response.data.c == 1) {
+                        var jsonData = JSON.parse(response.data.r);
+                        this.auntList = jsonData.auntList;
+                        this.companyInfo = jsonData.companyInfo;
+                        console.log(jsonData)
+                    } else {
+                        console.log(response.data.m)
+                    }
+                })
+        },
+        getMore: function () {
+            this.$http.get(createUrl(this.apiCompanyDetailMoreUrl, {companyid: this.companyid, page: this.page}, false))
+                .then(function(response) {
+                    if (response.data.c == 1) {
+                        var jsonData = JSON.parse(response.data.r);
+                        if (jsonData.auntList.length) {
+                            this.auntList.push(jsonData.auntList);
+                        }
+                        this.havemore = jsonData.havemore
+                    } else {
+                        console.log(response.data.m)
+                    }
+                })
+        },
+        book: function () {
+            this.alert = true
+        },
+        unBook: function () {
+            this.alert = false
+        },
+        select: function (id) {
+            this.serverId = id;
+//            $(".serve_btn").toggleClass('checked');
+        },
+        selected: function () {
+            console.log(this.serverId)
+
+            // 跳转选择页面
+//            window.location.href = './add_address.jsp'
+        }
+
+    }
+});
+
+    $(document).on('click','.prompt-ok', function () {
+        $.prompt('输入你要充值的金额', function (value) {
+            $.alert('你要充值"' + value + '"元');
+        });
+    });
+
+    $.init();
+</script>
+</body>
+</html>

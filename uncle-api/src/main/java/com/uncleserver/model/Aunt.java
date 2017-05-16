@@ -1,0 +1,514 @@
+package com.uncleserver.model;
+
+import java.io.Serializable;
+import java.util.Date;
+
+public class Aunt implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private Integer auntid;
+
+	private String phone;
+
+	private String realName;
+
+	private String nameLetter;
+
+	private String password;
+
+	private Integer avatar;
+
+	private String thirdAvatar;
+
+	private Byte level;
+
+	private String sex;
+
+	private String signature;
+
+	private Date birthday;
+	
+	private String birthdays;
+
+	private String idcardNum;
+	
+	private String idcard_picids;
+
+	private String originPlace;
+
+	private Byte workYear;
+
+	private String homeAddress;
+
+	private String nowAddress;
+
+	private String nation;
+
+	private Float weight;
+
+	private Float height;
+
+	private String bloodType;
+
+	private Byte trainState;
+
+	private String language;
+
+	private String characters;
+
+	private String culture;
+
+	private String religion;
+
+	private String political;
+
+	private String marriage;
+
+	private String workHis;
+
+	private String selfComment;
+
+	private String hobby;
+
+	private Byte state;
+	
+	private String states;
+
+	private Integer companyid;
+
+	private Date addtime;
+	
+	private String addtimes;
+
+	private String constellation;
+
+	private String zodiac;
+
+	private Short infoState;
+
+	private Short kingState;
+	
+	private String kingStates;
+
+	private String qqId;
+
+	private String sinaId;
+
+	private String wxId;
+
+	private String wxUnionid;
+	private String portrait;
+	
+	private String invitation_code;
+	
+	private Integer invitation_count;
+	
+	private Short invitationed_state;
+
+	public Integer getAuntid() {
+		return auntid;
+	}
+
+	public void setAuntid(Integer auntid) {
+		this.auntid = auntid;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone == null ? null : phone.trim();
+	}
+
+	public String getRealName() {
+		return realName;
+	}
+
+	public void setRealName(String realName) {
+		this.realName = realName == null ? null : realName.trim();
+	}
+
+	public String getNameLetter() {
+		return nameLetter;
+	}
+
+	public void setNameLetter(String nameLetter) {
+		this.nameLetter = nameLetter == null ? null : nameLetter.trim();
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password == null ? null : password.trim();
+	}
+
+	public Integer getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(Integer avatar) {
+		this.avatar = avatar;
+	}
+
+	public String getThirdAvatar() {
+		return thirdAvatar;
+	}
+
+	public void setThirdAvatar(String thirdAvatar) {
+		this.thirdAvatar = thirdAvatar == null ? null : thirdAvatar.trim();
+	}
+
+	public String getSex() {
+		return sex;
+	}
+
+	public void setSex(String sex) {
+		this.sex = sex == null ? null : sex.trim();
+	}
+
+	public String getSignature() {
+		return signature;
+	}
+
+	public void setSignature(String signature) {
+		this.signature = signature == null ? null : signature.trim();
+	}
+
+	public Date getBirthday() {
+		return birthday;
+	}
+
+	public void setBirthday(Date birthday) {
+		this.birthday = birthday;
+	}
+
+	public String getIdcardNum() {
+		return idcardNum;
+	}
+
+	public void setIdcardNum(String idcardNum) {
+		this.idcardNum = idcardNum == null ? null : idcardNum.trim();
+	}
+
+	public String getOriginPlace() {
+		return originPlace;
+	}
+
+	public void setOriginPlace(String originPlace) {
+		this.originPlace = originPlace == null ? null : originPlace.trim();
+	}
+
+	public Byte getWorkYear() {
+		return workYear;
+	}
+
+	public void setWorkYear(Byte workYear) {
+		this.workYear = workYear;
+	}
+
+	public String getHomeAddress() {
+		return homeAddress;
+	}
+
+	public void setHomeAddress(String homeAddress) {
+		this.homeAddress = homeAddress == null ? null : homeAddress.trim();
+	}
+
+	public String getNowAddress() {
+		return nowAddress;
+	}
+
+	public void setNowAddress(String nowAddress) {
+		this.nowAddress = nowAddress == null ? null : nowAddress.trim();
+	}
+
+	public String getNation() {
+		return nation;
+	}
+
+	public void setNation(String nation) {
+		this.nation = nation == null ? null : nation.trim();
+	}
+
+	public Float getWeight() {
+		return weight;
+	}
+
+	public void setWeight(Float weight) {
+		this.weight = weight;
+	}
+
+	public Float getHeight() {
+		return height;
+	}
+
+	public void setHeight(Float height) {
+		this.height = height;
+	}
+
+	public String getBloodType() {
+		return bloodType;
+	}
+
+	public void setBloodType(String bloodType) {
+		this.bloodType = bloodType == null ? null : bloodType.trim();
+	}
+
+	public Byte getTrainState() {
+		return trainState;
+	}
+
+	public void setTrainState(Byte trainState) {
+		this.trainState = trainState;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language == null ? null : language.trim();
+	}
+
+	public String getCharacters() {
+		return characters;
+	}
+
+	public void setCharacters(String characters) {
+		this.characters = characters == null ? null : characters.trim();
+	}
+
+	public String getCulture() {
+		return culture;
+	}
+
+	public void setCulture(String culture) {
+		this.culture = culture == null ? null : culture.trim();
+	}
+
+	public String getReligion() {
+		return religion;
+	}
+
+	public void setReligion(String religion) {
+		this.religion = religion == null ? null : religion.trim();
+	}
+
+	public String getPolitical() {
+		return political;
+	}
+
+	public void setPolitical(String political) {
+		this.political = political == null ? null : political.trim();
+	}
+
+	public String getMarriage() {
+		return marriage;
+	}
+
+	public void setMarriage(String marriage) {
+		this.marriage = marriage == null ? null : marriage.trim();
+	}
+
+	public String getWorkHis() {
+		return workHis;
+	}
+
+	public void setWorkHis(String workHis) {
+		this.workHis = workHis == null ? null : workHis.trim();
+	}
+
+	public String getSelfComment() {
+		return selfComment;
+	}
+
+	public void setSelfComment(String selfComment) {
+		this.selfComment = selfComment == null ? null : selfComment.trim();
+	}
+
+	public String getHobby() {
+		return hobby;
+	}
+
+	public void setHobby(String hobby) {
+		this.hobby = hobby == null ? null : hobby.trim();
+	}
+
+	public Byte getState() {
+		return state;
+	}
+
+	public void setState(Byte state) {
+		this.state = state;
+	}
+
+	public Integer getCompanyid() {
+		return companyid;
+	}
+
+	public void setCompanyid(Integer companyid) {
+		this.companyid = companyid;
+	}
+
+	public Date getAddtime() {
+		return addtime;
+	}
+
+	public void setAddtime(Date addtime) {
+		this.addtime = addtime;
+	}
+
+	public String getConstellation() {
+		return constellation;
+	}
+
+	public void setConstellation(String constellation) {
+		this.constellation = constellation == null ? null : constellation.trim();
+	}
+
+	public String getZodiac() {
+		return zodiac;
+	}
+
+	public void setZodiac(String zodiac) {
+		this.zodiac = zodiac == null ? null : zodiac.trim();
+	}
+
+	public Short getInfoState() {
+		return infoState;
+	}
+
+	public void setInfoState(Short infoState) {
+		this.infoState = infoState;
+	}
+
+	public Byte getLevel() {
+		return level;
+	}
+
+	public void setLevel(Byte level) {
+		this.level = level;
+	}
+
+	public String getQqId() {
+		return qqId;
+	}
+
+	public void setQqId(String qqId) {
+		this.qqId = qqId;
+	}
+
+	public String getSinaId() {
+		return sinaId;
+	}
+
+	public void setSinaId(String sinaId) {
+		this.sinaId = sinaId;
+	}
+
+	public String getWxId() {
+		return wxId;
+	}
+
+	public void setWxId(String wxId) {
+		this.wxId = wxId;
+	}
+
+	public String getPortrait() {
+		return portrait;
+	}
+
+	public void setPortrait(String portrait) {
+		this.portrait = portrait;
+	}
+
+	public Short getKingState() {
+		return kingState;
+	}
+
+	public void setKingState(Short kingState) {
+		this.kingState = kingState;
+	}
+
+	public String getWxUnionid() {
+		return wxUnionid;
+	}
+
+	public void setWxUnionid(String wxUnionid) {
+		this.wxUnionid = wxUnionid;
+	}
+
+	public String getIdcard_picids() {
+		return idcard_picids;
+	}
+
+	public void setIdcard_picids(String idcard_picids) {
+		this.idcard_picids = idcard_picids;
+	}
+
+
+	public String getInvitation_code() {
+		return invitation_code;
+	}
+
+	public void setInvitation_code(String invitation_code) {
+		this.invitation_code = invitation_code;
+	}
+
+	public Integer getInvitation_count() {
+		return invitation_count;
+	}
+
+	public void setInvitation_count(Integer invitation_count) {
+		this.invitation_count = invitation_count;
+	}
+
+	public Short getInvitationed_state() {
+		return invitationed_state;
+	}
+
+	public void setInvitationed_state(Short invitationed_state) {
+		this.invitationed_state = invitationed_state;
+	}
+
+
+	public String getBirthdays() {
+		return birthdays;
+	}
+
+	public void setBirthdays(String birthdays) {
+		this.birthdays = birthdays;
+	}
+
+	public String getAddtimes() {
+		return addtimes;
+	}
+
+	public void setAddtimes(String addtimes) {
+		this.addtimes = addtimes;
+	}
+
+	public String getStates() {
+		return states;
+	}
+
+	public void setStates(String states) {
+		this.states = states;
+	}
+
+	public String getKingStates() {
+		return kingStates;
+	}
+
+	public void setKingStates(String kingStates) {
+		this.kingStates = kingStates;
+	}
+
+	
+}

@@ -1,0 +1,521 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+    pageEncoding="utf-8"%>
+<html xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-validate="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>首页</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--星星评价-->
+    <link rel="stylesheet" href="../css/bottom.css" />
+    <link rel="stylesheet" href="../css/common.css" />
+    <!--sui-ui-->
+    <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+    <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/??sm.min.css,sm-extend.min.css">
+    <style>
+        p{
+            margin: 0;
+        }
+        .my_head{background-image: linear-gradient(to right, #78c6ff, #5d8ff9);}
+        .user_top{width: 100%}
+        .user_head{width: 100%;top: 4rem;background-color: #ffffff ;box-shadow:2px 2px 3px #aaaaaa;border: 1px solid #E3E5E4}
+        .text_size{text-align: center}
+        .info_number{font-size: 1rem;color: #5d92f9}
+        .info_text{color: #5d92f9}
+        .info_row{border-right: 1px solid #E3E5E4}
+
+        .user_img{width: 3rem;border-radius: 50%;height: 3rem;}
+        .img_box{position: absolute;top: -1.5rem;left: 50%;margin-left: -1.5rem}
+        .user_info_head{height: 5rem}
+        .user_name{margin-top: 0.5rem}
+        .user_info{padding: 1rem 1rem ;position: absolute;top: 5rem;width: 100%}
+        .sign_btn{height: 22px;padding-left: 0;padding-right:0;position: absolute;border: none;bottom:2px;right: 1rem}
+        .sign_btn img{height: 100%}
+        .chose_text{font-size: 0.6rem;color: #D5D7E2}
+        .chose_href{display: block}
+        .back_btn{background-image: url("../img/user/back_background.png");border: none;border-radius: 0;margin: 0 auto;height: 40px;line-height: 40px;color: white}
+        .about_text{margin-top: 45%}
+        .about_footer{font-size: 14px;position: absolute;width: 100%;text-align: center;bottom: 0.5rem}
+        .phone_number{color: #ff4c65}
+        .phone_title{padding-top: 30px;text-align: center;width: 100%;}
+        .phone_input{padding-top: 30px;position: relative}
+        .phone_input a{height: 40px;position: absolute;right: 15%;top: 30px;border-radius: 0;line-height: 40px;border: none;color: #333}
+        .btn_disable{background-color: #d5d7e3}
+        .btn_send{background-color: #69a8fb;color: white !important}
+        .phone_input input{width: 70%;border: 1px solid #d5d7e3;height: 40px;margin-left: 15%;}
+        .phone_btn{width: 70%;border:none;border-radius: 0;height: 35px;
+            background-image:url(../img/user/next_shape_select.png);background-size: 100% 100%;
+            margin-left: 15%;margin-top: 30px;line-height: 35px;color: white;
+        }
+        input{padding-left: 10px!important;font-size: 16px}
+        .vip_img{width: 3rem;position: absolute;top: 2.5rem}
+        .vip_img img{width: 100%}
+        .chose_href img{height: 30px}
+    </style>
+</head>
+<body>
+
+<div class="page-group" >
+    <div class="page page-current" id="user_home">
+        <nav class="bar bar-tab" style="background-color: #ffffff">
+            <a class="tab-item external" href="../auth/go?uri=/wechat/home/home">
+                <span class="icon">
+                    <img src="../img/home/home_unselect_icon.png" class="bar_icon">
+                </span>
+                <span class="tab-label">首页</span>
+            </a>
+            <a class="tab-item external" href="../auth/go?uri=/wechat/serves/home">
+                <span class="icon">
+                    <img src="../img/home/sort_unselect_icon.png" class="bar_icon">
+                </span>
+                <span class="tab-label">快速下单</span>
+            </a>
+            <a class="tab-item external" href="../auth/go?uri=/wechat/order/home">
+                <span class="icon">
+                    <img src="../img/home/order_unselect.png" class="bar_icon">
+                </span>
+                <span class="tab-label">订单</span>
+            </a>
+            <a class="tab-item external active" href="../auth/go?uri=/wechat/user/home">
+                <span class="icon">
+                    <img src="../img/home/mine_select.png" class="bar_icon">
+                </span>
+                <span class="tab-label">我的</span>
+            </a>
+        </nav>
+        <div class="content" style="background-color: #ffffff">
+            <!-- 这里是页面内容区 -->
+            <div class="page-index">
+                <div class="user_top" style="position: absolute">
+                    <img src="../img/user/top_bg.png" width="100%" />
+                </div>
+                <div class="user_info">
+                    <div class="user_head">
+                        <div class="user_info_head" style="position: relative;">
+                            <a href="../auth/go?uri=/wechat/user/info" external>
+                            <div class="img_box">
+                                <img src="../img/user/default_head_pic.png" :src="userInfo.avatarurl" class="user_img" />
+                                <p class="text-center user_name" v-cloak>{{userInfo.real_name}}</p>
+                                <div class="vip_img">
+                                    <img src="../img/user/vip_zero.png" :src="vipHeader[userInfo.level]" />
+                                </div>
+                            </div></a>
+                        </div>
+                        <div class="">
+                            <div class="row" style="padding-bottom: 1rem">
+                                <div class="col-33 info_row">
+                                    <a href="../auth/go?uri=/wechat/user/money" external>
+                                    <p class="text_size">
+                                        <span class="info_number" v-cloak>{{userInfo.balance}}</span>
+                                        <span class="info_text">元</span>
+                                    </p><p class="text_size">余额</p></a>
+                                </div>
+                                <div class="col-33 info_row">
+                                    <a href="../auth/go?uri=/wechat/user/card" external>
+                                    <p class="text_size">
+                                        <span class="info_number" v-cloak>{{userInfo.couponcount}}</span>
+                                        <span class="info_text">张</span>
+                                    </p><p class="text_size">优惠卷</p></a>
+                                </div>
+                                <div class="col-33 info_row" style="border-right: none">
+                                    <a href="../auth/go?uri=/wechat/user/point" external>
+                                    <p class="text_size">
+                                        <span class="info_number" v-cloak>{{userInfo.point}}</span>
+                                        <span class="info_text">分</span>
+                                    </p><p class="text_size">积分</p></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sing_box" style="margin-top: 1.5rem;position: relative;margin-bottom: 1.5rem">
+                        <p class="" v-cloak>本周已经签到{{userInfo.sign_week}}天</p>
+                        <a href="../auth/go?uri=/wechat/user/sign" class="button sign_btn" external>
+                            <img v-if="userInfo.today_sign" v-cloak  src="../img/user/sign_ok.png" />
+                            <img v-else="userInfo.today_sign" v-cloak src="../img/user/sign_not.png" />
+                        </a>
+                    </div>
+                    <div class="chose_box" style="border-top: 2px solid #E3E5E4">
+                        <div class="row" style="margin-top: 1.5rem">
+                            <!--<div class="col-33 text-center" style="padding: 0.5rem 0.5rem">-->
+                                <!--<a class="chose_href" href="./info.jsp" external>-->
+                                    <!--<img style="height: 2rem" src="../img/user/mine_data.png" />-->
+                                    <!--<p class="text-center chose_text" style="margin-top: 0.5rem">个人资料</p>-->
+                                <!--</a>-->
+                            <!--</div>-->
+                            <div class="col-33 text-center" style="padding: 0.5rem 0.5rem">
+                                <a class="chose_href" href="../auth/go?uri=/wechat/location/add_list" external>
+                                    <img src="../img/user/mine_address.png" />
+                                    <p class="text-center chose_text" style="margin-top: 0.5rem">服务地址</p>
+                                </a>
+                            </div>
+                            <div class="col-33 text-center" style="padding: 0.5rem 0.5rem">
+                                <a class="chose_href" href="#user_setting">
+                                    <img src="../img/user/mine_setting.png" />
+                                    <p class="text-center chose_text" style="margin-top: 0.5rem">设置</p>
+                                </a>
+                            </div>
+                            <div class="col-33 text-center" style="padding: 0.5rem 0.5rem">
+                                <a class="chose_href" href="#feedback">
+                                    <img src="../img/user/mine_advise.png" />
+                                    <p class="text-center chose_text" style="margin-top: 0.5rem">意见反馈</p>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-33 text-center" style="padding: 0.5rem 0.5rem">
+                                <a class="chose_href" href="https://ikefu.baidu.com/wise/zk">
+                                    <img src="../img/user/mine_service.png" />
+                                    <p class="text-center chose_text" style="margin-top: 0.5rem">联系客服</p>
+                                </a>
+                            </div>
+                            <div class="col-33 text-center" style="padding: 0.5rem 0.5rem">
+                                <a class="chose_href" id="about_page" href="#">
+                                    <img src="../img/user/mine_more.png" />
+                                    <p class="text-center chose_text" style="margin-top: 0.5rem">关于我们</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page" id="user_setting">
+        <header class="bar bar-nav my_head">
+            <!-- <a class="button button-link button-nav pull-left back">
+                <span class="icon icon-left"></span>
+            </a> -->
+            <h1 class="title">设置</h1>
+        </header>
+        <div class="content" style="background-color: white">
+            <!-- 这里是页面内容区 -->
+            <div class="list-block" style="margin-top: 0">
+                <ul>
+                    <li>
+                        <a href="#phone_edit" class="item-link item-content">
+                            <div class="item-inner">
+                                <div class="item-title">修改手机号</div>
+                                <div class="item-after" v-cloak>{{userInfo.phone | hidePhone}}</div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="list-block">
+                <ul>
+                    <li>
+                        <a href="#birthday_edit" class="item-link item-content">
+                            <div class="item-inner">
+                                <div class="item-title">常见问题</div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="item-link item-content">
+                            <div class="item-inner">
+                                <div class="item-title">用户协议</div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="page" id="phone_edit">
+        <header class="bar bar-nav my_head">
+            <!-- <a class="button button-link button-nav pull-left back">
+                <span class="icon icon-left"></span>
+            </a> -->
+            <h1 class="title">验证手机号</h1>
+        </header>
+        <div class="content" style="background-color: white">
+            <!-- 这里是页面内容区 -->
+            <div class="phone_title" v-if="isSet">
+                <p>系统已经发送验证码到</p>
+                <p>你的手机号<span class="phone_number">{{userInfo.phone | hidePhone}}</span>，请注意查收</p>
+            </div>
+            <div class="phone_title" v-else="isSet">
+                <p>点击获取验证码</p>
+                <p>你的手机号是<span class="phone_number">{{userInfo.phone | hidePhone}}</span></p>
+            </div>
+            <div class="phone_input">
+                <input v-model="vcode" />
+                <a class="button btn_disable" v-if="isSet"><span class="send_time">{{time}}</span>"重新获取</a>
+                <a class="button btn_send" v-else="isSet" v-on:click="sendCode">点击获取</a>
+            </div>
+            <a class="button phone_btn" v-on:click="checkCode">下一步</a>
+        </div>
+    </div>
+    <div class="page" id="phone_new">
+        <header class="bar bar-nav my_head">
+            <!-- <a class="button button-link button-nav pull-left back">
+                <span class="icon icon-left"></span>
+            </a> -->
+            <h1 class="title">修改手机号</h1>
+        </header>
+        <div class="content" style="background-color: white">
+            <!-- 这里是页面内容区 -->
+            <div class="phone_input">
+                <input placeholder="输入新手机号码" v-model="newPhone"/>
+            </div>
+            <div class="phone_input">
+                <input placeholder="输入验证码" v-model="vcode"/>
+                <a class="button btn_disable" v-if="isSet"><span class="send_time">{{time}}</span>"重新获取</a>
+                <a class="button btn_send" v-else="isSet" v-on:click="sendCode">点击获取</a>
+            </div>
+            <a class="button phone_btn" v-on:click="changePhone">完成</a>
+        </div>
+    </div>
+    <!-- <div class="page" id="about">
+        <header class="bar bar-nav my_head">
+            <a class="button button-link button-nav pull-left back">
+                <span class="icon icon-left"></span>
+            </a>
+            <h1 class="title">关于我们</h1>
+        </header>
+        <div class="content" style="background-color: white">
+            这里是页面内容区
+            <div class="about_text">
+                <p class="text-center">表叔云服</p>
+                <p class="text-center" style="font-size: 12px;color: #ccc">1.01</p>
+            </div>
+            <div class="about_footer">
+                浙江智咖网络科技有限公司 版权所有
+            </div>
+        </div>
+    </div> -->
+    <div class="page" id="feedback">
+        <header class="bar bar-nav my_head">
+            <!-- <a class="button button-link button-nav pull-left back">
+                <span class="icon icon-left"></span>
+            </a> -->
+            <h1 class="title">意见反馈</h1>
+        </header>
+        <div class="content" style="background-color: white">
+            <!-- 这里是页面内容区 -->
+            <div class="feed_text" style="padding-top: 1.5rem;">
+                <textarea style="width: 90%;height:200px;font-size:14px;border: 1px solid #ccc;margin-left: 5%" v-model="content" id="content"
+                          placeholder="告诉表叔云服你的宝贵意见，我们会更快哟"></textarea>
+                <p style="font-size: 12px;color: #ccc;padding-left: 5%">*意见采纳将给予一定的奖励</p>
+            </div>
+            <div class="about_footer" v-on:click="feedbackSubmit">
+                <span class="button back_btn" style="width: 80%">提交宝贵意见</span>
+            </div>
+        </div>
+    </div>
+</div>
+<!--<script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>-->
+<!--<script>var Zepto = jQuery</script>-->
+<!--sui-ui-->
+<script type='text/javascript' src='//g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
+<script type='text/javascript' src='//g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+<script type='text/javascript' src='//g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
+<script type='text/javascript' src='../js/van-common.js' charset='utf-8'></script>
+<script type='text/javascript' src='../js/plugins/md5.js' charset='utf-8'></script>
+<script src="../js/vue/vue.min.js"></script>
+<script src="../js/vue/vue-resource.min.js"></script>
+<script>
+   var wxuserid = "<%=session.getAttribute("wxuserid")%>";
+   var accesstoken = "<%=session.getAttribute("wxaccesstoken")%>";
+   setItem('user_id', wxuserid);
+   setItem('user_auth', accesstoken);
+   refreshLocal();
+    //本地地址localStorage
+   setItem('server_url','');
+   setItem('choseId','');
+   Vue.filter('hidePhone', function (value) {
+        if (typeof(value) != "undefined" && !value && value != "") {
+            return value.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2');
+        }
+    });
+    var wait = 60;
+    var userInfo = {
+        userId:0, avatarurl: '', balance: 0,  couponcount: 0, level: 0, point: 0, real_name: '', sign_week: 0, today_sign: 0, phone: ''
+    };
+    var home = new Vue({
+        el: '#user_home',
+        data: {
+            apiUrl: '/user/refreshUserInfo',
+            apiGetAboutUrl: '/system/getAbout', aboutUrl: '',
+            userInfo: userInfo
+        },
+        emulateJSON: true,
+        mounted: function() {
+            this.getCustomers();
+            this.getAbout()
+        },
+        methods: {
+            getCustomers: function() {
+                this.$http.get(createUrl(this.apiUrl, {userid: userId}, true))
+                .then(function(response) {
+                    if (response.data.c == 1) {
+                        var jsonData = JSON.parse(response.data.r);
+                        this.userInfo = jsonData;
+                        setting.userInfo = jsonData;
+                        //保存用户的余额
+                        setItem('userbalance',jsonData.balance);
+                    } else {
+                        $.toast(response.data.m);
+                    }
+                })
+
+            },
+            getAbout: function () {
+                this.$http.get(createUrl(this.apiGetAboutUrl, {type:1}, false))
+                    .then(function(response) {
+                        if (response.data.c == 1) {
+                            var jsonData = JSON.parse(response.data.r);
+                            this.aboutUrl = jsonData.url;
+                            $("#about_page").attr("href", jsonData.url);
+                        } else {
+                            $.toast(response.data.m);
+                        }
+                    })
+            }
+        }
+    });
+
+    var setting = new Vue({
+        el: '#user_setting',
+        data: {
+            userInfo: userInfo
+        }
+    });
+
+    var phoneEdit = new Vue({
+        el: '#phone_edit',
+        data: {
+            apiGetCodeUrl: '/user/getVCode',
+            apiCheckCodeUrl: '/user/checkVCode',
+            phone: '',
+            isSet: false,
+            vcode: '',
+            time: 60
+        },
+        methods: {
+            sendCode: function () {
+                this.$http.get(createUrl(this.apiGetCodeUrl, {phone: home.userInfo.phone, type:2}, false))
+                    .then(function(response) {
+                        if (response.data.c == 1) {
+                            var jsonData = JSON.parse(response.data.r);
+                            this.isSet = true;
+                            this.time = 60;
+                            time();
+                        } else {
+                            console.log(response.data.m)
+                        }
+                    })
+            },
+            checkCode: function () {
+                if (this.vcode == "") {
+                    $.toast("请输入验证码");
+                    return false;
+                }
+                this.$http.get(createUrl(this.apiCheckCodeUrl, {phone: home.userInfo.phone, vcode: this.vcode, type:2}, false))
+                    .then(function(response) {
+                        if (response.data.c == 1) {
+                            $.router.load("#phone_new");
+                        } else {
+                            this.vcode = '';
+                            $.toast(response.data.m);
+                        }
+                    })
+            }
+        }
+    });
+    function time() {
+        if (wait == 0) {
+            wait = 60;
+            phoneEdit.isSet = false;
+            phoneNew.time = wait;
+        } else {
+            wait--;
+            phoneEdit.time = wait;
+            phoneNew.time = wait;
+            setTimeout(function() { time() }, 1000)
+        }
+    }
+    var phoneNew = new Vue({
+        el: '#phone_new',
+        data: {
+            apiGetCodeUrl: '/user/getVCode',
+            apiChangePhoneUrl: '/user/changePhone',
+            newPhone: '',
+            isSet: false,
+            vcode: '',
+            time: 60
+        },
+        methods: {
+            sendCode: function () {
+                this.$http.get(createUrl(this.apiGetCodeUrl, {phone: this.newPhone, type:3}, false))
+                    .then(function(response) {
+                        if (response.data.c == 1) {
+                            var jsonData = JSON.parse(response.data.r);
+                            this.isSet = true;
+                            this.time = 60;
+                            time();
+                            console.log(jsonData)
+                        } else {
+                            console.log(response.data.m)
+                        }
+                    });
+            },
+            changePhone: function () {
+                if (this.newPhone == "") {
+                    $.toast("请输入新手机号码");
+                    return false;
+                }
+                if (this.vcode == "") {
+                    $.toast("请输入验证码");
+                    return false;
+                }
+                this.$http.get(createUrl(this.apiChangePhoneUrl, {userid: userId, vcode: this.vcode, newphone:this.newPhone}, true))
+                    .then(function(response) {
+                        if (response.data.c == 1) {
+                            var jsonData = JSON.parse(response.data.r);
+                            home.userInfo.phone = jsonData.phone;
+                            info.userInfo.phone = jsonData.phone;
+                            setting.userInfo.phone = jsonData.phone;
+                            $.router.load("#user_info");
+                        } else {
+                            $.toast(response.data.m);
+                        }
+                    })
+            }
+        }
+
+
+    });
+    var feedback = new Vue({
+        el: '#feedback',
+        data: {
+            apiUrl: '/user/feedBack',
+            content: ''
+        },
+        methods: {
+            feedbackSubmit: function () {
+                if (this.content == "") {
+                    $.toast("请输入你的宝贵意见！");
+                    return false;
+                }
+                this.$http.get(createUrl(this.apiUrl, {userid: userId, content:this.content}, true))
+                    .then(function(response) {
+                        if (response.data.c == 1) {
+                            $.toast(response.data.m);
+                            setTimeout(function () {
+                                $.router.back()
+                            }, 1000);
+                        }
+                    })
+            }
+        }
+
+    });
+
+    $.init();
+</script>
+</body>
+</html>

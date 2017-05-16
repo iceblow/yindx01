@@ -1,0 +1,157 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+    pageEncoding="utf-8"%>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="YES">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <meta content="telephone=no" name="format-detection" />
+    <meta http-equiv="Cache-Control"
+          content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <link rel="stylesheet" href="../js/mui/css/mui.min.css">
+    <link rel="stylesheet" href="../css/common.css" />
+    <link rel="stylesheet" href="../css/news_list.css" />
+    <title>消息详情</title>
+    <style>
+        .message_detail{background-color: white}
+        .message_list {margin-top: 0px;}
+        .mui-navigate-right:after, .mui-push-left:after, .mui-push-right:after {top:65%}
+        .mui-table-view:before, .mui-table-view:after, .mui-table-view-cell:after {background-color: #ffffff}
+    </style>
+</head>
+<body>
+<header class="mui-bar mui-bar-nav my_head money_head" id="header">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <h1 class="mui-title" v-cloak>{{title}}</h1>
+</header>
+<div class="mui-content detail_container mui-scroll-wrapper message_detail" id="pullrefresh">
+    <div class="mui-scroll">
+        <ul class="mui-table-view">
+            <li class="mui-table-view-cell mui-media message_list" v-for="message in messagelist" v-cloak>
+                <div class="date_time">{{message.timestr}}</div>
+                <div class="complate_data">
+                    <img src="../img/message/message_type_sys.png" class="detail_pic" v-if="type == 1">
+                    <img src="../img/message/message_type_ad.png" class="detail_pic" v-if="type == 2">
+                    <img src="../img/message/message_type_man.png" class="detail_pic" v-if="type == 3">
+                    <img src="../img/message/message_type_active.png" class="detail_pic" v-if="type == 4">
+                    <div class="data_infor">
+                        <p class="compl_name">{{message.title}}</p>
+                        <p class="compl_text">{{message.detail}}</p>
+                        <p class="compl_go" v-if="message.link_title">
+                            <a href="#" class="mui-navigate-right" :data-type="message.link_type" :data-link="message.link_content">
+                                {{message.link_title}}
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+<script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script type='text/javascript' src='../js/plugins/md5.js' charset='utf-8'></script>
+<script type='text/javascript' src='../js/van-common.js' charset='utf-8'></script>
+<script src="../js/vue/vue.min.js"></script>
+<script src="../js/vue/vue-resource.min.js"></script>
+
+<script src="../js/mui/js/mui.min.js"></script>
+<script>
+    var list = new Vue({
+        el: '#pullrefresh',
+        data: {
+            apiUrl: '/user/messageDetail',
+            messagelist: [], havemore: 0, page: 1, messageid:getItem('message_id'), type:getItem('message_type')
+        },
+        mounted: function() {
+            this.getCustomers();
+        },
+        methods: {
+            getCustomers: function () {
+                this.$http.get(createUrl(this.apiUrl, {userid: userId, messageid: this.messageid, page: this.page}, true))
+                    .then(function(response) {
+                        if (response.data.c == 1) {
+                            var jsonData = JSON.parse(response.data.r);
+                            this.messagelist = jsonData.messagelist;
+                            this.havemore = jsonData.havemore;
+                            this.page += 1;
+                            console.log(jsonData.messagelist)
+                        } else {
+                            console.log(response.data.m)
+                        }
+                    })
+            },
+        }
+    });
+    var header = new Vue({
+        el: '#header',
+        data: {  data: ['系统消息','广告','官方通知','活动通知'], title:'消息详情' },
+        mounted: function() {
+            this.title = this.data[list.type-1]
+        },
+    });
+    mui.init({
+        pullRefresh: {
+            container: '#pullrefresh',
+            up: {
+                contentrefresh: '正在加载...',
+                callback: pullupRefresh
+            }
+        }
+    });
+    mui('#pullrefresh').on('tap', 'a', function(e) {
+        var type = this.getAttribute('data-type');
+        var content = this.getAttribute('data-content');
+        switch (parseInt(type)) {
+            case 0:
+                window.location.href = '../auth/go?uri=/wechat/user/info';
+                break;
+            case 1:
+                setItem('order_detail_id', content);
+                window.location.href = '../auth/go?uri=/wechat/message/detail';
+                break;
+            case 2:
+                window.location.href = '../auth/go?uri=/wechat/company/list';
+                break;
+            case 3:
+                window.location.href = '../auth/go?uri=/wechat/servers/uncle';
+                break;
+            case 4:
+                window.location.href = content;
+                break;
+            default:
+        }
+
+    });
+
+    /**
+     * 上拉加载具体业务实现
+     */
+    function pullupRefresh() {
+        setTimeout(function() {
+            list.$http.get(createUrl(list.apiUrl, {userid: userId, messageid: list.messageid, page: list.page}, true))
+                .then(function(response) {
+                    if (response.data.c == 1) {
+                        var jsonData = JSON.parse(response.data.r);
+                        console.log(jsonData);
+                        if (jsonData.messagelist != null) {
+                            list.messagelist.push(jsonData.messagelist)
+                            list.havemore = jsonData.havemore;
+                            list.page += 1;
+                        }
+                        list.havemore = jsonData.havemore;
+                        list.page += 1;
+                    }
+                    mui('#pullrefresh').pullRefresh().endPullupToRefresh(!list.havemore); //参数为true代表没有更多数据了。
+                })
+        }, 1500);
+    }
+</script>
+
+</body>
+</html>
+

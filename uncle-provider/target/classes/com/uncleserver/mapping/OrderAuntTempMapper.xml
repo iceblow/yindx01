@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uncleserver.dao.OrderAuntTempMapper" >
+  <resultMap id="BaseResultMap" type="com.uncleserver.model.OrderAuntTemp" >
+    <id column="dataid" property="dataid" jdbcType="INTEGER" />
+    <result column="orderid" property="orderid" jdbcType="INTEGER" />
+    <result column="userid" property="userid" jdbcType="INTEGER" />
+    <result column="user_type" property="userType" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    dataid, orderid, userid, user_type
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_order_aunt_temp
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </select>
+  
+   <select id="selectByOrderid" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_order_aunt_temp
+    where orderid = #{orderid,jdbcType=INTEGER}
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_order_aunt_temp
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.uncleserver.model.OrderAuntTemp" >
+    insert into t_order_aunt_temp (dataid, orderid, userid, 
+      user_type)
+    values (#{dataid,jdbcType=INTEGER}, #{orderid,jdbcType=INTEGER}, #{userid,jdbcType=INTEGER}, 
+      #{userType,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.uncleserver.model.OrderAuntTemp" >
+    insert into t_order_aunt_temp
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="dataid != null" >
+        dataid,
+      </if>
+      <if test="orderid != null" >
+        orderid,
+      </if>
+      <if test="userid != null" >
+        userid,
+      </if>
+      <if test="userType != null" >
+        user_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="dataid != null" >
+        #{dataid,jdbcType=INTEGER},
+      </if>
+      <if test="orderid != null" >
+        #{orderid,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null" >
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="userType != null" >
+        #{userType,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.uncleserver.model.OrderAuntTemp" >
+    update t_order_aunt_temp
+    <set >
+      <if test="orderid != null" >
+        orderid = #{orderid,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null" >
+        userid = #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="userType != null" >
+        user_type = #{userType,jdbcType=TINYINT},
+      </if>
+    </set>
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.uncleserver.model.OrderAuntTemp" >
+    update t_order_aunt_temp
+    set orderid = #{orderid,jdbcType=INTEGER},
+      userid = #{userid,jdbcType=INTEGER},
+      user_type = #{userType,jdbcType=TINYINT}
+    where dataid = #{dataid,jdbcType=INTEGER}
+  </update>
+</mapper>
